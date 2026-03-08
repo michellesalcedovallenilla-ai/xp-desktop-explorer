@@ -124,10 +124,10 @@ export default function CameraApp() {
       if (glassesOn) {
         const img = overlayImages.glasses
         if (img?.complete && img.naturalWidth) {
-          const gw = Math.max(eyeDistancePx * 2.25, faceW * 0.78)
+          const gw = Math.max(eyeDistancePx * 2.4, faceW * 0.8)
           const gh = gw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
-          ctx.translate(eyeCenterX, eyeCenterY + faceH * 0.02)
+          ctx.translate(eyeCenterX, eyeCenterY + faceH * 0.06)
           ctx.rotate(rot)
           ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
           ctx.restore()
@@ -138,8 +138,8 @@ export default function CameraApp() {
         const img = overlayImages.mustache
         if (img?.complete && img.naturalWidth) {
           const mx = ((f.noseTip.x + f.upperLip.x) / 2) * w
-          const my = (f.upperLip.y * h) + faceH * 0.03
-          const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
+          const my = (f.upperLip.y * h) + faceH * 0.09
+          const mw = Math.max(mouthWidthPx * 1.65, faceW * 0.44)
           const mh = mw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(mx, my)
@@ -153,12 +153,13 @@ export default function CameraApp() {
         const img = overlayImages.hat
         if (img?.complete && img.naturalWidth) {
           const hx = f.forehead.x * w
-          const hy = (f.forehead.y * h) + faceH * 0.08
-          const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
+          const hy = (f.forehead.y * h) + faceH * 0.2
+          const hw = Math.max(faceW * 1.32, eyeDistancePx * 3.1)
           const hh = hw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
+          ctx.scale(-1, 1)
           ctx.drawImage(img, -hw / 2, -hh * 0.72, hw, hh)
           ctx.restore()
         }
@@ -191,12 +192,12 @@ export default function CameraApp() {
         const px = hd.palmCenter.x * w
         const py = hd.palmCenter.y * h
         const handWidthPx = hd.handWidth * w
-        const bw = Math.max(handWidthPx * 1.05, 44)
+        const bw = Math.max(handWidthPx * 1.25, 54)
         const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(px, py)
         ctx.rotate(hd.rotation - Math.PI / 2)
-        ctx.drawImage(img, -bw / 2, -bh * 0.68, bw, bh)
+        ctx.drawImage(img, -bw / 2, -bh * 0.52, bw, bh)
         ctx.restore()
       }
     }
@@ -306,12 +307,12 @@ export default function CameraApp() {
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
-        const gw = Math.max(eyeDistancePx * 2.25, faceW * 0.78)
+        const gw = Math.max(eyeDistancePx * 2.4, faceW * 0.8)
         const gh = gw * 0.35
         glasses = {
           position: 'absolute',
           left: eyeCenterX - gw / 2,
-          top: (eyeCenterY + faceH * 0.02) - gh / 2,
+          top: (eyeCenterY + faceH * 0.06) - gh / 2,
           width: gw,
           height: gh,
           transform: `rotate(${rotDeg}deg)`,
@@ -323,8 +324,8 @@ export default function CameraApp() {
 
       if (mustacheOn) {
         const mx = (noseTip.x + upperLip.x) / 2
-        const my = upperLip.y + faceH * 0.03
-        const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
+        const my = upperLip.y + faceH * 0.09
+        const mw = Math.max(mouthWidthPx * 1.65, faceW * 0.44)
         const mh = mw * 0.35
         mustache = {
           position: 'absolute',
@@ -341,8 +342,8 @@ export default function CameraApp() {
 
       if (hatOn) {
         const hx = forehead.x
-        const hy = forehead.y + faceH * 0.08
-        const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
+        const hy = forehead.y + faceH * 0.2
+        const hw = Math.max(faceW * 1.32, eyeDistancePx * 3.1)
         const hh = hw * 0.75
         hat = {
           position: 'absolute',
@@ -350,7 +351,7 @@ export default function CameraApp() {
           top: hy - hh * 0.72,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -380,13 +381,13 @@ export default function CameraApp() {
     if (hand && beerOn) {
       const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
       const handWidthPx = hand.handWidth * pxScale
-      const bw = Math.max(handWidthPx * 1.05, 26)
+      const bw = Math.max(handWidthPx * 1.25, 32)
       const bh = bw / 0.35
       const rotDeg = ((hand.rotation - Math.PI / 2) * 180) / Math.PI
       beer = {
         position: 'absolute',
         left: palm.x - bw / 2,
-        top: palm.y - bh * 0.68,
+        top: palm.y - bh * 0.52,
         width: bw,
         height: bh,
         transform: `rotate(${rotDeg}deg)`,
