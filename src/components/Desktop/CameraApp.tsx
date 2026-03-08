@@ -125,11 +125,13 @@ export default function CameraApp() {
       if (glassesOn) {
         const img = overlayImages.glasses
         if (img?.complete && img.naturalWidth) {
-          const gw = faceW * 1.15
+          const gw = faceW * 1.3
           const gh = gw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(eyeCenter.x, eyeCenter.y)
           ctx.rotate(rot)
+          // Flip horizontally to match mirrored video
+          ctx.scale(-1, 1)
           ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
           ctx.restore()
         }
@@ -140,11 +142,12 @@ export default function CameraApp() {
         if (img?.complete && img.naturalWidth) {
           const mx = f.upperLip.x * w
           const my = f.upperLip.y * h
-          const mw = faceW * 0.55
+          const mw = faceW * 0.6
           const mh = mw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(mx, my)
           ctx.rotate(rot)
+          ctx.scale(-1, 1)
           ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
           ctx.restore()
         }
@@ -155,12 +158,14 @@ export default function CameraApp() {
         if (img?.complete && img.naturalWidth) {
           const hx = f.forehead.x * w
           const hy = f.forehead.y * h
-          const hw = faceW * 1.4
+          const hw = faceW * 1.5
           const hh = hw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
-          ctx.drawImage(img, -hw / 2, -hh * 0.85, hw, hh)
+          // Flip horizontally to match mirrored video
+          ctx.scale(-1, 1)
+          ctx.drawImage(img, -hw / 2, -hh * 0.95, hw, hh)
           ctx.restore()
         }
       }
@@ -277,7 +282,7 @@ export default function CameraApp() {
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
-        const gw = faceW * 1.15
+        const gw = faceW * 1.3
         const gh = gw * 0.35
         glasses = {
           position: 'absolute',
@@ -285,7 +290,7 @@ export default function CameraApp() {
           top: eyeCenter.y - gh / 2,
           width: gw,
           height: gh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -295,7 +300,7 @@ export default function CameraApp() {
       if (mustacheOn) {
         const mx = face.upperLip.x * cw
         const my = face.upperLip.y * ch
-        const mw = faceW * 0.55
+        const mw = faceW * 0.6
         const mh = mw * 0.35
         mustache = {
           position: 'absolute',
@@ -303,7 +308,7 @@ export default function CameraApp() {
           top: my - mh / 2,
           width: mw,
           height: mh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -313,15 +318,15 @@ export default function CameraApp() {
       if (hatOn) {
         const hx = face.forehead.x * cw
         const hy = face.forehead.y * ch
-        const hw = faceW * 1.4
+        const hw = faceW * 1.5
         const hh = hw * 0.75
         hat = {
           position: 'absolute',
           left: hx - hw / 2,
-          top: hy - hh * 0.85,
+          top: hy - hh * 0.95,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
