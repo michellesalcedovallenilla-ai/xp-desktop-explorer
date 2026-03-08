@@ -323,6 +323,7 @@ export default function InternetExplorer({ windowId }: Props) {
     if (isGoogleSearch) {
       const urlObj = new URL(currentUrl)
       const query = urlObj.searchParams.get('q') || ''
+
       return (
         <div style={{ padding: '20px 30px', fontFamily: 'Arial, sans-serif' }}>
           <div style={{ display: 'flex', borderBottom: '1px solid #ebebeb', paddingBottom: '15px', marginBottom: '20px', alignItems: 'center' }}>
@@ -330,22 +331,46 @@ export default function InternetExplorer({ windowId }: Props) {
               <span style={{ color: '#4285F4' }}>G</span><span style={{ color: '#EA4335' }}>o</span><span style={{ color: '#FBBC05' }}>o</span><span style={{ color: '#4285F4' }}>g</span><span style={{ color: '#34A853' }}>l</span><span style={{ color: '#EA4335' }}>e</span>
             </span>
             <form onSubmit={(e) => { e.preventDefault(); navigateTo(`${GOOGLE_URL}search?q=${encodeURIComponent(searchQuery || query)}`) }} style={{ flex: 1, maxWidth: '600px', display: 'flex' }}>
-              <input type="text" defaultValue={query} onChange={(e) => setSearchQuery(e.target.value)}
+              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 style={{ flex: 1, padding: '8px 15px', fontSize: '16px', borderRadius: '24px 0 0 24px', border: '1px solid #dfe1e5', outline: 'none' }} />
               <button type="submit" style={{ padding: '0 20px', borderRadius: '0 24px 24px 0', border: '1px solid #dfe1e5', borderLeft: 'none', background: '#fff', cursor: 'pointer' }}>🔍</button>
             </form>
           </div>
-          <p style={{ color: '#70757a', fontSize: '14px', marginBottom: '20px' }}>About 2 results (0.01 seconds)</p>
-          <div style={{ marginBottom: '30px', maxWidth: '600px' }}>
-            <div style={{ fontSize: '14px', color: '#202124', marginBottom: '2px' }}>readymag.website › u2801101920</div>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigateTo(PORTFOLIO_URL) }} style={{ fontSize: '20px', color: '#1a0dab', textDecoration: 'none', display: 'block', marginBottom: '4px' }}>My Digital Drafts - Portfolio</a>
-            <div style={{ color: '#4d5156', fontSize: '14px', lineHeight: '1.4' }}>Explore the creative portfolio and digital works. A collection of projects, designs, and interactive experiences.</div>
-          </div>
-          <div style={{ marginBottom: '30px', maxWidth: '600px' }}>
-            <div style={{ fontSize: '14px', color: '#202124', marginBottom: '2px' }}>instagram.com › mydigitaldrafts</div>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigateTo(INSTAGRAM_URL) }} style={{ fontSize: '20px', color: '#1a0dab', textDecoration: 'none', display: 'block', marginBottom: '4px' }}>My Digital Drafts (@mydigitaldrafts) • Instagram photos</a>
-            <div style={{ color: '#4d5156', fontSize: '14px', lineHeight: '1.4' }}>See Instagram photos and videos from My Digital Drafts (@mydigitaldrafts). Follow for the latest design updates and drops.</div>
-          </div>
+
+          {liveSearchLoading ? (
+            <p style={{ color: '#70757a', fontSize: '14px' }}>Searching the web...</p>
+          ) : liveSearchError ? (
+            <p style={{ color: '#b00020', fontSize: '14px' }}>{liveSearchError}</p>
+          ) : (
+            <>
+              <p style={{ color: '#70757a', fontSize: '14px', marginBottom: '20px' }}>
+                About {liveSearchResults.length} results
+              </p>
+
+              {liveSearchResults.length === 0 ? (
+                <p style={{ color: '#4d5156', fontSize: '14px' }}>No results found.</p>
+              ) : (
+                liveSearchResults.map((result) => (
+                  <div key={`${result.url}-${result.title}`} style={{ marginBottom: '28px', maxWidth: '700px' }}>
+                    <div style={{ fontSize: '14px', color: '#202124', marginBottom: '2px' }}>{result.displayUrl}</div>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        navigateTo(result.url)
+                      }}
+                      style={{ fontSize: '20px', color: '#1a0dab', textDecoration: 'none', display: 'block', marginBottom: '4px' }}
+                    >
+                      {result.title}
+                    </a>
+                    <div style={{ color: '#4d5156', fontSize: '14px', lineHeight: '1.4' }}>
+                      {result.snippet || result.url}
+                    </div>
+                  </div>
+                ))
+              )}
+            </>
+          )}
         </div>
       )
     }
