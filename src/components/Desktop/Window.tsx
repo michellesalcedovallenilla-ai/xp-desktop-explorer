@@ -27,7 +27,8 @@ const contentComponents: Record<string, React.ComponentType<any>> = {
   minesweeper: MinesweeperApp,
   solitaire: SolitaireApp,
   ie: InternetExplorer,
-  messenger: MSNMessenger
+  messenger: MSNMessenger,
+  video: VideoPlayer
 }
 
 const typeIcons: Record<string, string> = {
