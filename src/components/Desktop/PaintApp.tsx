@@ -75,13 +75,15 @@ export default function PaintApp() {
     return () => observer.disconnect()
   }, [])
 
-  const getPos = (e: React.MouseEvent) => {
+  const getPos = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current
     if (!canvas) return { x: 0, y: 0 }
     const rect = canvas.getBoundingClientRect()
+    const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? (e as any).changedTouches?.[0]?.clientX ?? 0) : e.clientX
+    const clientY = 'touches' in e ? (e.touches[0]?.clientY ?? (e as any).changedTouches?.[0]?.clientY ?? 0) : e.clientY
     return {
-      x: Math.round(e.clientX - rect.left),
-      y: Math.round(e.clientY - rect.top)
+      x: Math.round(clientX - rect.left),
+      y: Math.round(clientY - rect.top)
     }
   }
 
@@ -114,7 +116,8 @@ export default function PaintApp() {
     ctx.putImageData(imageData, 0, 0)
   }, [])
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if ('touches' in e) e.preventDefault()
     const pos = getPos(e)
     const canvas = canvasRef.current
     if (!canvas) return
@@ -124,7 +127,7 @@ export default function PaintApp() {
     setStartPos(pos)
 
     if (tool === 'fill') {
-      const c = e.button === 2 ? secondaryColor : primaryColor
+      const c = ('button' in e && e.button === 2) ? secondaryColor : primaryColor
       floodFill(pos.x, pos.y, c)
       return
     }
@@ -146,7 +149,8 @@ export default function PaintApp() {
     ctx.lineJoin = 'round'
   }
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if ('touches' in e) e.preventDefault()
     const pos = getPos(e)
     setMousePos(pos)
     if (!isDrawing) return
@@ -201,7 +205,7 @@ export default function PaintApp() {
     }
   }
 
-  const handleMouseUp = () => {
+  const handlePointerUp = () => {
     setIsDrawing(false)
     setStartPos(null)
     setSnapshot(null)
@@ -270,10 +274,14 @@ export default function PaintApp() {
           <canvas
             ref={canvasRef}
             className="xp-paint-canvas"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            style={{ touchAction: 'none' }}
+            onMouseDown={handlePointerDown}
+            onMouseMove={handlePointerMove}
+            onMouseUp={handlePointerUp}
+            onMouseLeave={handlePointerUp}
+            onTouchStart={handlePointerDown}
+            onTouchMove={handlePointerMove}
+            onTouchEnd={handlePointerUp}
             onContextMenu={handleContextMenu}
           />
         </div>
