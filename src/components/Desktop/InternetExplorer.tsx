@@ -85,7 +85,7 @@ export default function InternetExplorer({ windowId }: Props) {
   const lastFetchedUrl = useRef('')
   useEffect(() => {
     if (currentUrl === lastFetchedUrl.current) return
-    if (isGoogleHome || isGoogleSearch || isInstagram || isPortfolio) {
+    if (isGoogleHome || isGoogleSearch || isInstagram || isPortfolio || isMyspace) {
       setReaderContent(null)
       setReaderError(null)
       setReaderLoading(false)
