@@ -13,6 +13,7 @@ import MinesweeperApp from './MinesweeperApp'
 import SolitaireApp from './SolitaireApp'
 import InternetExplorer from './InternetExplorer'
 import MSNMessenger from './MSNMessenger'
+import VideoPlayer from './VideoPlayer'
 
 const contentComponents: Record<string, React.ComponentType<any>> = {
   finder: Finder,
@@ -26,7 +27,8 @@ const contentComponents: Record<string, React.ComponentType<any>> = {
   minesweeper: MinesweeperApp,
   solitaire: SolitaireApp,
   ie: InternetExplorer,
-  messenger: MSNMessenger
+  messenger: MSNMessenger,
+  video: VideoPlayer
 }
 
 const typeIcons: Record<string, string> = {
@@ -41,7 +43,8 @@ const typeIcons: Record<string, string> = {
   solitaire: '🃏',
   ie: '🌐',
   project: '📁',
-  messenger: '💬'
+  messenger: '💬',
+  video: '🎬'
 }
 
 interface Props {
@@ -60,7 +63,7 @@ export default function Window({ window: win }: Props) {
   const isFocused = win.zIndex === nextZIndex - 1
   const ContentComponent = contentComponents[win.type] || Finder
   const icon = typeIcons[win.type] || '📁'
-  const hasOwnMenu = ['paint', 'minesweeper', 'solitaire', 'ie', 'music', 'messenger'].includes(
+  const hasOwnMenu = ['paint', 'minesweeper', 'solitaire', 'ie', 'music', 'messenger', 'video'].includes(
     win.type
   )
 
@@ -273,7 +276,7 @@ export default function Window({ window: win }: Props) {
           <ContentComponent windowId={win.id} projectId={win.projectId} initialPath={win.url} />
         </div>
 
-        {!['paint', 'ie', 'music', 'messenger'].includes(win.type) && (
+        {!['paint', 'ie', 'music', 'messenger', 'video'].includes(win.type) && (
           <div className="xp-window-statusbar">
             <span>{win.title}</span>
           </div>

@@ -59,6 +59,7 @@ const defaultDesktopIcons: DesktopIconData[] = [
   { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 42, y: 46, iconWidth: 8 },
   { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 70, y: 32, iconWidth: 14 },
   { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 52, y: 38, iconWidth: 11 },
+  { id: 'video', label: 'Video Player', icon: 'video', type: 'app', action: 'video', x: 88, y: 30, iconWidth: 7 },
 ]
 
 const defaultDockItems: DockItem[] = [

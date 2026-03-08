@@ -14,6 +14,7 @@ export interface WindowState {
     | 'solitaire'
     | 'ie'
     | 'messenger'
+    | 'video'
   x: number
   y: number
   width: number

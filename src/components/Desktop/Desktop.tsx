@@ -38,7 +38,8 @@ const Desktop = () => {
         music: { type: 'music', title: 'Music', width: w(vw, 480, 500, 700), height: h(vh - 50, 420, 400, 500) },
         minesweeper: { type: 'minesweeper', title: 'Games', width: w(vw, 320, 300, 320), height: h(vh - 50, 420, 380, 420) },
         ie: { type: 'ie', title: 'Internet Explorer', width: w(vw, 600, 650, 850), height: h(vh - 50, 450, 420, 600) },
-        messenger: { type: 'messenger', title: 'MSN Messenger - Guestbook', width: w(vw, 420, 400, 500), height: h(vh - 50, 450, 420, 550) }
+        messenger: { type: 'messenger', title: 'MSN Messenger - Guestbook', width: w(vw, 420, 400, 500), height: h(vh - 50, 450, 420, 550) },
+        video: { type: 'video', title: 'Windows Media Player', width: w(vw, 500, 520, 640), height: h(vh - 50, 450, 420, 520) }
       }
       const config = windowConfig[action]
       if (config) {
