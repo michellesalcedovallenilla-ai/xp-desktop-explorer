@@ -164,23 +164,6 @@ export default function CameraApp() {
         }
       }
 
-      if (heartsOn) {
-        const heartSize = Math.max(16, faceWidthPx * 0.14)
-        ctx.save()
-        ctx.textAlign = 'center'
-        ctx.font = `${heartSize}px serif`
-        const positions = [
-          { dx: 0, dy: -faceHeightPx * 0.25 },
-          { dx: -faceWidthPx * 0.18, dy: -faceHeightPx * 0.35 },
-          { dx: faceWidthPx * 0.18, dy: -faceHeightPx * 0.35 },
-          { dx: -faceWidthPx * 0.08, dy: -faceHeightPx * 0.45 },
-          { dx: faceWidthPx * 0.08, dy: -faceHeightPx * 0.45 },
-        ]
-        for (const p of positions) {
-          ctx.fillText('❤️', forehead.x + p.dx, forehead.y + p.dy)
-        }
-        ctx.restore()
-      }
     }
 
     if (hd && beerOn) {
