@@ -11,6 +11,7 @@ export default function MenuBar() {
     useSystemStore()
   const { windows, minimizeWindow, restoreWindow, focusWindow } =
     useWindowStore()
+  const { showError } = useErrorDialogStore()
   const [startOpen, setStartOpen] = useState(false)
   const startRef = useRef<HTMLDivElement>(null)
   const time = useClock()
