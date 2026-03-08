@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Heart, Download, Trash2, X, Crown, Beer, Smile } from 'lucide-react'
+import { Download, Trash2, X, Crown, Smile } from 'lucide-react'
 import { useMediaPipeTracking, type FaceLandmarks, type HandPosition } from '@/hooks/useMediaPipeTracking'
 
 interface Photo {
@@ -68,10 +68,9 @@ export default function CameraApp() {
   // Overlay toggles
   const [mustacheOn, setMustacheOn] = useState(false)
   const [hatOn, setHatOn] = useState(false)
-  const [heartsOn, setHeartsOn] = useState(false)
   const [beerOn, setBeerOn] = useState(false)
 
-  const anyOverlay = mustacheOn || hatOn || heartsOn || beerOn
+  const anyOverlay = mustacheOn || hatOn || beerOn
 
   // MediaPipe tracking
   const { face, hand, ready: trackingReady } = useMediaPipeTracking(
@@ -165,23 +164,6 @@ export default function CameraApp() {
         }
       }
 
-      if (heartsOn) {
-        const heartSize = Math.max(16, faceWidthPx * 0.14)
-        ctx.save()
-        ctx.textAlign = 'center'
-        ctx.font = `${heartSize}px serif`
-        const positions = [
-          { dx: 0, dy: -faceHeightPx * 0.25 },
-          { dx: -faceWidthPx * 0.18, dy: -faceHeightPx * 0.35 },
-          { dx: faceWidthPx * 0.18, dy: -faceHeightPx * 0.35 },
-          { dx: -faceWidthPx * 0.08, dy: -faceHeightPx * 0.45 },
-          { dx: faceWidthPx * 0.08, dy: -faceHeightPx * 0.45 },
-        ]
-        for (const p of positions) {
-          ctx.fillText('❤️', forehead.x + p.dx, forehead.y + p.dy)
-        }
-        ctx.restore()
-      }
     }
 
     if (hd && beerOn) {
@@ -198,7 +180,7 @@ export default function CameraApp() {
         ctx.restore()
       }
     }
-  }, [mustacheOn, hatOn, heartsOn, beerOn])
+  }, [mustacheOn, hatOn, beerOn])
 
   // Take photo
   const takePhoto = useCallback(() => {
@@ -274,7 +256,7 @@ export default function CameraApp() {
   const getOverlayCSS = useCallback((
     container: HTMLDivElement | null
   ) => {
-    if (!container) return { mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
+    if (!container) return { mustache: null, hat: null, beer: null }
 
     const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
     const lerp = (a: { x: number; y: number }, b: { x: number; y: number }, t: number) => ({
@@ -284,7 +266,6 @@ export default function CameraApp() {
 
     let mustache: React.CSSProperties | null = null
     let hat: React.CSSProperties | null = null
-    let hearts: React.CSSProperties[] = []
     let beer: React.CSSProperties | null = null
 
     if (face) {
@@ -344,24 +325,6 @@ export default function CameraApp() {
         }
       }
 
-      if (heartsOn) {
-        const positions = [
-          { dx: 0, dy: -faceHeightPx * 0.25, size: faceWidthPx * 0.14 },
-          { dx: -faceWidthPx * 0.18, dy: -faceHeightPx * 0.35, size: faceWidthPx * 0.12 },
-          { dx: faceWidthPx * 0.18, dy: -faceHeightPx * 0.35, size: faceWidthPx * 0.12 },
-          { dx: -faceWidthPx * 0.08, dy: -faceHeightPx * 0.45, size: faceWidthPx * 0.1 },
-          { dx: faceWidthPx * 0.08, dy: -faceHeightPx * 0.45, size: faceWidthPx * 0.1 },
-        ]
-        hearts = positions.map(p => ({
-          position: 'absolute' as const,
-          left: forehead.x + p.dx - p.size / 2,
-          top: forehead.y + p.dy - p.size / 2,
-          fontSize: p.size,
-          pointerEvents: 'none' as const,
-          zIndex: 10,
-          filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))',
-        }))
-      }
     }
 
     if (hand && beerOn) {
@@ -387,8 +350,8 @@ export default function CameraApp() {
       }
     }
 
-    return { mustache, hat, hearts, beer }
-  }, [face, hand, mustacheOn, hatOn, heartsOn, beerOn])
+    return { mustache, hat, beer }
+  }, [face, hand, mustacheOn, hatOn, beerOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
@@ -458,21 +421,6 @@ export default function CameraApp() {
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
 
-        {overlays.hearts.map((style, i) => (
-          <div key={i} style={style}>❤️</div>
-        ))}
-
-        {hasCamera && heartsOn && !face && trackingReady && (
-          <div style={{
-            position: 'absolute', top: '10%', left: 0, right: 0,
-            pointerEvents: 'none', display: 'flex', justifyContent: 'center', gap: 14, zIndex: 10, opacity: 0.5
-          }}>
-            <span style={{ fontSize: 34 }}>❤️</span>
-            <span style={{ fontSize: 28, transform: 'translateY(8px)' }}>❤️</span>
-            <span style={{ fontSize: 34 }}>❤️</span>
-          </div>
-        )}
-
         {/* Flash */}
         {flash && (
           <div style={{
@@ -504,9 +452,6 @@ export default function CameraApp() {
 
       {/* Controls */}
       <div className="camera-controls">
-        <button className={`camera-btn ${heartsOn ? 'active' : ''}`} onClick={() => setHeartsOn(!heartsOn)}>
-          <Heart size={18} fill={heartsOn ? '#ff4466' : 'none'} />
-        </button>
         <button className={`camera-btn ${hatOn ? 'active' : ''}`} onClick={() => setHatOn(!hatOn)} title="Hat">
           <Crown size={18} color={hatOn ? '#ff4466' : undefined} />
         </button>
@@ -517,7 +462,7 @@ export default function CameraApp() {
           <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
         </button>
         <button className={`camera-btn ${beerOn ? 'active' : ''}`} onClick={() => setBeerOn(!beerOn)} title="Polarcita">
-          <Beer size={18} color={beerOn ? '#f0a030' : undefined} />
+          <span style={{ fontSize: 16 }}>🇻🇪</span>
         </button>
       </div>
 
