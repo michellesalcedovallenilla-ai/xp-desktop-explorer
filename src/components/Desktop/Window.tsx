@@ -180,7 +180,7 @@ export default function Window({ window: win }: Props) {
           className={`xp-titlebar ${!isFocused ? 'inactive' : ''}`}
           style={{
             pointerEvents: 'auto',
-            cursor: win.isMaximized ? 'default' : 'move'
+            cursor: effectiveMaximized ? 'default' : 'move'
           }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
