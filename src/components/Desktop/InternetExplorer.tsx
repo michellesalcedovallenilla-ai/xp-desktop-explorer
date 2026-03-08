@@ -242,9 +242,7 @@ export default function InternetExplorer({ windowId }: Props) {
     // Instagram — exact 2012 iOS app replica
     if (isInstagram) {
       const igUrl = 'https://www.instagram.com/mydigitalcrib/'
-      const openIg = (e: React.MouseEvent) => {
-        e.stopPropagation()
-        // Try multiple methods since preview sandboxes can block window.open
+      const openIg = () => {
         const a = document.createElement('a')
         a.href = igUrl
         a.target = '_blank'
@@ -254,8 +252,8 @@ export default function InternetExplorer({ windowId }: Props) {
         document.body.removeChild(a)
       }
       return (
-        <div onClick={openIg} style={{
-          cursor: 'pointer',
+        <div style={{
+          cursor: 'default',
           fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
           background: '#ededed',
           height: '100%',
@@ -296,7 +294,7 @@ export default function InternetExplorer({ windowId }: Props) {
               textTransform: 'uppercase',
             }}>INSTAGRAM</span>
             {/* Share icon */}
-            <div style={{
+            <div onClick={openIg} style={{
               background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
               border: '1px solid #4a85a5',
               borderRadius: '4px',
