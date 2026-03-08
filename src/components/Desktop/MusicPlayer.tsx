@@ -19,16 +19,26 @@ interface YTTrack {
 }
 
 const playlistTracks: YTTrack[] = [
-  { id: '1', title: 'Atlantis', artist: 'Bridgit Mendler ft. Kaiydo', duration: 237, youtubeId: 'JK8VoVqLXeY' },
-  { id: '2', title: "Where's My Love", artist: 'SYML', duration: 253, youtubeId: 'goWa6EzkCh4' },
-  { id: '3', title: 'Call the Days', artist: 'Nadia Reid', duration: 213, youtubeId: 'y_Yt-_DS3bI' },
-  { id: '4', title: 'All The Pretty Girls', artist: 'KALEO', duration: 272, youtubeId: 'FNwgOkl5nRY' },
-  { id: '5', title: 'Georgia', artist: 'Vance Joy', duration: 239, youtubeId: 'DQMbHNofCzw' },
-  { id: '6', title: 'Ophelia', artist: 'The Lumineers', duration: 163, youtubeId: 'pTOC_q0NLTk' },
-  { id: '7', title: 'Sunday Morning', artist: 'Maroon 5', duration: 265, youtubeId: 'S2Cti12XBw4' },
-  { id: '8', title: 'Morning Rain', artist: 'Adam Torres', duration: 300, youtubeId: 'qlG_NCpld8g' },
-  { id: '9', title: 'Amadeus', artist: 'JoJo Worthington', duration: 229, youtubeId: 'OOP3jQWxU6o' },
-  { id: '10', title: 'The Words You Say', artist: 'Harrison Storm', duration: 211, youtubeId: 'kiaFCCElq-w' },
+  { id: '1', title: 'Sk8er Boi', artist: 'Avril Lavigne', duration: 219, youtubeId: 'TIy3n2b7V9k' },
+  { id: '2', title: 'Complicated', artist: 'Avril Lavigne', duration: 254, youtubeId: '5NPBIwQyPWE' },
+  { id: '3', title: 'I Want It That Way', artist: 'Backstreet Boys', duration: 220, youtubeId: '4fndeDfaWCg' },
+  { id: '4', title: 'As Long As You Love Me', artist: 'Backstreet Boys', duration: 218, youtubeId: '0Gl2QnHNpkA' },
+  { id: '5', title: "Everybody (Backstreet's Back)", artist: 'Backstreet Boys', duration: 363, youtubeId: '6M6samPEMpM' },
+  { id: '6', title: 'Bye Bye Bye', artist: '*NSYNC', duration: 239, youtubeId: 'Eo-KmOd3i7s' },
+  { id: '7', title: '...Baby One More Time', artist: 'Britney Spears', duration: 237, youtubeId: 'C-u5WLJ9Yk4' },
+  { id: '8', title: 'Wannabe', artist: 'Spice Girls', duration: 236, youtubeId: 'gJLIiF15wjQ' },
+  { id: '9', title: "It's My Life", artist: 'Bon Jovi', duration: 267, youtubeId: 'vx2u5uUu3DE' },
+  { id: '10', title: 'Zombie', artist: 'The Cranberries', duration: 308, youtubeId: '6Ejga4kJUts' },
+  { id: '11', title: 'In The End', artist: 'Linkin Park', duration: 219, youtubeId: 'eVTXPUF4Oz4' },
+  { id: '12', title: 'Californication', artist: 'Red Hot Chili Peppers', duration: 322, youtubeId: 'YlUKcNNmywk' },
+  { id: '13', title: 'Bring Me To Life', artist: 'Evanescence', duration: 254, youtubeId: '3YxaaGgTQYM' },
+  { id: '14', title: 'The Bad Touch', artist: 'Bloodhound Gang', duration: 245, youtubeId: 'xat1GVnl8-k' },
+  { id: '15', title: 'Pretty Fly (For a White Guy)', artist: 'The Offspring', duration: 193, youtubeId: 'AltMeuPkWRs' },
+  { id: '16', title: 'All Star', artist: 'Smash Mouth', duration: 237, youtubeId: 'L_jWHffIx5E' },
+  { id: '17', title: 'Smooth Criminal', artist: 'Alien Ant Farm', duration: 213, youtubeId: 'CDl9ZMfj6aE' },
+  { id: '18', title: "Rollin'", artist: 'Limp Bizkit', duration: 243, youtubeId: 'RYnFIRc0k6E' },
+  { id: '19', title: 'Chop Suey!', artist: 'System Of A Down', duration: 209, youtubeId: 'CSvFpBOe8eY' },
+  { id: '20', title: 'Fatlip', artist: 'Sum 41', duration: 200, youtubeId: 'CMX2lPum_pg' },
 ]
 
 const formatTime = (sec: number) => {
