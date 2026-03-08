@@ -36,7 +36,6 @@ const SAMPLE_IMAGES = [
 ]
 
 const OVERLAY_PATHS = {
-  glasses: '/overlays/glasses.png',
   mustache: '/overlays/mustache.png',
   hat: '/overlays/hat.png',
   polarcita: '/overlays/polarcita.png',
