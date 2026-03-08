@@ -4,9 +4,10 @@ import {
   Pause,
   SkipBack,
   SkipForward,
+  Square,
   Volume2,
   VolumeX,
-  Maximize2
+  Monitor
 } from 'lucide-react'
 
 const YOUTUBE_VIDEO_ID = 'a_YR4dKArgo'
@@ -28,7 +29,6 @@ export default function VideoPlayer() {
   const containerRef = useRef<HTMLDivElement>(null)
   const progressInterval = useRef<ReturnType<typeof setInterval>>()
 
-  // Track progress
   useEffect(() => {
     if (progressInterval.current) clearInterval(progressInterval.current)
     if (isPlaying && playerRef.current) {
@@ -46,17 +46,11 @@ export default function VideoPlayer() {
     }
   }, [isPlaying])
 
-  // Load YouTube IFrame API
   useEffect(() => {
     const tag = document.createElement('script')
     tag.src = 'https://www.youtube.com/iframe_api'
-
-    const existing = document.querySelector(
-      'script[src="https://www.youtube.com/iframe_api"]'
-    )
-    if (!existing) {
-      document.head.appendChild(tag)
-    }
+    const existing = document.querySelector('script[src="https://www.youtube.com/iframe_api"]')
+    if (!existing) document.head.appendChild(tag)
 
     const initPlayer = () => {
       if (!containerRef.current) return
@@ -68,16 +62,7 @@ export default function VideoPlayer() {
         height: '100%',
         width: '100%',
         videoId: YOUTUBE_VIDEO_ID,
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
-          rel: 0,
-          fs: 0,
-          iv_load_policy: 3,
-          showinfo: 0
-        },
+        playerVars: { autoplay: 0, controls: 0, disablekb: 1, modestbranding: 1, rel: 0, fs: 0, iv_load_policy: 3, showinfo: 0 },
         events: {
           onReady: () => {
             setPlayerReady(true)
@@ -108,35 +93,28 @@ export default function VideoPlayer() {
         initPlayer()
       }
     }
-
-    return () => {
-      try {
-        playerRef.current?.destroy?.()
-      } catch {}
-    }
+    return () => { try { playerRef.current?.destroy?.() } catch {} }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Volume sync
   useEffect(() => {
     if (playerRef.current && playerReady) {
-      if (isMuted) {
-        playerRef.current.mute()
-      } else {
-        playerRef.current.unMute()
-        playerRef.current.setVolume(volume)
-      }
+      if (isMuted) { playerRef.current.mute() }
+      else { playerRef.current.unMute(); playerRef.current.setVolume(volume) }
     }
   }, [volume, isMuted, playerReady])
 
   const handlePlayPause = useCallback(() => {
     if (!playerRef.current || !playerReady) return
-    if (isPlaying) {
-      playerRef.current.pauseVideo()
-    } else {
-      playerRef.current.playVideo()
-    }
+    isPlaying ? playerRef.current.pauseVideo() : playerRef.current.playVideo()
   }, [isPlaying, playerReady])
+
+  const handleStop = useCallback(() => {
+    if (!playerRef.current || !playerReady) return
+    playerRef.current.stopVideo()
+    setIsPlaying(false)
+    setPosition(0)
+  }, [playerReady])
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!duration || !playerRef.current) return
@@ -151,101 +129,82 @@ export default function VideoPlayer() {
 
   return (
     <div className="wmp-video-container">
-      {/* WMP Menu Bar */}
-      <div className="wmp-xp-menubar">
-        <button className="wmp-xp-menu-item">File</button>
-        <button className="wmp-xp-menu-item">View</button>
-        <button className="wmp-xp-menu-item">Play</button>
-        <button className="wmp-xp-menu-item">Tools</button>
-        <button className="wmp-xp-menu-item">Help</button>
+      {/* Cream menu bar */}
+      <div className="wmp-video-menubar">
+        <button>File</button>
+        <button>View</button>
+        <button>Play</button>
+        <button>Tools</button>
+        <button>Help</button>
+      </div>
+
+      {/* Toolbar strip */}
+      <div className="wmp-video-toolbar">
+        <div className="wmp-video-toolbar-progress" />
+        <div className="wmp-video-toolbar-icons">
+          <button title="Now Playing"><Monitor size={12} /></button>
+        </div>
       </div>
 
       {/* Video Area */}
       <div className="wmp-video-area" ref={containerRef} />
 
-      {/* Status */}
-      <div className="wmp-video-statusbar">
-        <span style={{ opacity: 0.7, fontSize: '10px' }}>Ready</span>
-      </div>
+      {/* Status bar */}
+      <div className="wmp-video-statusbar">Ready</div>
 
-      {/* Progress / Seek Bar */}
-      <div className="wmp-xp-progress-row" style={{ padding: '2px 8px' }}>
-        <span className="wmp-xp-time">{formatTime(position)}</span>
-        <div className="wmp-xp-progress-track" onClick={handleSeek}>
-          <div
-            className="wmp-xp-progress-thumb"
-            style={{ left: `${progressPct}%` }}
-          />
-          <div
-            className="wmp-xp-progress-fill"
-            style={{ width: `${progressPct}%` }}
-          />
+      {/* Dark blue bottom control bar */}
+      <div className="wmp-video-controlbar">
+        {/* Progress */}
+        <div className="wmp-video-progress-row">
+          <span className="wmp-video-time">{formatTime(position)}</span>
+          <div className="wmp-video-progress-track" onClick={handleSeek}>
+            <div className="wmp-video-progress-thumb" style={{ left: `${progressPct}%` }} />
+            <div className="wmp-video-progress-fill" style={{ width: `${progressPct}%` }} />
+          </div>
+          <span className="wmp-video-time">{formatTime(duration)}</span>
         </div>
-        <span className="wmp-xp-time">{formatTime(duration)}</span>
-      </div>
 
-      {/* Playback Controls */}
-      <div className="wmp-xp-controls" style={{ padding: '4px 8px 6px' }}>
-        <button
-          className="wmp-xp-ctrl-btn"
-          onClick={() => {
+        {/* Round buttons */}
+        <div className="wmp-video-controls-row">
+          <button className="wmp-video-ctrl-btn" onClick={() => {
             if (playerRef.current && playerReady) {
-              const t = Math.max(0, position - 10)
-              playerRef.current.seekTo(t, true)
-              setPosition(t)
+              playerRef.current.seekTo(Math.max(0, position - 10), true)
             }
-          }}
-          title="Rewind"
-        >
-          <SkipBack size={14} fill="currentColor" />
-        </button>
-        <button
-          className="wmp-xp-play-btn"
-          onClick={handlePlayPause}
-          title={isPlaying ? 'Pause' : 'Play'}
-        >
-          {isPlaying ? (
-            <Pause size={18} fill="currentColor" />
-          ) : (
-            <Play
-              size={18}
-              fill="currentColor"
-              style={{ marginLeft: '2px' }}
-            />
-          )}
-        </button>
-        <button
-          className="wmp-xp-ctrl-btn"
-          onClick={() => {
-            if (playerRef.current && playerReady) {
-              const t = Math.min(duration, position + 10)
-              playerRef.current.seekTo(t, true)
-              setPosition(t)
-            }
-          }}
-          title="Fast Forward"
-        >
-          <SkipForward size={14} fill="currentColor" />
-        </button>
-
-        <div className="wmp-xp-volume">
-          <button
-            className="wmp-xp-vol-icon"
-            onClick={() => setIsMuted(!isMuted)}
-          >
-            {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+          }} title="Rewind">
+            <SkipBack size={12} fill="currentColor" />
           </button>
-          <input
-            type="range"
-            className="wmp-xp-vol-slider"
-            min="0"
-            max="100"
-            value={isMuted ? 0 : volume}
-            onChange={(e) => {
-              setVolume(Number(e.target.value))
-              setIsMuted(false)
-            }}
-          />
+
+          <button className="wmp-video-play-btn" onClick={handlePlayPause} title={isPlaying ? 'Pause' : 'Play'}>
+            {isPlaying
+              ? <Pause size={18} fill="currentColor" />
+              : <Play size={18} fill="currentColor" style={{ marginLeft: '2px' }} />
+            }
+          </button>
+
+          <button className="wmp-video-stop-btn" onClick={handleStop} title="Stop">
+            <Square size={10} fill="currentColor" />
+          </button>
+
+          <button className="wmp-video-ctrl-btn" onClick={() => {
+            if (playerRef.current && playerReady) {
+              playerRef.current.seekTo(Math.min(duration, position + 10), true)
+            }
+          }} title="Fast Forward">
+            <SkipForward size={12} fill="currentColor" />
+          </button>
+
+          <div className="wmp-video-volume">
+            <button className="wmp-video-vol-icon" onClick={() => setIsMuted(!isMuted)}>
+              {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+            </button>
+            <input
+              type="range"
+              className="wmp-video-vol-slider"
+              min="0" max="100"
+              value={isMuted ? 0 : volume}
+              onChange={(e) => { setVolume(Number(e.target.value)); setIsMuted(false) }}
+            />
+          </div>
         </div>
       </div>
     </div>
