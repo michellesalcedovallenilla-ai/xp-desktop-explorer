@@ -55,6 +55,8 @@ const Desktop = () => {
           isMinimized: false,
           isMaximized: false
         })
+      } else {
+        showError(undefined, undefined)
       }
     },
     [openWindow]
