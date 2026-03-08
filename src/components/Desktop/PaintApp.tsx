@@ -149,7 +149,8 @@ export default function PaintApp() {
     ctx.lineJoin = 'round'
   }
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if ('touches' in e) e.preventDefault()
     const pos = getPos(e)
     setMousePos(pos)
     if (!isDrawing) return
