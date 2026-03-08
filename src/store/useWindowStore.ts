@@ -27,6 +27,7 @@ export const useWindowStore = create<WindowStore>((set) => ({
           nextZIndex: s.nextZIndex + 1
         }
       }
+      useAudioStore.getState().playDing()
       return {
         windows: [...s.windows, { ...win, zIndex: s.nextZIndex }],
         nextZIndex: s.nextZIndex + 1
