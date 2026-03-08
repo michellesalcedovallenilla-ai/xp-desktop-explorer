@@ -300,7 +300,7 @@ export default function CameraApp() {
       if (mustacheOn) {
         const mx = face.upperLip.x * cw
         const my = face.upperLip.y * ch
-        const mw = faceW * 0.55
+        const mw = faceW * 0.6
         const mh = mw * 0.35
         mustache = {
           position: 'absolute',
@@ -308,7 +308,7 @@ export default function CameraApp() {
           top: my - mh / 2,
           width: mw,
           height: mh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
