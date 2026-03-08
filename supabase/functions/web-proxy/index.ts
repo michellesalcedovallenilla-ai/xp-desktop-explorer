@@ -72,7 +72,12 @@ async function fetchPage(url: string): Promise<string> {
 
   if (!response.ok) {
     console.error('Firecrawl scrape error:', data)
-    throw new Error(data.error || `Scrape failed: ${response.status}`)
+    const errMsg = data?.error || `Scrape failed: ${response.status}`
+    // Check if site is blocked by Firecrawl
+    if (errMsg.includes('do not support this site') || errMsg.includes('blocked')) {
+      throw new Error('BLOCKED:' + errMsg)
+    }
+    throw new Error(errMsg)
   }
 
   const html = data?.data?.html || data?.html || ''

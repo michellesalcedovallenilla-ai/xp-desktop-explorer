@@ -182,9 +182,16 @@ export default function InternetExplorer({ windowId }: Props) {
         body: { url },
       })
       if (error) throw error
-      if (data?.error) throw new Error(data.error)
+      if (data?.error) {
+        const msg = data.error as string
+        if (msg.includes('BLOCKED') || msg.includes('do not support')) {
+          setProxyError(`This website (${new URL(url).hostname}) cannot be displayed — it blocks automated browsing. Try visiting it directly.`)
+        } else {
+          throw new Error(msg)
+        }
+        return
+      }
       if (!data?.html || data.html.trim().length < 100) {
-        // Empty or near-empty response — site requires auth or blocked
         setProxyError('This website requires authentication or blocked the request.')
       } else {
         setProxyHtml(data.html)
