@@ -370,7 +370,7 @@ export default function CameraApp() {
       const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
       const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
       const handWidthPx = dist(indexMcp, pinkyMcp)
-      const bw = Math.max(handWidthPx * 1.45, 32)
+      const bw = Math.max(handWidthPx * 2.0, 50)
       const bhRatio = beerImg?.naturalWidth ? (beerImg.naturalHeight / beerImg.naturalWidth) : (1 / 0.35)
       const bh = bw * bhRatio
       const rotDeg = ((hand.rotation + Math.PI / 2) * 180) / Math.PI
