@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { WindowState } from '../types'
+import { useAudioStore } from './useAudioStore'
 
 interface WindowStore {
   windows: WindowState[]
