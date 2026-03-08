@@ -119,9 +119,41 @@ export const useSystemStore = create<SystemState>((set) => ({
       widgets: s.widgets.map((w) => (w.id === id ? { ...w, x, y } : w))
     })),
   toggleWidget: (id) =>
-    set((s) => ({
-      widgets: s.widgets.map((w) => (w.id === id ? { ...w, isVisible: !w.isVisible } : w))
-    })),
+    set((s) => {
+      const target = s.widgets.find((w) => w.id === id)
+      if (!target) return {}
+
+      const willOpen = !target.isVisible
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
+
+      const preferredPositions: Record<string, { x: number; y: number }> = {
+        notes: { x: Math.round(vw * 0.16), y: Math.round(vh * 0.42) },
+        music: { x: Math.round(vw * 0.44), y: Math.round(vh * 0.42) }
+      }
+
+      const widgetWidths: Record<string, number> = { notes: 340, music: 320 }
+      const widgetHeights: Record<string, number> = { notes: 290, music: 280 }
+      const preferred = willOpen ? preferredPositions[id] : undefined
+
+      return {
+        widgets: s.widgets.map((w) => {
+          if (w.id !== id) return w
+          if (!preferred) return { ...w, isVisible: !w.isVisible }
+
+          const maxX = Math.max(0, vw - (widgetWidths[id] ?? 240) - 8)
+          const maxY = Math.max(30, vh - (widgetHeights[id] ?? 240) - 40)
+
+          return {
+            ...w,
+            isVisible: true,
+            x: clamp(preferred.x, 0, maxX),
+            y: clamp(preferred.y, 30, maxY)
+          }
+        })
+      }
+    }),
   bringWidgetToFront: (id) =>
     set((s) => {
       const maxZ = Math.max(...s.widgets.map((w) => w.zIndex))
