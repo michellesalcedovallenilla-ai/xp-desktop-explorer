@@ -282,7 +282,7 @@ export default function CameraApp() {
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
-        const gw = faceW * 1.15
+        const gw = faceW * 1.3
         const gh = gw * 0.35
         glasses = {
           position: 'absolute',
@@ -290,7 +290,7 @@ export default function CameraApp() {
           top: eyeCenter.y - gh / 2,
           width: gw,
           height: gh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
