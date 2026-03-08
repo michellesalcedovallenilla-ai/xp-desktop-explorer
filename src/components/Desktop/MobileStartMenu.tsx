@@ -48,39 +48,7 @@ export default function MobileStartMenu({ isOpen, onClose }: Props) {
     setActiveSection(null)
   }
 
-  const programItems: MenuItem[] = [
-    { icon: '🌐', label: 'Internet Explorer', bold: true, action: () => openWindow('ie', 'Internet Explorer') },
-    { icon: '💻', label: 'My Computer', bold: true, action: () => openWindow('finder', 'My Computer') },
-    { icon: '📁', label: 'My Documents', bold: true, action: () => openWindow('finder', 'My Documents') },
-    { icon: '👤', label: 'About Me', action: () => openWindow('about', 'About Me') },
-    { icon: '✉️', label: 'Contact', action: () => openWindow('contact', 'Contact') },
-    { icon: '📄', label: 'Resume', action: () => openWindow('resume', 'Resume.pdf') },
-    { icon: '📷', label: 'Camera', action: () => openWindow('camera', 'Camera') },
-    { icon: '🎵', label: 'Music Player', action: () => openWindow('music', 'Windows Media Player') },
-    { icon: '🎨', label: 'Paint', action: () => openWindow('paint', 'Paint') },
-    { icon: '💣', label: 'Minesweeper', action: () => openWindow('minesweeper', 'Minesweeper') },
-    { icon: '🃏', label: 'Solitaire', action: () => openWindow('solitaire', 'Solitaire') },
-    { icon: '💬', label: 'MSN Messenger', action: () => openWindow('messenger', 'MSN Messenger') },
-    { icon: '🔍', label: 'Search...', action: () => { setSpotlightOpen(true); onClose(); setActiveSection(null) } },
-    { icon: '▶️', label: 'Run...', action: () => { setSpotlightOpen(true); onClose(); setActiveSection(null) } },
-  ]
-
-  const placesItems: MenuItem[] = [
-    { icon: '📁', label: 'My Documents', action: () => openWindow('finder', 'My Documents') },
-    { icon: '🖼️', label: 'My Pictures', action: () => openWindow('finder', 'My Pictures') },
-    { icon: '🎶', label: 'My Music', action: () => openWindow('music', 'My Music') },
-    { icon: '💻', label: 'My Computer', action: () => openWindow('finder', 'My Computer') },
-    { icon: '⚙️', label: 'Control Panel', action: () => { showError('Control Panel', 'Access denied.'); onClose(); setActiveSection(null) } },
-    { icon: '🖨️', label: 'Printers', action: () => { showError('Printers and Faxes', 'Windows cannot find any printers.'); onClose(); setActiveSection(null) } },
-    { icon: '❓', label: 'Help and Support', action: () => { showError('Help and Support', 'Help is not available.'); onClose(); setActiveSection(null) } },
-  ]
-
-  const sections: MenuSection[] = [
-    { id: 'programs', label: 'Programs', icon: '📋', items: programItems },
-    { id: 'places', label: 'My Places', icon: '📂', items: placesItems },
-  ]
-
-  const activeItems = sections.find(s => s.id === activeSection)?.items
+  // No sections needed - flat menu only
 
   return (
     <AnimatePresence>
