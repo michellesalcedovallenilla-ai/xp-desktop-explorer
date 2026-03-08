@@ -4307,6 +4307,93 @@ textarea {
   min-height: 18px;
 }
 
+/* Nudge / Zumbido shake animation */
+@keyframes msnShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-4px, -3px); }
+  20% { transform: translate(4px, 2px); }
+  30% { transform: translate(-3px, 4px); }
+  40% { transform: translate(3px, -2px); }
+  50% { transform: translate(-2px, 3px); }
+  60% { transform: translate(4px, -3px); }
+  70% { transform: translate(-4px, 2px); }
+  80% { transform: translate(2px, -4px); }
+  90% { transform: translate(-3px, 3px); }
+}
+.msn-shake {
+  animation: msnShake 0.5s ease-in-out;
+}
+
+/* Nudge message styling */
+.msn-nudge-msg {
+  background: #fff8dc;
+  border: 1px dashed #f0a030 !important;
+  border-radius: 4px;
+  padding: 6px 8px !important;
+  margin: 4px 0;
+}
+.msn-nudge-body {
+  padding-left: 26px;
+  font-weight: bold;
+  color: #c06000;
+  font-style: italic;
+}
+.msn-nudge-text {
+  animation: msnShake 0.4s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* "dice:" prefix styling */
+.msn-msg-dice {
+  color: #0066cc;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Typing indicator */
+.msn-typing-indicator {
+  padding: 2px 10px;
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+  background: #f5f3e8;
+  border-top: 1px solid #ddd;
+  animation: msnTypingBlink 1.2s ease-in-out infinite;
+}
+@keyframes msnTypingBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Winks picker */
+.msn-winks-picker {
+  display: flex;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #fff;
+  border-bottom: 1px solid #aca899;
+  flex-wrap: wrap;
+}
+.msn-wink-btn {
+  background: linear-gradient(180deg, #fff 0%, #ece9d8 100%);
+  border: 1px solid #aca899;
+  border-radius: 3px;
+  padding: 3px 10px;
+  font-size: 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.msn-wink-btn:hover {
+  background: linear-gradient(180deg, #f4f4f8 0%, #d6dff7 100%);
+  border-color: #316ac5;
+}
+
+/* Nudge button pulse */
+.msn-nudge-btn {
+  font-size: 14px !important;
+  padding: 1px 6px !important;
+}
+
 /* ============================================
    MOBILE START MENU
    ============================================ */
