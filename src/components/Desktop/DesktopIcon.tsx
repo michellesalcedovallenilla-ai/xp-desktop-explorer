@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useWindowStore } from '../../store/useWindowStore'
 import { useSystemStore } from '../../store/useSystemStore'
 import type { DesktopIconData } from '../../types'
