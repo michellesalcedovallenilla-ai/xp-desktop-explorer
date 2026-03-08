@@ -4662,6 +4662,23 @@ textarea {
   }
 }
 
+/* === LAPTOP DESKTOP (1025-1366px) === */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .xp-start-menu {
+    width: 340px;
+  }
+
+  .xp-start-item {
+    padding: 4px 9px;
+    font-size: 10.5px;
+  }
+
+  .xp-start-footer-btn {
+    font-size: 10.5px;
+    padding: 3px 7px;
+  }
+}
+
 /* === LARGE DESKTOP (1441px+) === */
 @media (min-width: 1441px) {
   .xp-taskbar {
