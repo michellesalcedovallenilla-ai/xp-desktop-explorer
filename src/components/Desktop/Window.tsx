@@ -12,6 +12,7 @@ import PaintApp from './PaintApp'
 import MinesweeperApp from './MinesweeperApp'
 import SolitaireApp from './SolitaireApp'
 import InternetExplorer from './InternetExplorer'
+import MSNMessenger from './MSNMessenger'
 
 const contentComponents: Record<string, React.ComponentType<any>> = {
   finder: Finder,
@@ -24,7 +25,8 @@ const contentComponents: Record<string, React.ComponentType<any>> = {
   paint: PaintApp,
   minesweeper: MinesweeperApp,
   solitaire: SolitaireApp,
-  ie: InternetExplorer
+  ie: InternetExplorer,
+  messenger: MSNMessenger
 }
 
 const typeIcons: Record<string, string> = {
