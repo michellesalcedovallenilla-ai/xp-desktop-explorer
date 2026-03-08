@@ -280,7 +280,6 @@ export default function CameraApp() {
       y: a.y + (b.y - a.y) * t,
     })
 
-    let glasses: React.CSSProperties | null = null
     let mustache: React.CSSProperties | null = null
     let hat: React.CSSProperties | null = null
     let hearts: React.CSSProperties[] = []
@@ -298,31 +297,12 @@ export default function CameraApp() {
       const mouthLeft = mapToViewfinder(face.mouthLeft.x, face.mouthLeft.y, container)
       const mouthRight = mapToViewfinder(face.mouthRight.x, face.mouthRight.y, container)
 
-      const eyeCenter = { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 }
-      const eyeDistancePx = dist(leftEye, rightEye)
+      const eyeDistancePx = Math.hypot(rightEye.x - leftEye.x, rightEye.y - leftEye.y)
       const faceWidthPx = dist(leftTemple, rightTemple)
       const faceHeightPx = dist(forehead, chin)
       const mouthWidthPx = dist(mouthLeft, mouthRight)
       const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
       const rotDeg = (rotation * 180) / Math.PI
-
-      if (glassesOn) {
-        const glassesImg = overlayImages.glasses
-        const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
-        const ghRatio = glassesImg?.naturalWidth ? (glassesImg.naturalHeight / glassesImg.naturalWidth) : 0.35
-        const gh = gw * ghRatio
-        glasses = {
-          position: 'absolute',
-          left: eyeCenter.x - gw / 2,
-          top: (eyeCenter.y + faceHeightPx * 0.02) - gh / 2,
-          width: gw,
-          height: gh,
-          transform: `rotate(${rotDeg}deg)`,
-          pointerEvents: 'none',
-          zIndex: 10,
-          objectFit: 'contain',
-        }
-      }
 
       if (mustacheOn) {
         const mustacheImg = overlayImages.mustache
