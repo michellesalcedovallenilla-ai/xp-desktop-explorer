@@ -18,6 +18,8 @@ import MusicPlayerWidget from './components/Windows/MusicPlayerWidget'
 import NotesWidget from './components/Windows/NotesWidget'
 import Clippy from './components/Desktop/Clippy'
 import ShutdownDialog from './components/Desktop/ShutdownDialog'
+import XPErrorDialog from './components/Desktop/XPErrorDialog'
+import { useErrorDialogStore } from './store/useErrorDialogStore'
 import './App.css'
 
 const App = () => {
@@ -30,6 +32,7 @@ const App = () => {
   } = useSystemStore()
   const { windows, closeWindow } = useWindowStore()
   const { playStartup, playShutdown } = useAudioStore()
+  const { isOpen: errorOpen, title: errorTitle, message: errorMessage, closeError } = useErrorDialogStore()
   useKeyboardShortcuts()
 
   useEffect(() => {
@@ -69,6 +72,12 @@ const App = () => {
           windows.forEach((w) => closeWindow(w.id))
           setLocked(true)
         }}
+      />
+      <XPErrorDialog
+        isOpen={errorOpen}
+        title={errorTitle}
+        message={errorMessage}
+        onClose={closeError}
       />
       <WakeEffect />
     </div>

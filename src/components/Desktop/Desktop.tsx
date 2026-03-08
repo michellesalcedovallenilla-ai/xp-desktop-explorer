@@ -1,11 +1,13 @@
 import { useCallback } from 'react'
 import { useSystemStore } from '../../store/useSystemStore'
 import { useWindowStore } from '../../store/useWindowStore'
+import { useErrorDialogStore } from '../../store/useErrorDialogStore'
 import DesktopIcon from './DesktopIcon'
 
 const Desktop = () => {
   const { desktopIcons, selectedIconId, setSelectedIconId } = useSystemStore()
   const { openWindow } = useWindowStore()
+  const { showError } = useErrorDialogStore()
 
   const handleDesktopClick = useCallback(() => {
     setSelectedIconId(null)
@@ -53,6 +55,8 @@ const Desktop = () => {
           isMinimized: false,
           isMaximized: false
         })
+      } else {
+        showError(undefined, undefined)
       }
     },
     [openWindow]

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Wifi, Volume2 } from 'lucide-react'
 import { useSystemStore } from '../../store/useSystemStore'
 import { useWindowStore } from '../../store/useWindowStore'
+import { useErrorDialogStore } from '../../store/useErrorDialogStore'
 import { useClock } from '../../hooks/useClock'
 
 export default function MenuBar() {
@@ -10,6 +11,7 @@ export default function MenuBar() {
     useSystemStore()
   const { windows, minimizeWindow, restoreWindow, focusWindow } =
     useWindowStore()
+  const { showError } = useErrorDialogStore()
   const [startOpen, setStartOpen] = useState(false)
   const startRef = useRef<HTMLDivElement>(null)
   const time = useClock()
@@ -231,17 +233,29 @@ export default function MenuBar() {
                   <div className="xp-start-sep" />
                   <button
                     className="xp-start-item"
-                    onClick={() => openWindow('finder', 'Control Panel')}
+                    onClick={() => {
+                      showError('Control Panel', 'Access denied. You do not have permission to access the Control Panel.')
+                      setStartOpen(false)
+                    }}
                   >
                     <span className="xp-start-item-icon">⚙️</span> Control Panel
                   </button>
                   <button
                     className="xp-start-item"
-                    onClick={() => openWindow('finder', 'Printers and Faxes')}
+                    onClick={() => {
+                      showError('Printers and Faxes', 'Windows cannot find any printers. Make sure a printer is connected and try again.')
+                      setStartOpen(false)
+                    }}
                   >
                     <span className="xp-start-item-icon">🖨️</span> Printers
                   </button>
-                  <button className="xp-start-item">
+                  <button
+                    className="xp-start-item"
+                    onClick={() => {
+                      showError('Help and Support', 'Help is not available. This program has performed an illegal operation.')
+                      setStartOpen(false)
+                    }}
+                  >
                     <span className="xp-start-item-icon">❓</span> Help and
                     Support
                   </button>
@@ -273,7 +287,9 @@ export default function MenuBar() {
 
       {/* Quick Launch */}
       <div className="xp-quick-launch">
-        <button className="xp-ql-btn" title="Show Desktop" onClick={() => {}}>
+        <button className="xp-ql-btn" title="Show Desktop" onClick={() => {
+          showError('Explorer.exe', 'This program has performed an illegal operation and will be shut down.')
+        }}>
           🖥️
         </button>
         <button
