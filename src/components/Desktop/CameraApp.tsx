@@ -215,23 +215,23 @@ export default function CameraApp() {
       const fx = rf.x, fy = rf.y, fw = rf.w, fh = rf.h
 
       if (disguiseEnabled) {
-        const glasses = overlayImages['/overlays/glasses.png']
+        const glasses = overlayImages[OVERLAY_SRC.glasses]
         if (glasses?.complete) {
-          const ow = fw * 1.1, oh = fh * 0.28
-          ctx.drawImage(glasses, fx + (fw - ow) / 2, fy + fh * 0.22, ow, oh)
+          const ow = fw * 1.08, oh = fh * 0.24
+          ctx.drawImage(glasses, fx + (fw - ow) / 2, fy + fh * 0.28, ow, oh)
         }
-        const mustache = overlayImages['/overlays/mustache.png']
+        const mustache = overlayImages[OVERLAY_SRC.mustache]
         if (mustache?.complete) {
-          const ow = fw * 0.8, oh = fh * 0.22
-          ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.58, ow, oh)
+          const ow = fw * 0.72, oh = fh * 0.18
+          ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.62, ow, oh)
         }
       }
 
       if (hatEnabled) {
-        const hat = overlayImages['/overlays/hat.png']
+        const hat = overlayImages[OVERLAY_SRC.hat]
         if (hat?.complete) {
-          const ow = fw * 1.3, oh = fh * 0.55
-          ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.7, ow, oh)
+          const ow = fw * 1.15, oh = fh * 0.5
+          ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.62, ow, oh)
         }
       }
 
