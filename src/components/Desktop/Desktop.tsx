@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useSystemStore } from '../../store/useSystemStore'
 import { useWindowStore } from '../../store/useWindowStore'
+import { useErrorDialogStore } from '../../store/useErrorDialogStore'
 import DesktopIcon from './DesktopIcon'
 
 const Desktop = () => {

@@ -287,7 +287,9 @@ export default function MenuBar() {
 
       {/* Quick Launch */}
       <div className="xp-quick-launch">
-        <button className="xp-ql-btn" title="Show Desktop" onClick={() => {}}>
+        <button className="xp-ql-btn" title="Show Desktop" onClick={() => {
+          showError('Explorer.exe', 'This program has performed an illegal operation and will be shut down.')
+        }}>
           🖥️
         </button>
         <button
