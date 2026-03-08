@@ -137,7 +137,7 @@ export default function ResumeViewer() {
       </div>
 
       {/* Document Area */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '8px', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ flex: 1, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
         <div
           style={{
             width: '100%',
