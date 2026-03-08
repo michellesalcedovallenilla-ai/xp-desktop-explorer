@@ -53,7 +53,6 @@ const defaultDesktopIcons: DesktopIconData[] = [
   { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 100, y: 380, iconWidth: 110 },
   { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 1120, y: 250, iconWidth: 350 },
   { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 750, y: 280, iconWidth: 250 },
-  { id: 'messenger', label: 'MSN Messenger', icon: 'msn', type: 'app', action: 'messenger', x: 870, y: 150, iconWidth: 130 },
 ]
 
 const defaultDockItems: DockItem[] = [
