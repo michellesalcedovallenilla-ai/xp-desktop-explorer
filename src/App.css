@@ -4339,6 +4339,10 @@ textarea {
   .xp-running-apps {
     gap: 1px;
   }
+  /* Hide widget buttons on mobile - only show open windows */
+  .xp-running-apps .xp-task-btn.widget-btn {
+    display: none;
+  }
   .xp-task-btn {
     max-width: 80px;
     padding: 2px 4px;
