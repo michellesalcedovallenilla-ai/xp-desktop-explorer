@@ -268,10 +268,10 @@ export default function MenuBar() {
       {/* Running Windows */}
       <div className="xp-running-apps">
         {/* Widget taskbar buttons */}
-        {widgets.filter(w => w.isVisible).map((widget) => (
+        {widgets.map((widget) => (
           <button
             key={widget.id}
-            className="xp-task-btn active"
+            className={`xp-task-btn ${widget.isVisible ? 'active' : ''}`}
             onClick={() => toggleWidget(widget.id)}
           >
             {widget.type.charAt(0).toUpperCase() + widget.type.slice(1)}
