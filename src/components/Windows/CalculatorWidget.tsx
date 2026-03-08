@@ -134,115 +134,47 @@ export default function CalculatorWidget() {
         <div className="xp-calc-display-text">{display}</div>
       </div>
       <div className="xp-calc-buttons">
-        {/* Row 1: MC MR MS M+ */}
-        <button className="xp-calc-btn xp-calc-mem" disabled>
-          MC
-        </button>
-        <button className="xp-calc-btn xp-calc-mem" disabled>
-          MR
-        </button>
-        <button className="xp-calc-btn xp-calc-mem" disabled>
-          MS
-        </button>
-        <button className="xp-calc-btn xp-calc-mem" disabled>
-          M+
-        </button>
-        <div style={{ width: 4 }} />
-        <button className="xp-calc-btn xp-calc-fn" onClick={handleBackspace}>
-          ⌫
-        </button>
-        <button
-          className="xp-calc-btn xp-calc-fn"
-          onClick={() => {
-            setDisplay('0')
-            setFresh(true)
-          }}
-        >
-          CE
-        </button>
-        <button className="xp-calc-btn xp-calc-fn" onClick={handleClear}>
-          C
-        </button>
-        {/* Row 2 */}
-        <button className="xp-calc-btn" onClick={() => handleNumber('7')}>
-          7
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('8')}>
-          8
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('9')}>
-          9
-        </button>
-        <button
-          className="xp-calc-btn xp-calc-op"
-          onClick={() => handleOp('/')}
-        >
-          /
-        </button>
-        <div style={{ width: 4 }} />
-        <button className="xp-calc-btn xp-calc-fn" onClick={handleSqrt}>
-          √
-        </button>
-        {/* Row 3 */}
-        <button className="xp-calc-btn" onClick={() => handleNumber('4')}>
-          4
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('5')}>
-          5
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('6')}>
-          6
-        </button>
-        <button
-          className="xp-calc-btn xp-calc-op"
-          onClick={() => handleOp('*')}
-        >
-          *
-        </button>
-        <div style={{ width: 4 }} />
-        <button className="xp-calc-btn xp-calc-fn" onClick={handlePercent}>
-          %
-        </button>
-        {/* Row 4 */}
-        <button className="xp-calc-btn" onClick={() => handleNumber('1')}>
-          1
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('2')}>
-          2
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('3')}>
-          3
-        </button>
-        <button
-          className="xp-calc-btn xp-calc-op"
-          onClick={() => handleOp('-')}
-        >
-          -
-        </button>
-        <div style={{ width: 4 }} />
-        <button className="xp-calc-btn xp-calc-fn" onClick={handleReciprocal}>
-          1/x
-        </button>
-        {/* Row 5 */}
-        <button className="xp-calc-btn" onClick={() => handleNumber('0')}>
-          0
-        </button>
-        <button className="xp-calc-btn" onClick={handlePlusMinus}>
-          ±
-        </button>
-        <button className="xp-calc-btn" onClick={() => handleNumber('.')}>
-          .
-        </button>
-        <button
-          className="xp-calc-btn xp-calc-op"
-          onClick={() => handleOp('+')}
-        >
-          +
-        </button>
-        <div style={{ width: 4 }} />
-        <button className="xp-calc-btn xp-calc-eq" onClick={handleEquals}>
-          =
-        </button>
+        {/* Row 1: MC MR MS M+ | ⌫ CE C */}
+        <button className="xp-calc-btn xp-calc-mem" disabled>MC</button>
+        <button className="xp-calc-btn xp-calc-mem" disabled>MR</button>
+        <button className="xp-calc-btn xp-calc-mem" disabled>MS</button>
+        <button className="xp-calc-btn xp-calc-mem" disabled>M+</button>
+        <div />
+        <button className="xp-calc-btn xp-calc-fn" onClick={handleBackspace}>⌫</button>
+        <button className="xp-calc-btn xp-calc-fn" onClick={() => { setDisplay('0'); setFresh(true) }}>CE</button>
+        <button className="xp-calc-btn xp-calc-fn" onClick={handleClear}>C</button>
+
+        {/* Row 2: 7 8 9 / | √ */}
+        <button className="xp-calc-btn" onClick={() => handleNumber('7')}>7</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('8')}>8</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('9')}>9</button>
+        <button className="xp-calc-btn xp-calc-op" onClick={() => handleOp('/')}>/</button>
+        <div />
+        <button className="xp-calc-btn xp-calc-fn xp-calc-span3" onClick={handleSqrt}>√</button>
+
+        {/* Row 3: 4 5 6 * | % */}
+        <button className="xp-calc-btn" onClick={() => handleNumber('4')}>4</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('5')}>5</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('6')}>6</button>
+        <button className="xp-calc-btn xp-calc-op" onClick={() => handleOp('*')}>*</button>
+        <div />
+        <button className="xp-calc-btn xp-calc-fn xp-calc-span3" onClick={handlePercent}>%</button>
+
+        {/* Row 4: 1 2 3 - | 1/x */}
+        <button className="xp-calc-btn" onClick={() => handleNumber('1')}>1</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('2')}>2</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('3')}>3</button>
+        <button className="xp-calc-btn xp-calc-op" onClick={() => handleOp('-')}>-</button>
+        <div />
+        <button className="xp-calc-btn xp-calc-fn xp-calc-span3" onClick={handleReciprocal}>1/x</button>
+
+        {/* Row 5: 0 ± . + | = */}
+        <button className="xp-calc-btn" onClick={() => handleNumber('0')}>0</button>
+        <button className="xp-calc-btn" onClick={handlePlusMinus}>±</button>
+        <button className="xp-calc-btn" onClick={() => handleNumber('.')}>.</button>
+        <button className="xp-calc-btn xp-calc-op" onClick={() => handleOp('+')}>+</button>
+        <div />
+        <button className="xp-calc-btn xp-calc-eq xp-calc-span3" onClick={handleEquals}>=</button>
       </div>
     </DraggableWidget>
   )
