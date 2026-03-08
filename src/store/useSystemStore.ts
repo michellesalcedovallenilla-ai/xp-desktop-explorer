@@ -55,8 +55,8 @@ const defaultDesktopIcons: DesktopIconData[] = [
   { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 5, y: 56, iconWidth: 7 },
   { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 22, y: 40, iconWidth: 10 },
   { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 42, y: 46, iconWidth: 8 },
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 58, y: 36, iconWidth: 20 },
-  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 78, y: 42, iconWidth: 14 },
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 62, y: 42, iconWidth: 14 },
+  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 80, y: 50, iconWidth: 11 },
 ]
 
 const defaultDockItems: DockItem[] = [
