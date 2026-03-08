@@ -41,6 +41,12 @@ const SAMPLE_IMAGES = [
   '/animals/pig-flying.png',
 ]
 
+const OVERLAY_SRC = {
+  glasses: '/overlays/glasses.png?v=4',
+  mustache: '/overlays/mustache.png?v=4',
+  hat: '/overlays/hat-original.png?v=2',
+}
+
 // Preload overlay images so they're available for canvas drawing
 const overlayImages: Record<string, HTMLImageElement> = {}
 function preloadOverlay(src: string) {
@@ -54,9 +60,9 @@ function preloadOverlay(src: string) {
 }
 
 // Preload all overlays on module load
-preloadOverlay('/overlays/glasses.png')
-preloadOverlay('/overlays/mustache.png')
-preloadOverlay('/overlays/hat.png')
+preloadOverlay(OVERLAY_SRC.glasses)
+preloadOverlay(OVERLAY_SRC.mustache)
+preloadOverlay(OVERLAY_SRC.hat)
 
 export default function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null)
