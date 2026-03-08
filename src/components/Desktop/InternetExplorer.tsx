@@ -56,6 +56,7 @@ export default function InternetExplorer({ windowId }: Props) {
   const isGoogleSearch = currentUrl.startsWith(`${GOOGLE_URL}search`)
   const isPortfolio = currentUrl.startsWith('https://readymag.website/u2801101920/5411866')
   const isInstagram = currentUrl.includes('instagram.com/mydigitalcrib')
+  const isMyspace = currentUrl.includes('ifyourereadingthishiremenow.my.canva.site')
 
   // Fetch page content via Jina reader (for Readymag and other non-special URLs)
   const fetchReader = useCallback(async (url: string) => {
@@ -84,7 +85,7 @@ export default function InternetExplorer({ windowId }: Props) {
   const lastFetchedUrl = useRef('')
   useEffect(() => {
     if (currentUrl === lastFetchedUrl.current) return
-    if (isGoogleHome || isGoogleSearch || isInstagram || isPortfolio) {
+    if (isGoogleHome || isGoogleSearch || isInstagram || isPortfolio || isMyspace) {
       setReaderContent(null)
       setReaderError(null)
       setReaderLoading(false)
@@ -100,7 +101,7 @@ export default function InternetExplorer({ windowId }: Props) {
       lastFetchedUrl.current = currentUrl
       fetchReader(currentUrl)
     }
-  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, isPortfolio, fetchReader])
+  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, isPortfolio, isMyspace, fetchReader])
 
   const navigateTo = (url: string) => {
     let finalUrl = url
@@ -261,6 +262,233 @@ export default function InternetExplorer({ windowId }: Props) {
                 : 'home'
 
       return <PortfolioSite page={page} onNavigate={navigateTo} />
+    }
+
+    // MySpace — 2006 nostalgic profile
+    if (isMyspace) {
+      const msUrl = 'https://ifyourereadingthishiremenow.my.canva.site'
+      return (
+        <div style={{
+          height: '100%',
+          background: '#003366',
+          fontFamily: 'Verdana, Geneva, sans-serif',
+          overflow: 'auto',
+          color: '#fff',
+        }}>
+          <style>{`
+            @keyframes blink2006 { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+            @keyframes sparkle { 0% { text-shadow: 0 0 4px #fff; } 50% { text-shadow: 0 0 12px #ff0, 0 0 20px #ff0; } 100% { text-shadow: 0 0 4px #fff; } }
+          `}</style>
+
+          {/* MySpace nav bar */}
+          <div style={{
+            background: 'linear-gradient(to bottom, #003d7a 0%, #00264d 100%)',
+            borderBottom: '2px solid #ff6600',
+            padding: '6px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#fff', fontFamily: 'Georgia, serif' }}>
+              My<span style={{ color: '#ff6600' }}>Space</span>
+            </span>
+            <div style={{ display: 'flex', gap: '12px', fontSize: '11px' }}>
+              {['Home', 'Browse', 'Search', 'Mail', 'Blog', 'Forum'].map(l => (
+                <span key={l} style={{ color: '#99ccff', cursor: 'default' }}>{l}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Profile header */}
+          <div style={{
+            background: 'linear-gradient(135deg, #001a33 0%, #003366 50%, #004080 100%)',
+            padding: '20px',
+            borderBottom: '3px solid #ff6600',
+          }}>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+              {/* Profile pic */}
+              <div style={{
+                width: '120px',
+                height: '120px',
+                border: '3px solid #ff6600',
+                background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <span style={{ fontSize: '40px' }}>🎤</span>
+              </div>
+              <div>
+                <h1 style={{
+                  fontSize: '22px',
+                  margin: '0 0 4px',
+                  color: '#ff6600',
+                  fontFamily: 'Georgia, serif',
+                  animation: 'sparkle 2s ease-in-out infinite',
+                }}>
+                  ★ mydigitalcrib ★
+                </h1>
+                <p style={{ fontSize: '11px', color: '#99ccff', margin: '0 0 2px' }}>"if you're reading this, hire me now"</p>
+                <p style={{ fontSize: '10px', color: '#6699cc', margin: '0 0 6px' }}>Female / 🌎 Internet / Last Login: today</p>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {['creative 🎨', 'designer 💻', 'vibes ✨', 'gen z 🫶'].map(t => (
+                    <span key={t} style={{
+                      background: '#ff6600',
+                      color: '#000',
+                      padding: '2px 6px',
+                      fontSize: '9px',
+                      fontWeight: 'bold',
+                      borderRadius: '2px',
+                    }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Two-column layout */}
+          <div style={{ display: 'flex', gap: '8px', padding: '8px', alignItems: 'flex-start' }}>
+            {/* Left column */}
+            <div style={{ width: '180px', flexShrink: 0 }}>
+              {/* Blurbs */}
+              <div style={{
+                background: 'rgba(0,0,0,0.4)',
+                border: '1px solid #336699',
+                padding: '8px',
+                marginBottom: '8px',
+              }}>
+                <h3 style={{ fontSize: '11px', color: '#ff6600', margin: '0 0 6px', borderBottom: '1px solid #336699', paddingBottom: '4px' }}>About Me</h3>
+                <p style={{ fontSize: '10px', color: '#ccc', lineHeight: '1.5', margin: 0 }}>
+                  hey bestie 💻 creative designer & developer. i build things that live on the internet ✨
+                </p>
+              </div>
+
+              {/* Song */}
+              <div style={{
+                background: 'rgba(0,0,0,0.4)',
+                border: '1px solid #336699',
+                padding: '8px',
+                marginBottom: '8px',
+              }}>
+                <h3 style={{ fontSize: '11px', color: '#ff6600', margin: '0 0 6px', borderBottom: '1px solid #336699', paddingBottom: '4px' }}>🎵 Now Playing</h3>
+                <p style={{ fontSize: '10px', color: '#99ccff', margin: '0 0 4px' }}>♫ Arctic Monkeys — 505</p>
+                <div style={{ background: '#001a33', borderRadius: '2px', height: '6px', overflow: 'hidden' }}>
+                  <div style={{ width: '65%', height: '100%', background: 'linear-gradient(to right, #ff6600, #ff9900)' }} />
+                </div>
+              </div>
+
+              {/* Top 8 */}
+              <div style={{
+                background: 'rgba(0,0,0,0.4)',
+                border: '1px solid #336699',
+                padding: '8px',
+              }}>
+                <h3 style={{ fontSize: '11px', color: '#ff6600', margin: '0 0 6px', borderBottom: '1px solid #336699', paddingBottom: '4px' }}>My Top 8</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
+                  {['🐱 tom', '🎵 music', '☕ café', '🌙 moon', '🎨 art', '📷 pics', '🌸 cute', '✨ vibes'].map(f => (
+                    <div key={f} style={{
+                      background: '#001a33',
+                      border: '1px solid #336699',
+                      padding: '4px',
+                      textAlign: 'center',
+                      fontSize: '9px',
+                      color: '#99ccff',
+                    }}>{f}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right column */}
+            <div style={{ flex: 1 }}>
+              {/* Comments / Wall */}
+              <div style={{
+                background: 'rgba(0,0,0,0.4)',
+                border: '1px solid #336699',
+                padding: '8px',
+                marginBottom: '8px',
+              }}>
+                <h3 style={{ fontSize: '11px', color: '#ff6600', margin: '0 0 6px', borderBottom: '1px solid #336699', paddingBottom: '4px' }}>
+                  Comments (3)
+                </h3>
+                {[
+                  { from: '🌸 sarah_xo', msg: 'omg ur page is so cute!! luv the music 💕', time: '2 hrs ago' },
+                  { from: '🎸 jake2006', msg: 'nice profile!! add me back?? 🤙', time: '5 hrs ago' },
+                  { from: '✨ vibes.only', msg: 'this is giving 2006 energy i LOVE it 🫶', time: '1 day ago' },
+                ].map((c, i) => (
+                  <div key={i} style={{
+                    borderBottom: i < 2 ? '1px dotted #336699' : 'none',
+                    paddingBottom: '6px',
+                    marginBottom: '6px',
+                  }}>
+                    <span style={{ fontSize: '10px', color: '#ff6600', fontWeight: 'bold' }}>{c.from}</span>
+                    <span style={{ fontSize: '9px', color: '#6699cc', marginLeft: '6px' }}>{c.time}</span>
+                    <p style={{ fontSize: '10px', color: '#ccc', margin: '2px 0 0', lineHeight: '1.4' }}>{c.msg}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Blog post */}
+              <div style={{
+                background: 'rgba(0,0,0,0.4)',
+                border: '1px solid #336699',
+                padding: '8px',
+                marginBottom: '8px',
+              }}>
+                <h3 style={{ fontSize: '11px', color: '#ff6600', margin: '0 0 6px', borderBottom: '1px solid #336699', paddingBottom: '4px' }}>Latest Blog Post</h3>
+                <p style={{ fontSize: '12px', color: '#fff', fontWeight: 'bold', margin: '0 0 4px' }}>welcome 2 my page !!</p>
+                <p style={{ fontSize: '10px', color: '#ccc', lineHeight: '1.5', margin: '0 0 6px' }}>
+                  hiii if ur reading this ur literally amazing 🫶 this is my corner of the internet where i share my creative work, designs & vibes. 
+                  don't forget 2 add me & leave a comment!! xoxo
+                </p>
+                <p style={{ fontSize: '9px', color: '#6699cc', margin: 0, fontStyle: 'italic' }}>
+                  mood: creative ✨ | currently listening to: 505
+                </p>
+              </div>
+
+              {/* VISIT BUTTON */}
+              <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                <a
+                  href={msUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-block',
+                    padding: '12px 32px',
+                    background: 'linear-gradient(180deg, #ff8800 0%, #ff6600 100%)',
+                    color: '#fff',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    fontFamily: 'Georgia, serif',
+                    border: '2px outset #ff9900',
+                    textDecoration: 'none',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                    boxShadow: '0 3px 12px rgba(255, 102, 0, 0.4)',
+                    cursor: 'pointer',
+                    letterSpacing: '1px',
+                  }}
+                >
+                  🌐 Visit My Main Page ↗
+                </a>
+                <p style={{ fontSize: '9px', color: '#6699cc', marginTop: '6px' }}>(opens in a new tab)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{
+            textAlign: 'center',
+            padding: '12px',
+            borderTop: '1px solid #336699',
+            fontSize: '9px',
+            color: '#4477aa',
+          }}>
+            <p style={{ margin: '0 0 2px' }}>©2006 MySpace Inc. All Rights Reserved.</p>
+            <p style={{ margin: 0 }}>Terms | Privacy | Safety Tips | Contact MySpace</p>
+          </div>
+        </div>
+      )
     }
 
     // Instagram — exact 2012 iOS app replica
