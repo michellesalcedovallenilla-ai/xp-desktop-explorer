@@ -247,7 +247,6 @@ export default function CameraApp() {
       {/* Controls */}
       <div className="camera-controls">
         <button
-        <button
           className={`camera-btn ${heartsEnabled ? 'active' : ''}`}
           onClick={() => setHeartsEnabled(!heartsEnabled)}
         >
