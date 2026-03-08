@@ -39,6 +39,7 @@ const OVERLAY_PATHS = {
   mustache: '/overlays/mustache.png',
   hat: '/overlays/hat.png',
   polarcita: '/overlays/polarcita.png',
+  arepa: '/overlays/arepa.png',
 }
 
 // Preload overlay images for canvas drawing
