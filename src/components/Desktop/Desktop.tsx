@@ -29,7 +29,8 @@ const Desktop = () => {
         camera: { type: 'camera', title: 'Camera', width: 640, height: 520 },
         music: { type: 'music', title: 'Music', width: 700, height: 500 },
         minesweeper: { type: 'minesweeper', title: 'Games', width: 320, height: 420 },
-        ie: { type: 'ie', title: 'Internet Explorer', width: 850, height: 600 }
+        ie: { type: 'ie', title: 'Internet Explorer', width: 850, height: 600 },
+        messenger: { type: 'messenger', title: 'MSN Messenger - Guestbook', width: 500, height: 550 }
       }
       const config = windowConfig[action]
       if (config) {
