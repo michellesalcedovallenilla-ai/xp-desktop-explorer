@@ -130,7 +130,7 @@ export default function ResumeViewer() {
           {/* Certifications */}
           <Section title="Education & Certifications">
             <ul style={{ margin: 0, paddingLeft: 18 }}>
-              <li>AI Professional Certificate</li>
+              <li>AI Professional Certificate (Google)</li>
               <li>Fundamentals of Building AI Agents (IBM)</li>
               <li>Influencer Marketing II – Industry Specialist (Meltwater)</li>
               <li>Influencer Marketing I – Industry Specialist (Meltwater)</li>
