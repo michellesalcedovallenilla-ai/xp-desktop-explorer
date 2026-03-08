@@ -142,6 +142,9 @@ export default function Window({ window: win }: Props) {
     [isDragging, win.width, pos.x, pos.y, moveWindow, win.id]
   )
 
+  // On mobile, force fullscreen-like behavior
+  const effectiveMaximized = isMobileView || win.isMaximized
+
   return (
     <div
       className="xp-window-wrapper"
@@ -150,13 +153,13 @@ export default function Window({ window: win }: Props) {
         display: win.isMinimized ? 'none' : 'block',
         position: 'absolute',
         zIndex: win.zIndex,
-        width: win.isMaximized ? '100vw' : win.width,
-        height: win.isMaximized ? 'calc(100vh - 40px)' : win.height, // 40px for taskbar
+        width: effectiveMaximized ? '100vw' : Math.min(win.width, window.innerWidth - 8),
+        height: effectiveMaximized ? 'calc(100vh - 40px)' : Math.min(win.height, window.innerHeight - 50),
         left: 0,
         top: 0,
-        transform: win.isMaximized
+        transform: effectiveMaximized
           ? 'none'
-          : `translate(${pos.x}px, ${pos.y}px)`,
+          : `translate(${Math.min(pos.x, window.innerWidth - 100)}px, ${Math.max(0, pos.y)}px)`,
         opacity: isClosing ? 0 : 1,
         transition: isClosing ? 'opacity 150ms' : undefined,
         boxShadow: isFocused
