@@ -73,6 +73,12 @@ const App = () => {
           setLocked(true)
         }}
       />
+      <XPErrorDialog
+        isOpen={errorOpen}
+        title={errorTitle}
+        message={errorMessage}
+        onClose={closeError}
+      />
       <WakeEffect />
     </div>
   )
