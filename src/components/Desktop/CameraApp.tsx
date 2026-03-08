@@ -129,25 +129,11 @@ export default function CameraApp() {
       const leftTemple = toPx(f.leftTemple)
       const rightTemple = toPx(f.rightTemple)
 
-      const eyeCenter = { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 }
       const eyeDistancePx = dist(leftEye, rightEye)
       const mouthWidthPx = dist(mouthLeft, mouthRight)
       const faceHeightPx = dist(forehead, chin)
       const faceWidthPx = dist(leftTemple, rightTemple)
       const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
-
-      if (glassesOn) {
-        const img = overlayImages.glasses
-        if (img?.complete && img.naturalWidth) {
-          const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
-          const gh = gw * (img.naturalHeight / img.naturalWidth)
-          ctx.save()
-          ctx.translate(eyeCenter.x, eyeCenter.y + faceHeightPx * 0.02)
-          ctx.rotate(rotation)
-          ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
-          ctx.restore()
-        }
-      }
 
       if (mustacheOn) {
         const img = overlayImages.mustache
