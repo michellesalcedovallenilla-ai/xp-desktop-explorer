@@ -137,13 +137,12 @@ export default function ResumeViewer() {
       </div>
 
       {/* Document Area */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '20px', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: '8px', display: 'flex', justifyContent: 'center' }}>
         <div
           style={{
             width: '100%',
-            maxWidth: '800px',
             backgroundColor: 'white',
-            padding: '40px',
+            padding: '24px 32px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
             fontFamily: 'Arial, sans-serif',
             fontSize: '13px',
