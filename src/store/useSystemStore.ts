@@ -45,15 +45,19 @@ interface SystemState {
 }
 
 const defaultDesktopIcons: DesktopIconData[] = [
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 20, y: 50, iconWidth: 350 },
-  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 450, y: 50, iconWidth: 100 },
-  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 640, y: 30, iconWidth: 120 },
-  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 870, y: 80, iconWidth: 120 },
-  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 230, y: 260, iconWidth: 150 },
-  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 480, y: 370, iconWidth: 110 },
-  { id: 'hd', label: 'My Computer', icon: 'hd', type: 'app', action: 'finder', x: 700, y: 220, iconWidth: 200 },
-  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 920, y: 330, iconWidth: 120 },
-  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 1150, y: 420, iconWidth: 250 }
+  // LEFT SIDE — Applications
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 40, y: 60, iconWidth: 300 },
+  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 370, y: 50, iconWidth: 100 },
+  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 370, y: 180, iconWidth: 120 },
+  // CENTER — System (flying cat in sky, green cat grounded)
+  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 620, y: 30, iconWidth: 120 },
+  { id: 'hd', label: 'My Computer', icon: 'hd', type: 'app', action: 'finder', x: 580, y: 220, iconWidth: 220 },
+  // RIGHT SIDE — Portfolio (bear grounded, cat grounded, cow grounded)
+  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 900, y: 240, iconWidth: 150 },
+  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 1080, y: 300, iconWidth: 120 },
+  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 1200, y: 380, iconWidth: 220 },
+  // BOTTOM CENTER — Contact (capybara grounded)
+  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 550, y: 420, iconWidth: 110 }
 ]
 
 const defaultDockItems: DockItem[] = [
