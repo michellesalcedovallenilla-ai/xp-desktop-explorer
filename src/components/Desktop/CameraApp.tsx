@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Heart, Download, Trash2, X, Glasses, Crown, Beer, Smile } from 'lucide-react'
+import { Heart, Download, Trash2, X, Crown, Beer, Smile } from 'lucide-react'
 import { useMediaPipeTracking, type FaceLandmarks, type HandPosition } from '@/hooks/useMediaPipeTracking'
 
 interface Photo {
@@ -36,7 +36,6 @@ const SAMPLE_IMAGES = [
 ]
 
 const OVERLAY_PATHS = {
-  glasses: '/overlays/glasses.png',
   mustache: '/overlays/mustache.png',
   hat: '/overlays/hat.png',
   polarcita: '/overlays/polarcita.png',
@@ -67,13 +66,12 @@ export default function CameraApp() {
   const [sampleIndex, setSampleIndex] = useState(0)
 
   // Overlay toggles
-  const [glassesOn, setGlassesOn] = useState(false)
   const [mustacheOn, setMustacheOn] = useState(false)
   const [hatOn, setHatOn] = useState(false)
   const [heartsOn, setHeartsOn] = useState(false)
   const [beerOn, setBeerOn] = useState(false)
 
-  const anyOverlay = glassesOn || mustacheOn || hatOn || heartsOn || beerOn
+  const anyOverlay = mustacheOn || hatOn || heartsOn || beerOn
 
   // MediaPipe tracking
   const { face, hand, ready: trackingReady } = useMediaPipeTracking(
@@ -131,25 +129,11 @@ export default function CameraApp() {
       const leftTemple = toPx(f.leftTemple)
       const rightTemple = toPx(f.rightTemple)
 
-      const eyeCenter = { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 }
       const eyeDistancePx = dist(leftEye, rightEye)
       const mouthWidthPx = dist(mouthLeft, mouthRight)
       const faceHeightPx = dist(forehead, chin)
       const faceWidthPx = dist(leftTemple, rightTemple)
       const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
-
-      if (glassesOn) {
-        const img = overlayImages.glasses
-        if (img?.complete && img.naturalWidth) {
-          const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
-          const gh = gw * (img.naturalHeight / img.naturalWidth)
-          ctx.save()
-          ctx.translate(eyeCenter.x, eyeCenter.y + faceHeightPx * 0.02)
-          ctx.rotate(rotation)
-          ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
-          ctx.restore()
-        }
-      }
 
       if (mustacheOn) {
         const img = overlayImages.mustache
@@ -212,7 +196,7 @@ export default function CameraApp() {
         ctx.restore()
       }
     }
-  }, [glassesOn, mustacheOn, hatOn, heartsOn, beerOn])
+  }, [mustacheOn, hatOn, heartsOn, beerOn])
 
   // Take photo
   const takePhoto = useCallback(() => {
@@ -288,7 +272,7 @@ export default function CameraApp() {
   const getOverlayCSS = useCallback((
     container: HTMLDivElement | null
   ) => {
-    if (!container) return { glasses: null, mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
+    if (!container) return { mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
 
     const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
     const lerp = (a: { x: number; y: number }, b: { x: number; y: number }, t: number) => ({
@@ -296,7 +280,6 @@ export default function CameraApp() {
       y: a.y + (b.y - a.y) * t,
     })
 
-    let glasses: React.CSSProperties | null = null
     let mustache: React.CSSProperties | null = null
     let hat: React.CSSProperties | null = null
     let hearts: React.CSSProperties[] = []
@@ -314,31 +297,12 @@ export default function CameraApp() {
       const mouthLeft = mapToViewfinder(face.mouthLeft.x, face.mouthLeft.y, container)
       const mouthRight = mapToViewfinder(face.mouthRight.x, face.mouthRight.y, container)
 
-      const eyeCenter = { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 }
-      const eyeDistancePx = dist(leftEye, rightEye)
+      const eyeDistancePx = Math.hypot(rightEye.x - leftEye.x, rightEye.y - leftEye.y)
       const faceWidthPx = dist(leftTemple, rightTemple)
       const faceHeightPx = dist(forehead, chin)
       const mouthWidthPx = dist(mouthLeft, mouthRight)
       const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
       const rotDeg = (rotation * 180) / Math.PI
-
-      if (glassesOn) {
-        const glassesImg = overlayImages.glasses
-        const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
-        const ghRatio = glassesImg?.naturalWidth ? (glassesImg.naturalHeight / glassesImg.naturalWidth) : 0.35
-        const gh = gw * ghRatio
-        glasses = {
-          position: 'absolute',
-          left: eyeCenter.x - gw / 2,
-          top: (eyeCenter.y + faceHeightPx * 0.02) - gh / 2,
-          width: gw,
-          height: gh,
-          transform: `rotate(${rotDeg}deg)`,
-          pointerEvents: 'none',
-          zIndex: 10,
-          objectFit: 'contain',
-        }
-      }
 
       if (mustacheOn) {
         const mustacheImg = overlayImages.mustache
@@ -421,8 +385,8 @@ export default function CameraApp() {
       }
     }
 
-    return { glasses, mustache, hat, hearts, beer }
-  }, [face, hand, glassesOn, mustacheOn, hatOn, heartsOn, beerOn])
+    return { mustache, hat, hearts, beer }
+  }, [face, hand, mustacheOn, hatOn, heartsOn, beerOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
@@ -488,7 +452,6 @@ export default function CameraApp() {
         )}
 
         {/* Live overlays */}
-        {overlays.glasses && <img src={OVERLAY_PATHS.glasses} alt="" style={overlays.glasses} />}
         {overlays.mustache && <img src={OVERLAY_PATHS.mustache} alt="" style={overlays.mustache} />}
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
@@ -497,12 +460,6 @@ export default function CameraApp() {
           <div key={i} style={style}>❤️</div>
         ))}
 
-        {/* Centered fallbacks when no face detected */}
-        {hasCamera && glassesOn && !face && trackingReady && (
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}>
-            <img src={OVERLAY_PATHS.glasses} alt="" style={{ width: '40%' }} />
-          </div>
-        )}
         {hasCamera && heartsOn && !face && trackingReady && (
           <div style={{
             position: 'absolute', top: '10%', left: 0, right: 0,
@@ -553,9 +510,6 @@ export default function CameraApp() {
         </button>
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
-        </button>
-        <button className={`camera-btn ${glassesOn ? 'active' : ''}`} onClick={() => setGlassesOn(!glassesOn)} title="Glasses">
-          <Glasses size={18} color={glassesOn ? '#ffcc00' : undefined} />
         </button>
         <button className={`camera-btn ${mustacheOn ? 'active' : ''}`} onClick={() => setMustacheOn(!mustacheOn)} title="Mustache">
           <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
