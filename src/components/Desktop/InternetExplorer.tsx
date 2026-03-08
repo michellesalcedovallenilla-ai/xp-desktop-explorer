@@ -239,222 +239,262 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    // Instagram — 2012 iOS app style
+    // Instagram — exact 2012 iOS app replica
     if (isInstagram) {
       return (
         <div style={{
           fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-          background: '#e8e8e8',
+          background: '#ededed',
           height: '100%',
-          overflow: 'auto',
           display: 'flex',
           flexDirection: 'column',
+          overflow: 'hidden',
         }}>
-          {/* Top nav bar — iOS 6 style blue gradient */}
+          {/* === TOP NAV BAR === */}
           <div style={{
-            background: 'linear-gradient(to bottom, #5c8ab2 0%, #3b6d8c 100%)',
-            borderBottom: '1px solid #2a5a7a',
-            padding: '8px 12px',
+            background: 'linear-gradient(to bottom, #5d8fad 0%, #3a6d8e 50%, #336485 100%)',
+            borderBottom: '1px solid #2a5570',
+            padding: '7px 8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
             flexShrink: 0,
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 3px rgba(0,0,0,0.25)',
           }}>
-            <span style={{
-              color: '#fff', fontSize: '13px', fontWeight: 'bold',
-              textShadow: '0 -1px 1px rgba(0,0,0,0.3)',
-              background: 'linear-gradient(to bottom, #7fb5d5, #5a9abb)',
-              border: '1px solid #4a8aab',
+            {/* Explore button */}
+            <div style={{
+              background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
+              border: '1px solid #4a85a5',
               borderRadius: '4px',
               padding: '4px 10px',
               cursor: 'pointer',
-            }}>Explore</span>
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+            }}>
+              <span style={{ color: '#fff', fontSize: '12px', fontWeight: 'bold', textShadow: '0 -1px 0 rgba(0,0,0,0.3)' }}>Explore</span>
+            </div>
+            {/* Title */}
             <span style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontSize: '18px',
               fontWeight: 'bold',
               color: '#fff',
-              textShadow: '0 1px 2px rgba(0,0,0,0.4)',
-              letterSpacing: '1px',
+              textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+              letterSpacing: '2px',
               textTransform: 'uppercase',
             }}>INSTAGRAM</span>
-            <span style={{
-              color: '#fff', fontSize: '16px', cursor: 'pointer',
-              textShadow: '0 -1px 1px rgba(0,0,0,0.3)',
-            }}>📤</span>
+            {/* Share icon */}
+            <div style={{
+              background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
+              border: '1px solid #4a85a5',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              cursor: 'pointer',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+            }}>
+              <span style={{ color: '#fff', fontSize: '14px' }}>↗</span>
+            </div>
           </div>
 
-          {/* Profile card */}
-          <div style={{
-            background: '#fff',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            margin: '10px 10px 0',
-            overflow: 'hidden',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-          }}>
-            {/* Profile row: pic + stats */}
+          {/* === SCROLLABLE CONTENT === */}
+          <div style={{ flex: 1, overflow: 'auto', background: '#ededed' }}>
+
+            {/* Profile card */}
             <div style={{
-              display: 'flex',
-              padding: '12px',
-              gap: '12px',
-              borderBottom: '1px solid #eee',
-            }}>
-              {/* Profile pic — square with rounded corners like 2012 */}
-              <div style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '6px',
-                border: '2px solid #ddd',
-                background: '#1a1a1a',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
-                flexShrink: 0,
-              }}>
-                <span style={{ color: '#fff', fontSize: '22px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
-              </div>
-
-              {/* Stats */}
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  display: 'flex',
-                  textAlign: 'center',
-                  marginBottom: '8px',
-                }}>
-                  <div style={{ flex: 1, borderRight: '1px solid #eee' }}>
-                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>33</div>
-                    <div style={{ fontSize: '10px', color: '#999', textTransform: 'lowercase' }}>photos</div>
-                  </div>
-                  <div style={{ flex: 1, borderRight: '1px solid #eee' }}>
-                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>793</div>
-                    <div style={{ fontSize: '10px', color: '#999' }}>followers</div>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>19</div>
-                    <div style={{ fontSize: '10px', color: '#999' }}>following</div>
-                  </div>
-                </div>
-
-                {/* Follow button */}
-                <button style={{
-                  width: '100%',
-                  background: 'linear-gradient(to bottom, #6cb4da 0%, #4a9cc4 100%)',
-                  border: '1px solid #3d8ab5',
-                  borderRadius: '4px',
-                  color: '#fff',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  padding: '6px 0',
-                  cursor: 'pointer',
-                  textShadow: '0 -1px 1px rgba(0,0,0,0.2)',
-                }}>Follow</button>
-              </div>
-            </div>
-
-            {/* Bio */}
-            <div style={{ padding: '10px 12px', borderBottom: '1px solid #eee' }}>
-              <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', margin: '0 0 2px' }}>mydigitalcrib</p>
-              <p style={{ fontSize: '13px', color: '#333', margin: '0 0 2px', lineHeight: '1.4' }}>
-                hey bestie 💻<br />
-                we're vibes, your gen z marketing crew.<br />
-                taking your brand to the next level is our thing! 🫶
-              </p>
-              <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('https://welcometomywebsites.com') }}
-                style={{ fontSize: '13px', color: '#3b6d8c', textDecoration: 'none' }}>
-                welcometomywebsites.com
-              </a>
-            </div>
-
-            {/* Grid / List / Photo Map tabs */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              borderBottom: '1px solid #eee',
-              background: '#fafafa',
-            }}>
-              <div style={{
-                flex: 1, textAlign: 'center', padding: '10px 0',
-                borderBottom: '2px solid #3b6d8c',
-                cursor: 'pointer',
-              }}>
-                <span style={{ fontSize: '18px' }}>⊞</span>
-              </div>
-              <div style={{
-                flex: 1, textAlign: 'center', padding: '10px 0',
-                cursor: 'pointer', color: '#bbb',
-              }}>
-                <span style={{ fontSize: '18px' }}>☰</span>
-              </div>
-              <div style={{
-                flex: 2, display: 'flex', alignItems: 'center',
-                justifyContent: 'center', gap: '6px',
-                padding: '10px 0', cursor: 'pointer', color: '#bbb',
-              }}>
-                <span style={{ fontSize: '14px' }}>📍</span>
-                <span style={{ fontSize: '13px', color: '#999' }}>Photo Map</span>
-                <span style={{ fontSize: '12px', color: '#ccc' }}>›</span>
-              </div>
-            </div>
-
-            {/* Photo grid — 2012 Instagram style, tight with thin borders */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '2px',
               background: '#fff',
+              margin: '8px 8px 0',
+              borderRadius: '4px',
+              border: '1px solid #d0d0d0',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+              overflow: 'hidden',
             }}>
-              {[
-                { bg: 'linear-gradient(135deg, #2a1a3e, #4a2a5e)', emoji: '🎵' },
-                { bg: 'linear-gradient(135deg, #3a3a2e, #5a5a3e)', emoji: '🔍' },
-                { bg: 'linear-gradient(135deg, #4a3a2e, #6a5a3e)', emoji: '📋' },
-                { bg: 'linear-gradient(135deg, #2e3a4a, #3e5a6a)', emoji: '📒' },
-                { bg: 'linear-gradient(135deg, #3e2a3a, #5e3a5a)', emoji: '☕' },
-                { bg: 'linear-gradient(135deg, #2a4a3e, #3a6a5e)', emoji: '💻' },
-                { bg: 'linear-gradient(135deg, #3a2e4a, #5a3e6a)', emoji: '🎨' },
-                { bg: 'linear-gradient(135deg, #4a4a2e, #6a6a3e)', emoji: '📸' },
-                { bg: 'linear-gradient(135deg, #2e2e4a, #3e3e6a)', emoji: '✨' },
-              ].map((item, i) => (
-                <div key={i} style={{
-                  aspectRatio: '1',
-                  background: item.bg,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
+              {/* Top section: avatar + stats + follow */}
+              <div style={{
+                display: 'flex',
+                padding: '12px 10px',
+                gap: '10px',
+                borderBottom: '1px solid #efefef',
+              }}>
+                {/* Avatar */}
+                <div style={{
+                  width: '77px', height: '77px',
+                  borderRadius: '5px',
+                  border: '1px solid #d0d0d0',
+                  background: '#1a1a1a',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+                  overflow: 'hidden',
                 }}>
-                  <span style={{ fontSize: '32px', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}>{item.emoji}</span>
+                  <span style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
                 </div>
-              ))}
+
+                {/* Stats + follow */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  {/* Stats row with borders */}
+                  <div style={{
+                    display: 'flex',
+                    border: '1px solid #d0d0d0',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                    marginBottom: '8px',
+                  }}>
+                    <div style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0' }}>
+                      <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>33</div>
+                      <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>photos</div>
+                    </div>
+                    <div style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0' }}>
+                      <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>793</div>
+                      <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>followers</div>
+                    </div>
+                    <div style={{ flex: 1, textAlign: 'center', padding: '6px 0' }}>
+                      <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>19</div>
+                      <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>following</div>
+                    </div>
+                  </div>
+
+                  {/* Follow button — exact 2012 blue */}
+                  <button style={{
+                    width: '100%',
+                    background: 'linear-gradient(to bottom, #6db3d5 0%, #4a99c4 100%)',
+                    border: '1px solid #3886b0',
+                    borderRadius: '4px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    padding: '7px 0',
+                    cursor: 'pointer',
+                    textShadow: '0 -1px 0 rgba(0,0,0,0.25)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 1px 2px rgba(0,0,0,0.1)',
+                  }}>Follow</button>
+                </div>
+              </div>
+
+              {/* Bio section */}
+              <div style={{ padding: '10px 12px', borderBottom: '1px solid #efefef' }}>
+                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#262626', margin: '0 0 3px' }}>mydigitalcrib</p>
+                <p style={{ fontSize: '13px', color: '#555', margin: '0 0 2px', lineHeight: '1.45' }}>
+                  hey bestie 💻<br />
+                  we're vibes, your gen z marketing crew.<br />
+                  taking your brand to the next level is our thing! 🫶
+                </p>
+                <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('https://welcometomywebsites.com') }}
+                  style={{ fontSize: '13px', color: '#3b6d8c', textDecoration: 'none' }}>
+                  welcometomywebsites.com
+                </a>
+              </div>
+
+              {/* Tabs: grid | list | photo map */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'stretch',
+                borderBottom: '1px solid #efefef',
+                background: '#fafafa',
+              }}>
+                {/* Grid tab — active */}
+                <div style={{
+                  flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '10px 0', cursor: 'pointer',
+                  borderBottom: '2px solid #3b6d8c',
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="#3b6d8c">
+                    <rect x="0" y="0" width="5" height="5" /><rect x="6.5" y="0" width="5" height="5" /><rect x="13" y="0" width="5" height="5" />
+                    <rect x="0" y="6.5" width="5" height="5" /><rect x="6.5" y="6.5" width="5" height="5" /><rect x="13" y="6.5" width="5" height="5" />
+                    <rect x="0" y="13" width="5" height="5" /><rect x="6.5" y="13" width="5" height="5" /><rect x="13" y="13" width="5" height="5" />
+                  </svg>
+                </div>
+                {/* List tab */}
+                <div style={{
+                  flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '10px 0', cursor: 'pointer',
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="#ccc">
+                    <rect x="0" y="1" width="18" height="2" /><rect x="0" y="6" width="18" height="2" />
+                    <rect x="0" y="11" width="18" height="2" /><rect x="0" y="16" width="18" height="2" />
+                  </svg>
+                </div>
+                {/* Photo Map */}
+                <div style={{
+                  flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  gap: '5px', padding: '10px 0', cursor: 'pointer',
+                }}>
+                  <svg width="14" height="18" viewBox="0 0 14 18" fill="#ccc">
+                    <path d="M7 0C3.13 0 0 3.13 0 7c0 5.25 7 11 7 11s7-5.75 7-11c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>
+                  </svg>
+                  <span style={{ fontSize: '13px', color: '#999', fontWeight: '500' }}>Photo Map</span>
+                  <span style={{ fontSize: '16px', color: '#ccc', fontWeight: '300' }}>›</span>
+                </div>
+              </div>
+
+              {/* Photo grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '1px',
+                background: '#e0e0e0',
+              }}>
+                {[
+                  { bg: '#c2533a', emoji: '🏪' },
+                  { bg: '#4a6a4a', emoji: '🎄' },
+                  { bg: '#6a8a5a', emoji: '🎉' },
+                  { bg: '#3a5a7a', emoji: '🌆' },
+                  { bg: '#8a6a4a', emoji: '☕' },
+                  { bg: '#5a7a9a', emoji: '🏠' },
+                  { bg: '#7a5a3a', emoji: '📷' },
+                  { bg: '#4a4a6a', emoji: '🎵' },
+                  { bg: '#5a8a6a', emoji: '🌿' },
+                  { bg: '#8a4a5a', emoji: '💻' },
+                  { bg: '#3a6a5a', emoji: '🎨' },
+                  { bg: '#6a5a8a', emoji: '✨' },
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    aspectRatio: '1',
+                    background: item.bg,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}>
+                    <span style={{ fontSize: '28px', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))' }}>{item.emoji}</span>
+                  </div>
+                ))}
+              </div>
             </div>
+
+            <div style={{ height: '8px' }} />
           </div>
 
-          {/* Bottom tab bar — iOS 6 style */}
+          {/* === BOTTOM TAB BAR — iOS 6 dark chrome === */}
           <div style={{
-            marginTop: 'auto',
-            background: 'linear-gradient(to bottom, #393939 0%, #1a1a1a 100%)',
-            borderTop: '1px solid #555',
+            background: 'linear-gradient(to bottom, #434343 0%, #1c1c1c 100%)',
+            borderTop: '1px solid #606060',
             display: 'flex',
-            padding: '6px 0 4px',
+            padding: '5px 0 3px',
             flexShrink: 0,
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
           }}>
-            {['🏠', '⭐', '📷', '💬', '📇'].map((icon, i) => (
+            {[
+              { icon: '🏠', active: true },
+              { icon: '⭐', active: false },
+              { icon: '📷', active: false, special: true },
+              { icon: '💬', active: false },
+              { icon: '📇', active: false },
+            ].map((tab, i) => (
               <div key={i} style={{
                 flex: 1,
                 textAlign: 'center',
-                fontSize: '20px',
+                fontSize: '22px',
                 cursor: 'pointer',
-                opacity: i === 0 ? 1 : 0.5,
-                ...(i === 2 ? {
-                  background: 'linear-gradient(to bottom, #5c8ab2, #3b6d8c)',
-                  borderRadius: '6px',
-                  margin: '-2px 8px 0',
-                  padding: '2px 0',
+                padding: '4px 0',
+                opacity: tab.active ? 1 : 0.4,
+                ...(tab.special ? {
+                  background: 'linear-gradient(to bottom, #5d8fad, #3a6d8e)',
+                  borderRadius: '5px',
+                  margin: '0 6px',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.3)',
+                  opacity: 1,
                 } : {}),
               }}>
-                {icon}
+                {tab.icon}
               </div>
             ))}
           </div>
