@@ -256,7 +256,7 @@ export default function CameraApp() {
   const getOverlayCSS = useCallback((
     container: HTMLDivElement | null
   ) => {
-    if (!container) return { mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
+    if (!container) return { mustache: null, hat: null, beer: null }
 
     const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
     const lerp = (a: { x: number; y: number }, b: { x: number; y: number }, t: number) => ({
