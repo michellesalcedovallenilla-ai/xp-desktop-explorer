@@ -242,19 +242,15 @@ export default function InternetExplorer({ windowId }: Props) {
     // Instagram — exact 2012 iOS app replica
     if (isInstagram) {
       const igUrl = 'https://www.instagram.com/mydigitalcrib/'
-      const openIg = () => {
-        const a = document.createElement('a')
-        a.href = igUrl
-        a.target = '_blank'
-        a.rel = 'noopener noreferrer'
-        a.style.display = 'none'
-        document.body.appendChild(a)
-        a.click()
-        setTimeout(() => document.body.removeChild(a), 100)
-      }
+      // Wrap entire view in a native <a> so clicks pass through sandbox
+      const IgLink = ({ children, style, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { children: React.ReactNode }) => (
+        <a href={igUrl} target="_blank" rel="noopener noreferrer"
+          style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer', ...style }} {...props}>
+          {children}
+        </a>
+      )
       return (
         <div style={{
-          cursor: 'default',
           fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
           background: '#ededed',
           height: '100%',
@@ -274,16 +270,16 @@ export default function InternetExplorer({ windowId }: Props) {
             boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 3px rgba(0,0,0,0.25)',
           }}>
             {/* Explore button */}
-            <div onClick={openIg} style={{
+            <IgLink style={{
               background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
               border: '1px solid #4a85a5',
               borderRadius: '4px',
               padding: '4px 10px',
-              cursor: 'pointer',
               boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+              display: 'inline-block',
             }}>
               <span style={{ color: '#fff', fontSize: '12px', fontWeight: 'bold', textShadow: '0 -1px 0 rgba(0,0,0,0.3)' }}>Explore</span>
-            </div>
+            </IgLink>
             {/* Title */}
             <span style={{
               fontFamily: 'Georgia, "Times New Roman", serif',
@@ -295,16 +291,16 @@ export default function InternetExplorer({ windowId }: Props) {
               textTransform: 'uppercase',
             }}>INSTAGRAM</span>
             {/* Share icon */}
-            <div onClick={openIg} style={{
+            <IgLink style={{
               background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
               border: '1px solid #4a85a5',
               borderRadius: '4px',
               padding: '4px 8px',
-              cursor: 'pointer',
               boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+              display: 'inline-block',
             }}>
               <span style={{ color: '#fff', fontSize: '14px' }}>↗</span>
-            </div>
+            </IgLink>
           </div>
 
           {/* === SCROLLABLE CONTENT === */}
@@ -327,7 +323,7 @@ export default function InternetExplorer({ windowId }: Props) {
                 borderBottom: '1px solid #efefef',
               }}>
                 {/* Avatar */}
-                <div onClick={openIg} style={{
+                <IgLink style={{
                   width: '77px', height: '77px',
                   borderRadius: '5px',
                   border: '1px solid #d0d0d0',
@@ -336,10 +332,9 @@ export default function InternetExplorer({ windowId }: Props) {
                   flexShrink: 0,
                   boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
                   overflow: 'hidden',
-                  cursor: 'pointer',
                 }}>
                   <span style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
-                </div>
+                </IgLink>
 
                 {/* Stats + follow */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -351,22 +346,23 @@ export default function InternetExplorer({ windowId }: Props) {
                     overflow: 'hidden',
                     marginBottom: '8px',
                   }}>
-                    <div onClick={openIg} style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0', cursor: 'pointer' }}>
+                    <IgLink style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0', display: 'block' }}>
                       <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>33</div>
                       <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>photos</div>
-                    </div>
-                    <div onClick={openIg} style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0', cursor: 'pointer' }}>
+                    </IgLink>
+                    <IgLink style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0', display: 'block' }}>
                       <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>793</div>
                       <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>followers</div>
-                    </div>
-                    <div onClick={openIg} style={{ flex: 1, textAlign: 'center', padding: '6px 0', cursor: 'pointer' }}>
+                    </IgLink>
+                    <IgLink style={{ flex: 1, textAlign: 'center', padding: '6px 0', display: 'block' }}>
                       <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>19</div>
                       <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>following</div>
-                    </div>
+                    </IgLink>
                   </div>
 
                   {/* Follow button — exact 2012 blue */}
-                  <button onClick={openIg} style={{
+                  <IgLink style={{
+                    display: 'block',
                     width: '100%',
                     background: 'linear-gradient(to bottom, #6db3d5 0%, #4a99c4 100%)',
                     border: '1px solid #3886b0',
@@ -375,10 +371,10 @@ export default function InternetExplorer({ windowId }: Props) {
                     fontSize: '14px',
                     fontWeight: 'bold',
                     padding: '7px 0',
-                    cursor: 'pointer',
+                    textAlign: 'center',
                     textShadow: '0 -1px 0 rgba(0,0,0,0.25)',
                     boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 1px 2px rgba(0,0,0,0.1)',
-                  }}>Follow</button>
+                  }}>Follow</IgLink>
                 </div>
               </div>
 
@@ -390,10 +386,9 @@ export default function InternetExplorer({ windowId }: Props) {
                   we're vibes, your gen z marketing crew.<br />
                   taking your brand to the next level is our thing! 🫶
                 </p>
-                <a href="#" onClick={(e) => { e.preventDefault(); openIg() }}
-                  style={{ fontSize: '13px', color: '#3b6d8c', textDecoration: 'none' }}>
+                <IgLink style={{ fontSize: '13px', color: '#3b6d8c' }}>
                   welcometomywebsites.com
-                </a>
+                </IgLink>
               </div>
 
               {/* Tabs: grid | list | photo map */}
@@ -404,9 +399,9 @@ export default function InternetExplorer({ windowId }: Props) {
                 background: '#fafafa',
               }}>
                 {/* Grid tab — active */}
-                <div onClick={openIg} style={{
+                <IgLink style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '10px 0', cursor: 'pointer',
+                  padding: '10px 0',
                   borderBottom: '2px solid #3b6d8c',
                 }}>
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="#3b6d8c">
@@ -414,28 +409,28 @@ export default function InternetExplorer({ windowId }: Props) {
                     <rect x="0" y="6.5" width="5" height="5" /><rect x="6.5" y="6.5" width="5" height="5" /><rect x="13" y="6.5" width="5" height="5" />
                     <rect x="0" y="13" width="5" height="5" /><rect x="6.5" y="13" width="5" height="5" /><rect x="13" y="13" width="5" height="5" />
                   </svg>
-                </div>
+                </IgLink>
                 {/* List tab */}
-                <div onClick={openIg} style={{
+                <IgLink style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '10px 0', cursor: 'pointer',
+                  padding: '10px 0',
                 }}>
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="#ccc">
                     <rect x="0" y="1" width="18" height="2" /><rect x="0" y="6" width="18" height="2" />
                     <rect x="0" y="11" width="18" height="2" /><rect x="0" y="16" width="18" height="2" />
                   </svg>
-                </div>
+                </IgLink>
                 {/* Photo Map */}
-                <div onClick={openIg} style={{
+                <IgLink style={{
                   flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: '5px', padding: '10px 0', cursor: 'pointer',
+                  gap: '5px', padding: '10px 0',
                 }}>
                   <svg width="14" height="18" viewBox="0 0 14 18" fill="#ccc">
                     <path d="M7 0C3.13 0 0 3.13 0 7c0 5.25 7 11 7 11s7-5.75 7-11c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>
                   </svg>
                   <span style={{ fontSize: '13px', color: '#999', fontWeight: '500' }}>Photo Map</span>
                   <span style={{ fontSize: '16px', color: '#ccc', fontWeight: '300' }}>›</span>
-                </div>
+                </IgLink>
               </div>
 
               {/* Photo grid */}
@@ -459,16 +454,15 @@ export default function InternetExplorer({ windowId }: Props) {
                   { bg: '#3a6a5a', emoji: '🎨' },
                   { bg: '#6a5a8a', emoji: '✨' },
                 ].map((item, i) => (
-                  <div key={i} onClick={openIg} style={{
+                  <IgLink key={i} style={{
                     aspectRatio: '1',
                     background: item.bg,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    cursor: 'pointer',
                   }}>
                     <span style={{ fontSize: '28px', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))' }}>{item.emoji}</span>
-                  </div>
+                  </IgLink>
                 ))}
               </div>
             </div>
@@ -492,13 +486,13 @@ export default function InternetExplorer({ windowId }: Props) {
               { icon: '💬', active: false },
               { icon: '📇', active: false },
             ].map((tab, i) => (
-              <div key={i} onClick={openIg} style={{
+              <IgLink key={i} style={{
                 flex: 1,
                 textAlign: 'center',
                 fontSize: '22px',
-                cursor: 'pointer',
                 padding: '4px 0',
                 opacity: tab.active ? 1 : 0.4,
+                display: 'block',
                 ...(tab.special ? {
                   background: 'linear-gradient(to bottom, #5d8fad, #3a6d8e)',
                   borderRadius: '5px',
@@ -508,7 +502,7 @@ export default function InternetExplorer({ windowId }: Props) {
                 } : {}),
               }}>
                 {tab.icon}
-              </div>
+              </IgLink>
             ))}
           </div>
         </div>
