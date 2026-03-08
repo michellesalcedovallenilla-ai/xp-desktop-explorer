@@ -172,6 +172,36 @@ export default function CameraApp() {
         }
       }
 
+      if (plumbobOn) {
+        const img = overlayImages.plumbob
+        if (img?.complete && img.naturalWidth) {
+          const pw = Math.max(faceWidthPx * 0.35, eyeDistancePx * 0.8)
+          const ph = pw * (img.naturalHeight / img.naturalWidth)
+          const plumbobAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.55 }
+          ctx.save()
+          ctx.translate(plumbobAnchor.x, plumbobAnchor.y)
+          ctx.rotate(rotation)
+          ctx.scale(-1, -1)
+          ctx.drawImage(img, -pw / 2, -ph / 2, pw, ph)
+          ctx.restore()
+        }
+      }
+
+      if (handsOn) {
+        const img = overlayImages.hands
+        if (img?.complete && img.naturalWidth) {
+          const hw = Math.max(faceWidthPx * 1.4, eyeDistancePx * 3.2)
+          const hh = hw * (img.naturalHeight / img.naturalWidth)
+          const handsAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.35 }
+          ctx.save()
+          ctx.translate(handsAnchor.x, handsAnchor.y)
+          ctx.rotate(rotation)
+          ctx.scale(-1, -1)
+          ctx.drawImage(img, -hw / 2, -hh * 0.5, hw, hh)
+          ctx.restore()
+        }
+      }
+
     }
 
     if (lh && beerOn) {
