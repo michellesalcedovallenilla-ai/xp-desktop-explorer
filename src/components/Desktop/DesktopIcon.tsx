@@ -113,7 +113,6 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       }}
       onDoubleClick={() => {
         onDoubleClick()
-        handleOpen()
       }}
     >
       {animal && !imgError ? (

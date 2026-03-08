@@ -63,7 +63,6 @@ export default function CameraApp() {
   }, [])
 
   useEffect(() => {
-    startCamera()
     return () => {
       if (videoRef.current?.srcObject) {
         ;(videoRef.current.srcObject as MediaStream)
@@ -71,7 +70,7 @@ export default function CameraApp() {
           .forEach((t) => t.stop())
       }
     }
-  }, [startCamera])
+  }, [])
 
   useEffect(() => {
     if (!heartsEnabled) return
