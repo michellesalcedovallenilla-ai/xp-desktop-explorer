@@ -279,6 +279,24 @@ export default function MenuBar() {
             {widget.type.charAt(0).toUpperCase() + widget.type.slice(1)}
           </button>
         ))}
+        {/* Music Player taskbar button - opens as window */}
+        <button
+          className={`xp-task-btn ${windows.some(w => w.id === 'window-music' && !w.isMinimized) ? 'active' : ''}`}
+          onClick={() => {
+            const musicWin = windows.find(w => w.id === 'window-music')
+            if (musicWin) {
+              if (musicWin.isMinimized) {
+                restoreWindow(musicWin.id)
+              } else {
+                minimizeWindow(musicWin.id)
+              }
+            } else {
+              openWindow('music', 'Windows Media Player')
+            }
+          }}
+        >
+          Music
+        </button>
         {/* Window taskbar buttons */}
         {windows.map((win) => (
           <button
