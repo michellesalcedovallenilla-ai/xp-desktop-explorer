@@ -421,21 +421,6 @@ export default function CameraApp() {
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
 
-        {overlays.hearts.map((style, i) => (
-          <div key={i} style={style}>❤️</div>
-        ))}
-
-        {hasCamera && heartsOn && !face && trackingReady && (
-          <div style={{
-            position: 'absolute', top: '10%', left: 0, right: 0,
-            pointerEvents: 'none', display: 'flex', justifyContent: 'center', gap: 14, zIndex: 10, opacity: 0.5
-          }}>
-            <span style={{ fontSize: 34 }}>❤️</span>
-            <span style={{ fontSize: 28, transform: 'translateY(8px)' }}>❤️</span>
-            <span style={{ fontSize: 34 }}>❤️</span>
-          </div>
-        )}
-
         {/* Flash */}
         {flash && (
           <div style={{
