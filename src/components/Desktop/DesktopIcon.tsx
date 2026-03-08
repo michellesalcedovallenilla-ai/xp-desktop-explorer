@@ -130,6 +130,8 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       onDoubleClick={() => {
         if (icon.action === 'portfolio-link') {
           window.open('https://readymag.website/u2801101920/5411866/', '_blank')
+        } else if (icon.action === 'myspace-link') {
+          window.open('https://ifyourereadingthishiremenow.my.canva.site', '_blank')
         } else {
           onDoubleClick()
         }
