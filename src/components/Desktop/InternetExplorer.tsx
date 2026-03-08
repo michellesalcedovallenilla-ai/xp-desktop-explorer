@@ -241,7 +241,18 @@ export default function InternetExplorer({ windowId }: Props) {
 
     // Instagram — exact 2012 iOS app replica
     if (isInstagram) {
-      const openIg = () => window.open('https://www.instagram.com/mydigitalcrib/', '_blank')
+      const igUrl = 'https://www.instagram.com/mydigitalcrib/'
+      const openIg = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        // Try multiple methods since preview sandboxes can block window.open
+        const a = document.createElement('a')
+        a.href = igUrl
+        a.target = '_blank'
+        a.rel = 'noopener noreferrer'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+      }
       return (
         <div onClick={openIg} style={{
           cursor: 'pointer',
