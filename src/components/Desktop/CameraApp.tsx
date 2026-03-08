@@ -39,6 +39,7 @@ const OVERLAY_PATHS = {
   mustache: '/overlays/mustache.png',
   hat: '/overlays/hat.png',
   polarcita: '/overlays/polarcita.png',
+  arepa: '/overlays/arepa.png',
 }
 
 // Preload overlay images for canvas drawing
@@ -69,8 +70,9 @@ export default function CameraApp() {
   const [mustacheOn, setMustacheOn] = useState(false)
   const [hatOn, setHatOn] = useState(false)
   const [beerOn, setBeerOn] = useState(false)
+  const [arepaOn, setArepaOn] = useState(false)
 
-  const anyOverlay = mustacheOn || hatOn || beerOn
+  const anyOverlay = mustacheOn || hatOn || beerOn || arepaOn
 
   // MediaPipe tracking
   const { face, hand, ready: trackingReady } = useMediaPipeTracking(
@@ -180,7 +182,22 @@ export default function CameraApp() {
         ctx.restore()
       }
     }
-  }, [mustacheOn, hatOn, beerOn])
+
+    if (hd && arepaOn) {
+      const img = overlayImages.arepa
+      if (img?.complete && img.naturalWidth) {
+        const palm = toPx(hd.palmCenter)
+        const handWidthPx = hd.handWidth * w
+        const aw = Math.max(handWidthPx * 1.8, 70)
+        const ah = aw * (img.naturalHeight / img.naturalWidth)
+        ctx.save()
+        ctx.translate(palm.x, palm.y)
+        ctx.rotate(hd.rotation)
+        ctx.drawImage(img, -aw / 2, -ah / 2, aw, ah)
+        ctx.restore()
+      }
+    }
+  }, [mustacheOn, hatOn, beerOn, arepaOn])
 
   // Take photo
   const takePhoto = useCallback(() => {
@@ -350,8 +367,32 @@ export default function CameraApp() {
       }
     }
 
-    return { mustache, hat, beer }
-  }, [face, hand, mustacheOn, hatOn, beerOn])
+    let arepa: React.CSSProperties | null = null
+    if (hand && arepaOn) {
+      const arepaImg = overlayImages.arepa
+      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
+      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const handWidthPx = dist(indexMcp, pinkyMcp)
+      const aw = Math.max(handWidthPx * 1.8, 45)
+      const ahRatio = arepaImg?.naturalWidth ? (arepaImg.naturalHeight / arepaImg.naturalWidth) : 1
+      const ah = aw * ahRatio
+      const rotDeg = ((hand.rotation) * 180) / Math.PI
+      arepa = {
+        position: 'absolute',
+        left: palm.x - aw / 2,
+        top: palm.y - ah / 2,
+        width: aw,
+        height: ah,
+        transform: `rotate(${rotDeg}deg)`,
+        pointerEvents: 'none',
+        zIndex: 10,
+        objectFit: 'contain',
+      }
+    }
+
+    return { mustache, hat, beer, arepa }
+  }, [face, hand, mustacheOn, hatOn, beerOn, arepaOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
@@ -420,6 +461,7 @@ export default function CameraApp() {
         {overlays.mustache && <img src={OVERLAY_PATHS.mustache} alt="" style={overlays.mustache} />}
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
+        {overlays.arepa && <img src={OVERLAY_PATHS.arepa} alt="" style={overlays.arepa} />}
 
         {/* Flash */}
         {flash && (
@@ -462,7 +504,10 @@ export default function CameraApp() {
           <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
         </button>
         <button className={`camera-btn ${beerOn ? 'active' : ''}`} onClick={() => setBeerOn(!beerOn)} title="Polarcita">
-          <span style={{ fontSize: 16 }}>🇻🇪</span>
+          <span style={{ fontSize: 16 }}>🍺</span>
+        </button>
+        <button className={`camera-btn ${arepaOn ? 'active' : ''}`} onClick={() => setArepaOn(!arepaOn)} title="Arepa">
+          <span style={{ fontSize: 16 }}>🫓</span>
         </button>
       </div>
 
