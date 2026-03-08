@@ -149,6 +149,8 @@ export default function Window({ window: win }: Props) {
 
   // On mobile, force fullscreen-like behavior
   const effectiveMaximized = isMobileView || win.isMaximized
+  // Calculate taskbar height based on viewport
+  const taskbarHeight = isMobileView ? 40 : isTabletView ? 36 : 30
 
   return (
     <div
@@ -159,7 +161,7 @@ export default function Window({ window: win }: Props) {
         position: 'absolute',
         zIndex: win.zIndex,
         width: effectiveMaximized ? '100vw' : Math.min(win.width, window.innerWidth - 8),
-        height: effectiveMaximized ? 'calc(100vh - 40px)' : Math.min(win.height, window.innerHeight - 50),
+        height: effectiveMaximized ? `calc(100vh - ${taskbarHeight}px)` : Math.min(win.height, window.innerHeight - taskbarHeight - 10),
         left: 0,
         top: 0,
         transform: effectiveMaximized
