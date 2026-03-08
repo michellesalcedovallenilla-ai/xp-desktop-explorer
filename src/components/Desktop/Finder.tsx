@@ -104,39 +104,28 @@ export default function Finder() {
           <div className="xp-address-path">C:\My Documents</div>
         </div>
         <div className="xp-explorer-grid">
-          {files.map((f) => {
-            const isImage = f.icon.endsWith('.png') || f.icon.endsWith('.jpg')
-            const Icon = !isImage ? iconMap[f.icon] || FolderOpen : null
-            return (
-              <button
-                key={f.label}
-                className="xp-explorer-file"
-                onClick={() =>
-                  openItem(
-                    f.action,
-                    f.label
-                      .replace('.lnk', '')
-                      .replace('.exe', '')
-                      .replace('.pdf', '')
-                  )
-                }
-              >
-                <div className="xp-explorer-file-icon">
-                  {isImage ? (
-                    <img
-                      src={`/${f.icon}`}
-                      alt={f.label}
-                      style={{ width: 32, height: 32, objectFit: 'contain' }}
-                      draggable={false}
-                    />
-                  ) : (
-                    Icon && <Icon size={32} />
-                  )}
-                </div>
-                <span className="xp-explorer-file-name">{f.label}</span>
-              </button>
-            )
-          })}
+          {files.map((f) => (
+            <button
+              key={f.label}
+              className="xp-explorer-file"
+              onClick={() =>
+                openItem(
+                  f.action,
+                  f.label.replace('.lnk', '').replace('.exe', '').replace('.pdf', '')
+                )
+              }
+            >
+              <div className="xp-explorer-file-icon">
+                <img
+                  src={f.icon}
+                  alt={f.label}
+                  style={{ width: 32, height: 32, objectFit: 'contain' }}
+                  draggable={false}
+                />
+              </div>
+              <span className="xp-explorer-file-name">{f.label}</span>
+            </button>
+          ))}
           {projects.map((p) => (
             <button
               key={p.id}
