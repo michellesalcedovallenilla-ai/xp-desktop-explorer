@@ -385,8 +385,8 @@ export default function CameraApp() {
       }
     }
 
-    return { glasses, mustache, hat, hearts, beer }
-  }, [face, hand, glassesOn, mustacheOn, hatOn, heartsOn, beerOn])
+    return { mustache, hat, hearts, beer }
+  }, [face, hand, mustacheOn, hatOn, heartsOn, beerOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
