@@ -64,6 +64,14 @@ export default function Window({ window: win }: Props) {
     win.type
   )
 
+  // Responsive: detect mobile/tablet
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768)
+  useEffect(() => {
+    const onResize = () => setIsMobileView(window.innerWidth <= 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   const [isClosing, setIsClosing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [pos, setPos] = useState({ x: win.x, y: win.y })
