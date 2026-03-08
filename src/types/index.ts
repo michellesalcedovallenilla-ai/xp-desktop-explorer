@@ -13,6 +13,7 @@ export interface WindowState {
     | 'minesweeper'
     | 'solitaire'
     | 'ie'
+    | 'messenger'
   x: number
   y: number
   width: number
