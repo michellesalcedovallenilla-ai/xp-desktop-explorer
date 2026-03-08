@@ -7,6 +7,7 @@ const PASSWORD = '1234'
 
 export default function LockScreen() {
   const { isLocked, setLocked } = useSystemStore()
+  const { playStartup } = useAudioStore()
   const [password, setPassword] = useState('')
   const [shake, setShake] = useState(false)
   const [showPasswordField, setShowPasswordField] = useState(false)
