@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   FolderOpen,
   FileText,
@@ -5,16 +6,17 @@ import {
   Music,
   Monitor,
   User,
-  Mail
+  Mail,
+  ArrowLeft
 } from 'lucide-react'
 import { useWindowStore } from '../../store/useWindowStore'
 import { projects } from '../../data/projects'
 
 const folders = [
-  { label: 'My Documents', icon: FolderOpen },
-  { label: 'My Pictures', icon: Image },
-  { label: 'My Music', icon: Music },
-  { label: 'My Computer', icon: Monitor }
+  { label: 'My Documents', icon: FolderOpen, path: 'documents' },
+  { label: 'My Pictures', icon: Image, path: 'pictures' },
+  { label: 'My Music', icon: Music, path: 'music' },
+  { label: 'My Computer', icon: Monitor, path: 'computer' }
 ]
 
 const files = [
@@ -27,8 +29,21 @@ const files = [
   { label: 'Minesweeper.exe', icon: '/icons/xp-minesweeper.png', action: 'minesweeper' }
 ]
 
+const pictures = [
+  { label: 'michael-scott.png', src: '/pictures/michael-scott.png' },
+  { label: 'born-designer.png', src: '/pictures/born-designer.png' },
+  { label: 'i-love-graphic-design.png', src: '/pictures/i-love-graphic-design.png' },
+  { label: 'graphic-design-passion.png', src: '/pictures/graphic-design-passion.png' },
+  { label: 'paint-passion.png', src: '/pictures/paint-passion.png' },
+  { label: 'snoopy-dilly-dally.png', src: '/pictures/snoopy-dilly-dally.png' },
+  { label: 'webby-nook.png', src: '/pictures/webby-nook.png' },
+  { label: 'party-cow.png', src: '/pictures/party-cow.png' },
+]
+
 export default function Finder() {
   const { openWindow } = useWindowStore()
+  const [currentPath, setCurrentPath] = useState<string>('documents')
+  const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
 
   const openItem = (action: string, title: string) => {
     openWindow({
@@ -58,6 +73,10 @@ export default function Finder() {
       projectId: projId
     })
   }
+
+  const addressPath = currentPath === 'pictures' 
+    ? 'C:\\My Documents\\My Pictures' 
+    : 'C:\\My Documents'
 
   return (
     <div className="xp-explorer">
@@ -89,7 +108,11 @@ export default function Finder() {
           {folders.map((f) => {
             const Icon = f.icon
             return (
-              <button key={f.label} className="xp-explorer-sidebar-item">
+              <button 
+                key={f.label} 
+                className="xp-explorer-sidebar-item"
+                onClick={() => { setCurrentPath(f.path); setSelectedPicture(null) }}
+              >
                 <Icon size={14} /> {f.label}
               </button>
             )
@@ -100,53 +123,102 @@ export default function Finder() {
       {/* File grid */}
       <div className="xp-explorer-content">
         <div className="xp-explorer-address-bar">
-          <span>Address</span>
-          <div className="xp-address-path">C:\My Documents</div>
-        </div>
-        <div className="xp-explorer-grid">
-          {files.map((f) => (
-            <button
-              key={f.label}
-              className="xp-explorer-file"
-              onClick={() =>
-                openItem(
-                  f.action,
-                  f.label.replace('.lnk', '').replace('.exe', '').replace('.pdf', '')
-                )
-              }
+          {currentPath !== 'documents' && (
+            <button 
+              onClick={() => { setCurrentPath('documents'); setSelectedPicture(null) }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', display: 'flex', alignItems: 'center' }}
             >
-              <div className="xp-explorer-file-icon">
-                <img
-                  src={f.icon}
-                  alt={f.label}
-                  style={{ width: 32, height: 32, objectFit: 'contain' }}
-                  draggable={false}
-                />
-              </div>
-              <span className="xp-explorer-file-name">{f.label}</span>
+              <ArrowLeft size={14} />
             </button>
-          ))}
-          {projects.map((p) => (
+          )}
+          <span>Address</span>
+          <div className="xp-address-path">{addressPath}</div>
+        </div>
+
+        {/* Picture lightbox */}
+        {selectedPicture && (
+          <div 
+            style={{
+              position: 'absolute', inset: 0, zIndex: 50, 
+              background: 'rgba(0,0,0,0.85)', display: 'flex', 
+              alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+            }}
+            onClick={() => setSelectedPicture(null)}
+          >
+            <img 
+              src={selectedPicture} 
+              alt="" 
+              style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain', borderRadius: 4 }} 
+            />
+          </div>
+        )}
+
+        <div className="xp-explorer-grid">
+          {currentPath === 'documents' && (
+            <>
+              {files.map((f) => (
+                <button
+                  key={f.label}
+                  className="xp-explorer-file"
+                  onClick={() =>
+                    openItem(
+                      f.action,
+                      f.label.replace('.lnk', '').replace('.exe', '').replace('.pdf', '')
+                    )
+                  }
+                >
+                  <div className="xp-explorer-file-icon">
+                    <img
+                      src={f.icon}
+                      alt={f.label}
+                      style={{ width: 32, height: 32, objectFit: 'contain' }}
+                      draggable={false}
+                    />
+                  </div>
+                  <span className="xp-explorer-file-name">{f.label}</span>
+                </button>
+              ))}
+              {projects.map((p) => (
+                <button
+                  key={p.id}
+                  className="xp-explorer-file"
+                  onClick={() => {
+                    if (p.link) {
+                      window.open(p.link, '_blank')
+                    } else {
+                      openProject(p.id, p.title)
+                    }
+                  }}
+                >
+                  <div className="xp-explorer-file-icon">
+                    <img
+                      src={p.image}
+                      alt={p.title}
+                      style={{ width: 32, height: 32, objectFit: 'contain' }}
+                      draggable={false}
+                    />
+                  </div>
+                  <span className="xp-explorer-file-name">{p.title}</span>
+                </button>
+              ))}
+            </>
+          )}
+
+          {currentPath === 'pictures' && pictures.map((pic) => (
             <button
-              key={p.id}
+              key={pic.label}
               className="xp-explorer-file"
-              onClick={() => {
-                if (p.link) {
-                  window.open(p.link, '_blank')
-                } else {
-                  openProject(p.id, p.title)
-                }
-              }}
+              onClick={() => setSelectedPicture(pic.src)}
             >
               <div className="xp-explorer-file-icon">
                 <img
-                  src={p.image}
-                  alt={p.title}
-                  style={{ width: 32, height: 32, objectFit: 'contain' }}
+                  src={pic.src}
+                  alt={pic.label}
+                  style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 2, border: '1px solid #ccc' }}
                   draggable={false}
                 />
               </div>
-              <span className="xp-explorer-file-name">{p.title}</span>
+              <span className="xp-explorer-file-name">{pic.label}</span>
             </button>
           ))}
         </div>
