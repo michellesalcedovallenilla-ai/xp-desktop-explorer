@@ -58,11 +58,38 @@ const Desktop = () => {
     [openWindow]
   )
 
+  const handleSunClick = useCallback(() => {
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    const isMobile = vw <= 480
+    const isTablet = vw > 480 && vw <= 768
+    const isSmallLaptop = vw > 768 && vw <= 1024
+    const sz = (m: number, t: number, sl: number, d: number) =>
+      isMobile ? m : isTablet ? t : isSmallLaptop ? sl : d
+    openWindow({
+      id: 'window-messenger',
+      title: 'MSN Messenger - Guestbook',
+      type: 'messenger',
+      x: isMobile ? 0 : 150,
+      y: isMobile ? 0 : 60,
+      width: sz(vw, 420, 400, 500),
+      height: sz(vh - 50, 450, 420, 550),
+      isMinimized: false,
+      isMaximized: false
+    })
+  }, [openWindow])
+
   return (
     <div
       className="desktop"
       onClick={handleDesktopClick}
     >
+      {/* Sun - MSN Messenger shortcut */}
+      <div className="xp-sun-wrapper" onClick={handleSunClick}>
+        <img src="/animals/sun.png" alt="Sun - Click for MSN Messenger" className="xp-sun-img" draggable={false} />
+        <span className="xp-sun-label">CLICK HERE!</span>
+      </div>
+
       {desktopIcons.map((icon) => (
         <DesktopIcon
           key={icon.id}

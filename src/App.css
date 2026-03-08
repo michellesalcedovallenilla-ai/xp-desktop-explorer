@@ -392,6 +392,45 @@
   right: 0;
   bottom: 30px;
 }
+/* === SUN (MSN Messenger shortcut) === */
+.xp-sun-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 6;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.xp-sun-wrapper:hover {
+  transform: scale(1.08);
+}
+
+.xp-sun-img {
+  width: 8vw;
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(255, 200, 0, 0.6));
+  pointer-events: auto;
+}
+
+.xp-sun-label {
+  font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  text-align: center;
+  animation: xp-sun-blink 1s ease-in-out infinite alternate;
+  margin-top: -4px;
+}
+
+@keyframes xp-sun-blink {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
 
 /* === LANDSCAPE ANIMAL ICONS === */
 .xp-landscape-icon {
