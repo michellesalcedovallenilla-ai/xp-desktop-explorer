@@ -4,13 +4,6 @@ import { supabase } from '@/integrations/supabase/client'
 const PORTFOLIO_URL = 'https://readymag.website/u2801101920/5411866/'
 const GOOGLE_URL = 'https://www.google.com/'
 
-interface SearchResult {
-  title: string
-  url: string
-  snippet: string
-  displayUrl: string
-}
-
 interface ReaderContent {
   title: string
   content: string
@@ -21,20 +14,31 @@ interface Props {
   windowId: string
 }
 
+// Hardcoded search results — always shown
+const HARDCODED_RESULTS = [
+  {
+    title: 'My Digital Crib (@mydigitalcrib) • Instagram photos and videos',
+    url: 'https://www.instagram.com/mydigitalcrib/',
+    snippet: '23K Followers, 456 Posts - See Instagram photos and videos from My Digital Crib (@mydigitalcrib) — Vintage computing aesthetics & digital curation',
+    displayUrl: 'www.instagram.com/mydigitalcrib',
+  },
+  {
+    title: 'hire me :) — Digital Portfolio & Creative Showcase',
+    url: 'https://readymag.website/u2801101920/5411866/',
+    snippet: "this ain't a regular site. it's touchable, scrollable, clickable, and loud. volume up. have fun. welcome to my side of the internet (aka my resume, just less boring)",
+    displayUrl: 'readymag.website/u2801101920/5411866',
+  },
+]
+
 export default function InternetExplorer({ windowId }: Props) {
   const [addressBar, setAddressBar] = useState(GOOGLE_URL)
   const [currentUrl, setCurrentUrl] = useState(GOOGLE_URL)
   const [history, setHistory] = useState<string[]>([GOOGLE_URL])
   const [historyIndex, setHistoryIndex] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
-
-  // Search state
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [searchError, setSearchError] = useState<string | null>(null)
   const [lastSearchQuery, setLastSearchQuery] = useState('')
 
-  // Reader state
+  // Reader state (for Readymag via Jina)
   const [readerContent, setReaderContent] = useState<ReaderContent | null>(null)
   const [readerLoading, setReaderLoading] = useState(false)
   const [readerError, setReaderError] = useState<string | null>(null)
@@ -45,34 +49,13 @@ export default function InternetExplorer({ windowId }: Props) {
     currentUrl === 'http://www.google.com'
   const isGoogleSearch = currentUrl.startsWith(`${GOOGLE_URL}search`)
   const isPortfolio = currentUrl.startsWith('https://readymag.website/u2801101920/5411866')
+  const isInstagram = currentUrl.includes('instagram.com/mydigitalcrib')
 
-  // Fetch search results
-  const fetchSearch = useCallback(async (query: string) => {
-    setSearchLoading(true)
-    setSearchError(null)
-    setSearchResults([])
-    setReaderContent(null)
-    try {
-      const { data, error } = await supabase.functions.invoke('web-proxy', {
-        body: { mode: 'search', query },
-      })
-      if (error) throw error
-      if (data?.error) throw new Error(data.error)
-      setSearchResults(data?.results || [])
-      setLastSearchQuery(query)
-    } catch (err: any) {
-      setSearchError(err.message || 'Search failed')
-    } finally {
-      setSearchLoading(false)
-    }
-  }, [])
-
-  // Fetch page content via Jina reader
+  // Fetch page content via Jina reader (for Readymag and other non-special URLs)
   const fetchReader = useCallback(async (url: string) => {
     setReaderLoading(true)
     setReaderError(null)
     setReaderContent(null)
-    setSearchResults([])
     try {
       const { data, error } = await supabase.functions.invoke('web-proxy', {
         body: { mode: 'read', url },
@@ -95,29 +78,22 @@ export default function InternetExplorer({ windowId }: Props) {
   const lastFetchedUrl = useRef('')
   useEffect(() => {
     if (currentUrl === lastFetchedUrl.current) return
-    if (isGoogleHome || isPortfolio) {
-      setSearchResults([])
+    if (isGoogleHome || isGoogleSearch || isInstagram) {
       setReaderContent(null)
-      setSearchError(null)
       setReaderError(null)
       lastFetchedUrl.current = currentUrl
-      return
-    }
-    if (isGoogleSearch) {
-      const urlObj = new URL(currentUrl)
-      const q = urlObj.searchParams.get('q') || ''
-      if (q) {
-        lastFetchedUrl.current = currentUrl
-        fetchSearch(q)
+      if (isGoogleSearch) {
+        const urlObj = new URL(currentUrl)
+        setLastSearchQuery(urlObj.searchParams.get('q') || '')
       }
       return
     }
-    // Any other URL → reader mode
+    // For Readymag and other URLs → use Jina reader
     if (currentUrl && currentUrl !== 'about:blank') {
       lastFetchedUrl.current = currentUrl
       fetchReader(currentUrl)
     }
-  }, [currentUrl, isGoogleHome, isGoogleSearch, isPortfolio, fetchSearch, fetchReader])
+  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, fetchReader])
 
   const navigateTo = (url: string) => {
     let finalUrl = url
@@ -126,7 +102,6 @@ export default function InternetExplorer({ windowId }: Props) {
     } else if (finalUrl.startsWith('www')) {
       finalUrl = `https://${finalUrl}`
     }
-
     const newHistory = history.slice(0, historyIndex + 1)
     newHistory.push(finalUrl)
     setHistory(newHistory)
@@ -174,26 +149,20 @@ export default function InternetExplorer({ windowId }: Props) {
     setTimeout(() => setCurrentUrl(temp), 50)
   }
 
-  // Simple markdown-like renderer for Jina content
+  // Simple markdown renderer for Jina content
   const renderMarkdown = (text: string) => {
     const lines = text.split('\n')
     return lines.map((line, i) => {
-      // Headers
       if (line.startsWith('# ')) return <h1 key={i} style={{ fontSize: '24px', fontWeight: 'bold', margin: '16px 0 8px' }}>{line.slice(2)}</h1>
       if (line.startsWith('## ')) return <h2 key={i} style={{ fontSize: '20px', fontWeight: 'bold', margin: '14px 0 6px' }}>{line.slice(3)}</h2>
       if (line.startsWith('### ')) return <h3 key={i} style={{ fontSize: '17px', fontWeight: 'bold', margin: '12px 0 4px' }}>{line.slice(4)}</h3>
-      // Images
       const imgMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/)
-      if (imgMatch) return <img key={i} src={imgMatch[2]} alt={imgMatch[1]} style={{ maxWidth: '100%', margin: '8px 0', borderRadius: '4px' }} />
-      // Links in text
-      const linkified = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#1a0dab;text-decoration:underline">$1</a>')
-      // Bold
+      if (imgMatch && !imgMatch[2].startsWith('blob:')) return <img key={i} src={imgMatch[2]} alt={imgMatch[1]} style={{ maxWidth: '100%', margin: '8px 0', borderRadius: '4px' }} />
+      if (imgMatch && imgMatch[2].startsWith('blob:')) return null
+      const linkified = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#0000CC;text-decoration:underline">$1</a>')
       const bolded = linkified.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      // Empty line
       if (line.trim() === '') return <br key={i} />
-      // List items
       if (line.startsWith('- ') || line.startsWith('* ')) return <li key={i} style={{ marginLeft: '20px', fontSize: '14px', lineHeight: '1.6' }} dangerouslySetInnerHTML={{ __html: bolded.slice(2) }} />
-      // Regular paragraph
       return <p key={i} style={{ fontSize: '14px', lineHeight: '1.7', margin: '4px 0', color: '#333' }} dangerouslySetInnerHTML={{ __html: bolded }} />
     })
   }
@@ -202,7 +171,7 @@ export default function InternetExplorer({ windowId }: Props) {
     // Google homepage
     if (isGoogleHome) {
       return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', fontFamily: 'Arial, sans-serif' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', fontFamily: 'Arial, sans-serif', background: '#fff' }}>
           <div style={{ fontSize: '72px', fontWeight: 'bold', marginBottom: '20px', letterSpacing: '-3px' }}>
             <span style={{ color: '#4285F4' }}>G</span><span style={{ color: '#EA4335' }}>o</span><span style={{ color: '#FBBC05' }}>o</span><span style={{ color: '#4285F4' }}>g</span><span style={{ color: '#34A853' }}>l</span><span style={{ color: '#EA4335' }}>e</span>
           </div>
@@ -219,77 +188,144 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    // Search results page
+    // Search results — 2004-era Google style with hardcoded results
     if (isGoogleSearch) {
-      if (searchLoading) {
-        return (
-          <div style={{ padding: '40px', fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', marginBottom: '12px', animation: 'spin 1s linear infinite' }}>🔍</div>
-            <p style={{ color: '#666', fontSize: '14px' }}>Searching...</p>
-          </div>
-        )
-      }
-      if (searchError) {
-        return (
-          <div style={{ padding: '40px', fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
-            <p style={{ color: '#666' }}>{searchError}</p>
-            <button onClick={handleRefresh} style={{ marginTop: '12px', padding: '8px 24px', backgroundColor: '#4285F4', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Try Again</button>
-          </div>
-        )
-      }
       return (
-        <div style={{ padding: '20px 30px', fontFamily: 'Arial, sans-serif', maxWidth: '700px' }}>
-          {/* Search bar at top */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #ebebeb' }}>
-            <span style={{ fontSize: '28px', fontWeight: 'bold' }}>
+        <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '13px', background: '#fff', height: '100%' }}>
+          {/* Google header bar */}
+          <div style={{ background: '#f1f1f1', borderBottom: '1px solid #e5e5e5', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{ fontSize: '22px', fontWeight: 'bold', letterSpacing: '-1px' }}>
               <span style={{ color: '#4285F4' }}>G</span><span style={{ color: '#EA4335' }}>o</span><span style={{ color: '#FBBC05' }}>o</span><span style={{ color: '#4285F4' }}>g</span><span style={{ color: '#34A853' }}>l</span><span style={{ color: '#EA4335' }}>e</span>
             </span>
-            <form onSubmit={(e) => { e.preventDefault(); navigateTo(`${GOOGLE_URL}search?q=${encodeURIComponent(lastSearchQuery)}`) }} style={{ flex: 1 }}>
+            <form onSubmit={(e) => { e.preventDefault(); navigateTo(`${GOOGLE_URL}search?q=${encodeURIComponent(lastSearchQuery)}`) }} style={{ flex: 1, maxWidth: '500px' }}>
               <input value={lastSearchQuery} onChange={(e) => setLastSearchQuery(e.target.value)}
-                style={{ width: '100%', padding: '8px 16px', fontSize: '14px', borderRadius: '24px', border: '1px solid #dfe1e5', outline: 'none' }} />
+                style={{ width: '100%', padding: '6px 12px', fontSize: '14px', border: '1px solid #d9d9d9', outline: 'none', fontFamily: 'Arial, sans-serif' }} />
             </form>
           </div>
 
-          {/* Results count */}
-          <p style={{ fontSize: '12px', color: '#70757a', marginBottom: '16px' }}>
-            About {searchResults.length} results
-          </p>
+          {/* Stats bar */}
+          <div style={{ padding: '6px 16px', color: '#808080', fontSize: '11px', borderBottom: '1px solid #e5e5e5' }}>
+            Results 1 - 2 of about 2 for <b>{lastSearchQuery}</b>. (0.28 seconds)
+          </div>
 
           {/* Results */}
-          {searchResults.length === 0 && !searchLoading && (
-            <p style={{ color: '#666', fontSize: '14px' }}>No results found.</p>
-          )}
-          {searchResults.map((result, i) => (
-            <div key={i} style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '12px', color: '#202124', marginBottom: '2px' }}>
-                {result.displayUrl}
+          <div style={{ padding: '12px 16px' }}>
+            {HARDCODED_RESULTS.map((result, i) => (
+              <div key={i} style={{ marginBottom: '22px' }}>
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); navigateTo(result.url) }}
+                  style={{ fontSize: '16px', color: '#0000CC', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'Arial, sans-serif', lineHeight: '1.2' }}
+                >
+                  {result.title}
+                </a>
+                <div style={{ fontSize: '13px', color: '#008000', marginTop: '1px' }}>
+                  {result.displayUrl}
+                </div>
+                <div style={{ fontSize: '13px', color: '#000', lineHeight: '1.4', marginTop: '2px' }}>
+                  {result.snippet}
+                </div>
               </div>
-              <a
-                href="#"
-                onClick={(e) => { e.preventDefault(); navigateTo(result.url) }}
-                style={{ fontSize: '18px', color: '#1a0dab', textDecoration: 'none', cursor: 'pointer', lineHeight: '1.3' }}
-                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-              >
-                {result.title}
-              </a>
-              <p style={{ fontSize: '13px', color: '#4d5156', lineHeight: '1.5', margin: '4px 0 0' }}>
-                {result.snippet}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Google footer */}
+          <div style={{ padding: '16px', textAlign: 'center', borderTop: '1px solid #e5e5e5', marginTop: '20px' }}>
+            <span style={{ fontSize: '22px', letterSpacing: '-1px' }}>
+              <span style={{ color: '#4285F4' }}>G</span><span style={{ color: '#EA4335' }}>o</span><span style={{ color: '#FBBC05' }}>o</span><span style={{ color: '#4285F4' }}>o</span><span style={{ color: '#34A853' }}>o</span><span style={{ color: '#EA4335' }}>o</span><span style={{ color: '#4285F4' }}>g</span><span style={{ color: '#34A853' }}>l</span><span style={{ color: '#EA4335' }}>e</span>
+            </span>
+          </div>
         </div>
       )
     }
 
-    // Portfolio site (simulated)
-    if (isPortfolio) {
-      const path = currentUrl.replace('https://readymag.website/u2801101920/5411866/', '').replace(/\/$/, '') || 'home'
-      return <PortfolioSite page={path} onNavigate={navigateTo} />
+    // Instagram — Legacy Profile View
+    if (isInstagram) {
+      return (
+        <div style={{
+          fontFamily: 'Arial, sans-serif',
+          background: '#fff',
+          height: '100%',
+          overflow: 'auto',
+        }}>
+          {/* Instagram-style header */}
+          <div style={{
+            background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)',
+            padding: '30px 40px',
+            color: '#fff',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{
+                width: '80px', height: '80px', borderRadius: '50%',
+                background: 'rgba(255,255,255,0.2)', border: '3px solid #fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '36px',
+              }}>📷</div>
+              <div>
+                <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 4px' }}>My Digital Crib</h1>
+                <p style={{ fontSize: '14px', margin: 0, opacity: 0.9 }}>
+                  <strong>@mydigitalcrib</strong> • Digital Creator
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Profile stats */}
+          <div style={{
+            display: 'flex', gap: '32px', padding: '20px 40px',
+            borderBottom: '1px solid #dbdbdb',
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>456</div>
+              <div style={{ fontSize: '12px', color: '#8e8e8e' }}>Posts</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>23K</div>
+              <div style={{ fontSize: '12px', color: '#8e8e8e' }}>Followers</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>1,234</div>
+              <div style={{ fontSize: '12px', color: '#8e8e8e' }}>Following</div>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div style={{ padding: '20px 40px', borderBottom: '1px solid #dbdbdb' }}>
+            <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 8px', color: '#262626' }}>
+              📸 Vintage computing aesthetics & digital curation
+            </p>
+            <p style={{ fontSize: '14px', color: '#262626', margin: 0 }}>
+              🖥️ Retro tech • Design • Digital experiences
+            </p>
+          </div>
+
+          {/* Legacy notice */}
+          <div style={{
+            margin: '20px 40px',
+            padding: '16px 20px',
+            background: '#FFF8E1',
+            border: '1px solid #FFE082',
+            borderRadius: '4px',
+            fontSize: '12px',
+            color: '#5D4037',
+            lineHeight: '1.5',
+          }}>
+            <strong>⚠️ Legacy Profile View</strong><br />
+            Instagram requires modern authentication to display full content.
+            This is a text-only legacy view.<br />
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); window.open('https://www.instagram.com/mydigitalcrib/', '_blank') }}
+              style={{ color: '#0000CC', textDecoration: 'underline', marginTop: '4px', display: 'inline-block' }}
+            >
+              Open in a new window ↗
+            </a>
+          </div>
+        </div>
+      )
     }
 
-    // Reader mode for any other URL
+    // Reader mode (Jina) for Readymag and other URLs
     if (readerLoading) {
       return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontFamily: 'Arial, sans-serif' }}>
@@ -315,7 +351,6 @@ export default function InternetExplorer({ windowId }: Props) {
     if (readerContent) {
       return (
         <div style={{ padding: '24px 32px', fontFamily: 'Georgia, serif', maxWidth: '800px', margin: '0 auto', overflow: 'auto', height: '100%' }}>
-          {/* Reader header */}
           <div style={{ borderBottom: '2px solid #eee', paddingBottom: '16px', marginBottom: '20px' }}>
             <div style={{ fontSize: '11px', color: '#888', marginBottom: '6px', fontFamily: 'Arial, sans-serif' }}>
               📖 Reader View — {readerContent.siteName}
@@ -326,11 +361,10 @@ export default function InternetExplorer({ windowId }: Props) {
               </h1>
             )}
             <a href="#" onClick={(e) => { e.preventDefault(); window.open(currentUrl, '_blank') }}
-              style={{ fontSize: '12px', color: '#4285F4', fontFamily: 'Arial, sans-serif', textDecoration: 'none' }}>
+              style={{ fontSize: '12px', color: '#0000CC', fontFamily: 'Arial, sans-serif', textDecoration: 'underline' }}>
               Open original page ↗
             </a>
           </div>
-          {/* Content */}
           <div style={{ fontSize: '15px', lineHeight: '1.8', color: '#333' }}>
             {renderMarkdown(readerContent.content)}
           </div>
@@ -359,21 +393,21 @@ export default function InternetExplorer({ windowId }: Props) {
         </form>
       </div>
 
-      {/* Content Area */}
+      {/* Content */}
       <div className="xp-ie-content" style={{ flex: 1, backgroundColor: '#fff', margin: 0, padding: 0, overflow: 'auto' }}>
         {renderContent()}
       </div>
 
       {/* Status Bar */}
       <div className="xp-ie-statusbar" style={{ height: '22px', backgroundColor: '#ECE9D8', borderTop: '1px solid #ACA899', display: 'flex', alignItems: 'center', padding: '0 8px', fontSize: '11px', color: '#333' }}>
-        <span style={{ flex: 1 }}>{(searchLoading || readerLoading) ? `Loading...` : 'Done'}</span>
+        <span style={{ flex: 1 }}>{readerLoading ? 'Loading...' : 'Done'}</span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '4px', borderLeft: '1px solid #ACA899', paddingLeft: '8px' }}>🌐 Internet</span>
       </div>
     </div>
   )
 }
 
-// Portfolio site component (kept as-is)
+// Portfolio site component
 function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: string) => void }) {
   const [showWarning, setShowWarning] = useState(page === 'home')
   const PORTFOLIO_BASE = 'https://readymag.website/u2801101920/5411866/'
@@ -399,54 +433,21 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
   const content = pageContent[page]
 
   return (
-    <div style={{
-      height: '100%',
-      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
-      color: '#fff',
-      fontFamily: "'Arial', sans-serif",
-      overflow: 'auto',
-      position: 'relative'
-    }}>
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'url(https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/image-379fff01-5b6b-4681-8b43-70fd84c97339.png?w=300&e=webp&nll=true)',
-        backgroundSize: 'cover', backgroundPosition: 'center',
-        filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
-      }} />
-
+    <div style={{ height: '100%', background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)', color: '#fff', fontFamily: "'Arial', sans-serif", overflow: 'auto', position: 'relative' }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/image-379fff01-5b6b-4681-8b43-70fd84c97339.png?w=300&e=webp&nll=true)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)' }} />
       {showWarning && (
-        <div style={{
-          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-          justifyContent: 'center', zIndex: 10, background: 'rgba(0,0,0,0.5)'
-        }}>
-          <div style={{
-            background: '#FFD700', color: '#000', borderRadius: '16px',
-            padding: '30px 40px', maxWidth: '400px', textAlign: 'center', position: 'relative'
-          }}>
-            <button onClick={() => setShowWarning(false)} style={{
-              position: 'absolute', top: '10px', right: '14px',
-              background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#000'
-            }}>✕</button>
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, background: 'rgba(0,0,0,0.5)' }}>
+          <div style={{ background: '#FFD700', color: '#000', borderRadius: '16px', padding: '30px 40px', maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
+            <button onClick={() => setShowWarning(false)} style={{ position: 'absolute', top: '10px', right: '14px', background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#000' }}>✕</button>
             <h2 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px' }}>WARNING</h2>
-            <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 16px' }}>
-              this ain't a regular site.<br />
-              it's touchable, scrollable, clickable, and loud.<br />
-              volume up. have fun.
-            </p>
-            <p style={{ fontSize: '13px', margin: 0, fontStyle: 'italic' }}>
-              welcome to my side of the internet<br />
-              (aka my resume, just less boring)
-            </p>
+            <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 16px' }}>this ain't a regular site.<br />it's touchable, scrollable, clickable, and loud.<br />volume up. have fun.</p>
+            <p style={{ fontSize: '13px', margin: 0, fontStyle: 'italic' }}>welcome to my side of the internet<br />(aka my resume, just less boring)</p>
           </div>
         </div>
       )}
-
       <div style={{ position: 'relative', zIndex: 5, padding: '40px 30px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(PORTFOLIO_BASE) }}
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
-            My Digital Drafts
-          </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(PORTFOLIO_BASE) }} style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>My Digital Drafts</a>
           <div style={{ display: 'flex', gap: '20px' }}>
             {navLinks.map((link) => (
               <a key={link.label} href="#" onClick={(e) => { e.preventDefault(); onNavigate(link.url) }}
@@ -457,42 +458,25 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
             ))}
           </div>
         </div>
-
         {content && content.title && (
           <div style={{ maxWidth: '600px', margin: '80px auto', textAlign: 'center' }}>
             <h1 style={{ fontSize: '42px', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1px' }}>{content.title}</h1>
             <p style={{ fontSize: '16px', lineHeight: '1.8', color: '#ccc' }}>{content.body}</p>
           </div>
         )}
-
         {(page === 'home' || page === 'portfolio') && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '40px' }}>
-            {[
-              'image-952ad33b-466e-47fd-90fa-7d253f913fde',
-              'image-8c416ae5-c92a-43ff-af12-ce43ddd0ae32',
-              'image-b9f14574-36fe-4a4f-b21f-e5c9a8df10b3',
-              'image-35fa2936-1eba-48a4-9326-f7eeda1bd0fa',
-              'image-0865149c-34db-408d-ae22-f372a4588229',
-              'image-10f721cf-d2af-4446-81f3-740bc1c624c1',
-            ].map((id) => (
+            {['image-952ad33b-466e-47fd-90fa-7d253f913fde','image-8c416ae5-c92a-43ff-af12-ce43ddd0ae32','image-b9f14574-36fe-4a4f-b21f-e5c9a8df10b3','image-35fa2936-1eba-48a4-9326-f7eeda1bd0fa','image-0865149c-34db-408d-ae22-f372a4588229','image-10f721cf-d2af-4446-81f3-740bc1c624c1'].map((id) => (
               <div key={id} style={{ borderRadius: '8px', overflow: 'hidden', aspectRatio: '1', background: '#222' }}>
-                <img src={`https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/${id}.png?w=300&e=webp&nll=true`}
-                  alt="Project" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                <img src={`https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/${id}.png?w=300&e=webp&nll=true`} alt="Project" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
               </div>
             ))}
           </div>
         )}
-
         {page === 'socials' && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: '40px' }}>
-            <a href="https://www.instagram.com/mydigitaldrafts/" target="_blank" rel="noopener noreferrer"
-              style={{ padding: '12px 32px', background: '#FFD700', color: '#000', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>
-              📸 Instagram — @mydigitaldrafts
-            </a>
-            <a href="https://ifyourereadingthishiremenow.my.canva.site/" target="_blank" rel="noopener noreferrer"
-              style={{ padding: '12px 32px', background: '#333', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>
-              🌐 MySpace
-            </a>
+            <a href="https://www.instagram.com/mydigitaldrafts/" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 32px', background: '#FFD700', color: '#000', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>📸 Instagram — @mydigitaldrafts</a>
+            <a href="https://ifyourereadingthishiremenow.my.canva.site/" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 32px', background: '#333', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>🌐 MySpace</a>
           </div>
         )}
       </div>
