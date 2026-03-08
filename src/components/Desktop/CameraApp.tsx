@@ -47,6 +47,7 @@ export default function CameraApp() {
   const [activeFilter, setActiveFilter] = useState(0)
   const [sampleIndex, setSampleIndex] = useState(0)
   const [disguiseEnabled, setDisguiseEnabled] = useState(false)
+  const [hatEnabled, setHatEnabled] = useState(false)
   const heartIdRef = useRef(0)
 
   const startCamera = useCallback(async () => {
