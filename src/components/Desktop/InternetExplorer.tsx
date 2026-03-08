@@ -17,13 +17,13 @@ interface Props {
 // Hardcoded search results — always shown
 const HARDCODED_RESULTS = [
   {
-    title: 'My Digital Crib (@mydigitalcrib) • Instagram photos and videos',
+    title: 'mydigitalcrib (@mydigitalcrib) • Instagram photos and videos',
     url: 'https://www.instagram.com/mydigitalcrib/',
-    snippet: '23K Followers, 456 Posts - See Instagram photos and videos from My Digital Crib (@mydigitalcrib) — Vintage computing aesthetics & digital curation',
+    snippet: '793 Followers, 33 Posts - Marketing Agency. hey bestie 💻 we\'re vibes, your gen z marketing crew. taking your brand to the next level is our thing! 🫶',
     displayUrl: 'www.instagram.com/mydigitalcrib',
   },
   {
-    title: 'hire me :) — Digital Portfolio & Creative Showcase',
+    title: 'My Main Portfolio - 100% Interactive and responsive made with Readymag',
     url: 'https://readymag.website/u2801101920/5411866/',
     snippet: "this ain't a regular site. it's touchable, scrollable, clickable, and loud. volume up. have fun. welcome to my side of the internet (aka my resume, just less boring)",
     displayUrl: 'readymag.website/u2801101920/5411866',
@@ -510,15 +510,16 @@ export default function InternetExplorer({ windowId }: Props) {
 
               {/* Bio section */}
               <div style={{ padding: '10px 12px', borderBottom: '1px solid #efefef' }}>
-                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#262626', margin: '0 0 3px' }}>mydigitalcrib</p>
+                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#262626', margin: '0 0 1px' }}>mydigitalcrib</p>
+                <p style={{ fontSize: '12px', color: '#777', margin: '0 0 3px' }}>Marketing Agency</p>
                 <p style={{ fontSize: '13px', color: '#555', margin: '0 0 2px', lineHeight: '1.45' }}>
                   hey bestie 💻<br />
                   we're vibes, your gen z marketing crew.<br />
                   taking your brand to the next level is our thing! 🫶
                 </p>
-                <IgLink style={{ fontSize: '13px', color: '#3b6d8c' }}>
-                  welcometomywebsites.com
-                </IgLink>
+                <p style={{ fontSize: '12px', color: '#555', margin: '2px 0 0' }}>
+                  🔗 welcometomywebsites.com &nbsp; ⓘ mydigitalcrib
+                </p>
               </div>
 
               {/* Tabs: grid | list | photo map */}
