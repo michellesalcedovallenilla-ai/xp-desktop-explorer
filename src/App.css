@@ -4643,8 +4643,8 @@ textarea {
   }
 }
 
-/* === TOUCH DEVICE ENHANCEMENTS === */
-@media (pointer: coarse) {
+/* === TOUCH DEVICE ENHANCEMENTS (only on small touch screens) === */
+@media (pointer: coarse) and (max-width: 768px) {
   .xp-win-btn {
     width: 28px;
     height: 28px;
@@ -4699,7 +4699,6 @@ textarea {
     width: 22px;
     height: 22px;
   }
-  /* Thumb actions always visible on touch */
   .thumb-actions {
     opacity: 1 !important;
   }
