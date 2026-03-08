@@ -174,7 +174,20 @@ export default function CameraApp() {
           mixBlendMode: 'multiply'
         }} />
 
-        {/* Hearts */}
+        {/* Disguise overlay */}
+        {disguiseEnabled && (
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <img
+              src="/overlays/mustache-glasses.png"
+              alt="Disguise"
+              style={{ width: '55%', opacity: 0.9, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+            />
+          </div>
+        )}
+
         <AnimatePresence>
           {hearts.map((heart) => (
             <motion.div
