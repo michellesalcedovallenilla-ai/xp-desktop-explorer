@@ -29,7 +29,8 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
   const { moveDesktopIcon } = useSystemStore()
   const [imgError, setImgError] = useState(false)
   const animal = ICON_IMAGES[icon.icon] || ICON_IMAGES[icon.id] || ICON_IMAGES[icon.action]
-  const iconWidth = icon.iconWidth || 120
+  // iconWidth is now in vw units
+  const iconWidthVw = icon.iconWidth || 8
 
   useEffect(() => {
     setImgError(false)
@@ -94,8 +95,11 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       const dy = ev.clientY - startY
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true
       if (moved) {
-        const nx = Math.max(0, Math.min(window.innerWidth - iconWidth, origX + dx))
-        const ny = Math.max(0, Math.min(window.innerHeight - 120, origY + dy))
+        // Convert pixel delta to viewport percentage delta
+        const dxVw = (dx / window.innerWidth) * 100
+        const dyVh = (dy / window.innerHeight) * 100
+        const nx = Math.max(0, Math.min(95, origX + dxVw))
+        const ny = Math.max(0, Math.min(90, origY + dyVh))
         moveDesktopIcon(icon.id, nx, ny)
       }
     }
@@ -112,7 +116,11 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
   return (
     <div
       className={`xp-landscape-icon ${isSelected ? 'selected' : ''}`}
-      style={{ left: icon.x, top: icon.y, width: iconWidth }}
+      style={{
+        left: `${icon.x}vw`,
+        top: `${icon.y}vh`,
+        width: `${iconWidthVw}vw`
+      }}
       onMouseDown={(e) => {
         onSelect()
         handleMouseDown(e)
@@ -126,12 +134,12 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
           src={animal.src}
           alt={animal.alt}
           className="xp-landscape-animal"
-          style={{ width: iconWidth }}
+          style={{ width: `${iconWidthVw}vw` }}
           draggable={false}
           onError={() => setImgError(true)}
         />
       ) : (
-        <div style={{ width: iconWidth, height: iconWidth * 0.75, background: 'rgba(0,0,0,0.2)', borderRadius: 8 }} />
+        <div style={{ width: `${iconWidthVw}vw`, height: `${iconWidthVw * 0.75}vw`, background: 'rgba(0,0,0,0.2)', borderRadius: 8 }} />
       )}
       <span className="xp-landscape-label">{icon.label}</span>
     </div>

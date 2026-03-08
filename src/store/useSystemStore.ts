@@ -44,19 +44,19 @@ interface SystemState {
   loadNotes: () => void
 }
 
+// Positions are in viewport percentages (vw/vh) so they align with the Bliss wallpaper on any screen
 const defaultDesktopIcons: DesktopIconData[] = [
-  // === SKY ANIMALS (flying creatures - belong in the sky) ===
-  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 520, y: 30, iconWidth: 110 },
-  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 180, y: 100, iconWidth: 90 },
-  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 1050, y: 60, iconWidth: 100 },
-  // === GROUND ANIMALS (standing on the Bliss hill) ===
-  // Positioned along the hill curve: left side lower, right side slightly higher
-  // Lower on hill = larger (closer), higher on hill = smaller (farther)
-  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 80, y: 420, iconWidth: 100 },
-  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 300, y: 340, iconWidth: 140 },
-  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 530, y: 380, iconWidth: 110 },
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 750, y: 310, iconWidth: 300 },
-  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 1100, y: 350, iconWidth: 220 },
+  // === SKY ANIMALS (flying creatures — clearly above the horizon) ===
+  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 38, y: 4, iconWidth: 8 },
+  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 12, y: 14, iconWidth: 7 },
+  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 80, y: 6, iconWidth: 7 },
+  // === GROUND ANIMALS (standing on the Bliss hill, feet on grass) ===
+  // Hill horizon: ~52-58% from top (higher on right, lower on left)
+  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 5, y: 56, iconWidth: 7 },
+  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 22, y: 40, iconWidth: 10 },
+  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 42, y: 46, iconWidth: 8 },
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 58, y: 36, iconWidth: 20 },
+  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 78, y: 42, iconWidth: 14 },
 ]
 
 const defaultDockItems: DockItem[] = [
