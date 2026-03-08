@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Camera, Download, Trash2, X, Glasses, Crown } from 'lucide-react'
+import { Heart, Download, Trash2, X, Glasses, Crown } from 'lucide-react'
 
 interface Photo {
   id: string
   dataUrl: string
+}
+
+interface FaceBox {
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 const FILTERS = [
@@ -25,20 +32,24 @@ const FILTERS = [
 const SAMPLE_IMAGES = [
   '/animals/michelle.png',
   '/animals/cat.png',
-  '/animals/cat ii.png',
-  '/animals/cat flying.png',
+  '/animals/cat-ii.png',
+  '/animals/cat-flying.png',
   '/animals/chiguire.png',
-  '/animals/cow iii.png',
+  '/animals/cow-iii.png',
   '/animals/dino.png',
-  '/animals/fish flying.png',
+  '/animals/fish-flying.png',
   '/animals/oso.png',
-  '/animals/pig flying.png',
+  '/animals/pig-flying.png',
 ]
 
 export default function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const viewfinderRef = useRef<HTMLDivElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const faceDetectorRef = useRef<any>(null)
+  const faceLoopRef = useRef<number>(0)
+
   const [photos, setPhotos] = useState<Photo[]>([])
   const [heartsEnabled, setHeartsEnabled] = useState(false)
   const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([])
@@ -50,20 +61,90 @@ export default function CameraApp() {
   const [sampleIndex, setSampleIndex] = useState(0)
   const [disguiseEnabled, setDisguiseEnabled] = useState(false)
   const [hatEnabled, setHatEnabled] = useState(false)
+  const [faceBox, setFaceBox] = useState<FaceBox | null>(null)
   const heartIdRef = useRef(0)
+
+  // Initialize FaceDetector if available
+  useEffect(() => {
+    if ('FaceDetector' in window) {
+      try {
+        faceDetectorRef.current = new (window as any).FaceDetector({
+          fastMode: true,
+          maxDetectedFaces: 1,
+        })
+      } catch {
+        faceDetectorRef.current = null
+      }
+    }
+    return () => {
+      cancelAnimationFrame(faceLoopRef.current)
+    }
+  }, [])
+
+  // Face detection loop
+  const runFaceDetection = useCallback(async () => {
+    if (!faceDetectorRef.current || !videoRef.current || !hasCamera) return
+    const video = videoRef.current
+    if (video.readyState < 2) {
+      faceLoopRef.current = requestAnimationFrame(runFaceDetection)
+      return
+    }
+
+    try {
+      const faces = await faceDetectorRef.current.detect(video)
+      if (faces.length > 0) {
+        const face = faces[0]
+        const vw = video.videoWidth
+        const vh = video.videoHeight
+        const container = viewfinderRef.current
+        if (container && vw && vh) {
+          const cw = container.clientWidth
+          const ch = container.clientHeight
+          // Video is object-fit: cover/contain — compute scale
+          const scale = Math.min(cw / vw, ch / vh)
+          const offsetX = (cw - vw * scale) / 2
+          const offsetY = (ch - vh * scale) / 2
+
+          // Mirror the x coordinate since video is mirrored
+          const mirroredX = vw - face.boundingBox.x - face.boundingBox.width
+
+          setFaceBox({
+            x: mirroredX * scale + offsetX,
+            y: face.boundingBox.y * scale + offsetY,
+            width: face.boundingBox.width * scale,
+            height: face.boundingBox.height * scale,
+          })
+        }
+      } else {
+        setFaceBox(null)
+      }
+    } catch {
+      // FaceDetector may fail on some frames
+    }
+
+    faceLoopRef.current = requestAnimationFrame(runFaceDetection)
+  }, [hasCamera])
+
+  useEffect(() => {
+    if (hasCamera && (disguiseEnabled || hatEnabled)) {
+      faceLoopRef.current = requestAnimationFrame(runFaceDetection)
+    } else {
+      cancelAnimationFrame(faceLoopRef.current)
+      if (!disguiseEnabled && !hatEnabled) setFaceBox(null)
+    }
+    return () => cancelAnimationFrame(faceLoopRef.current)
+  }, [hasCamera, disguiseEnabled, hatEnabled, runFaceDetection])
 
   const startCamera = useCallback(async () => {
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error('Camera API not supported in this browser')
       }
-
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       streamRef.current?.getTracks().forEach((t) => t.stop())
       streamRef.current = stream
       setHasCamera(true)
       setCameraError(null)
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
@@ -112,7 +193,6 @@ export default function CameraApp() {
       ctx.filter = FILTERS[activeFilter].css
       ctx.drawImage(video, 0, 0)
     } else {
-      // Capture the sample image with filter
       const img = document.querySelector('.camera-sample-img') as HTMLImageElement
       if (!img) return
       canvas.width = img.naturalWidth || 400
@@ -122,11 +202,61 @@ export default function CameraApp() {
     }
 
     ctx.filter = 'none'
+
+    // Draw overlays onto captured photo if face detected
+    if (faceBox && hasCamera && videoRef.current) {
+      const video = videoRef.current
+      const vw = video.videoWidth
+      const vh = video.videoHeight
+      const container = viewfinderRef.current
+      if (container && vw && vh) {
+        const cw = container.clientWidth
+        const ch = container.clientHeight
+        const scale = Math.min(cw / vw, ch / vh)
+        const offsetX = (cw - vw * scale) / 2
+        const offsetY = (ch - vh * scale) / 2
+        // Convert faceBox back to video coordinates
+        const fx = (faceBox.x - offsetX) / scale
+        const fy = (faceBox.y - offsetY) / scale
+        const fw = faceBox.width / scale
+        const fh = faceBox.height / scale
+
+        const drawOverlay = (src: string, yRatio: number, hRatio: number) => {
+          const img = new Image()
+          img.src = src
+          // These are sync if cached
+          if (img.complete) {
+            const ow = fw * 1.1
+            const oh = fh * hRatio
+            const ox = fx + (fw - ow) / 2
+            const oy = fy + fh * yRatio
+            ctx.drawImage(img, ox, oy, ow, oh)
+          }
+        }
+
+        if (disguiseEnabled) {
+          drawOverlay('/overlays/glasses.png', 0.25, 0.25)
+          drawOverlay('/overlays/mustache.png', 0.6, 0.2)
+        }
+        if (hatEnabled) {
+          const img = new Image()
+          img.src = '/overlays/hat.png'
+          if (img.complete) {
+            const ow = fw * 1.3
+            const oh = fh * 0.5
+            const ox = fx + (fw - ow) / 2
+            const oy = fy - oh * 0.7
+            ctx.drawImage(img, ox, oy, ow, oh)
+          }
+        }
+      }
+    }
+
     const dataUrl = canvas.toDataURL('image/png')
     setPhotos((prev) => [{ id: Date.now().toString(), dataUrl }, ...prev])
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
-  }, [hasCamera, activeFilter])
+  }, [hasCamera, activeFilter, faceBox, disguiseEnabled, hatEnabled])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
@@ -140,10 +270,61 @@ export default function CameraApp() {
   }
 
   const filterStyle = FILTERS[activeFilter].css
+  const hasFaceApi = 'FaceDetector' in window
+
+  // Compute overlay positions from faceBox
+  const glassesStyle: React.CSSProperties | null =
+    disguiseEnabled && faceBox
+      ? {
+          position: 'absolute',
+          left: faceBox.x + faceBox.width * -0.05,
+          top: faceBox.y + faceBox.height * 0.22,
+          width: faceBox.width * 1.1,
+          height: faceBox.height * 0.28,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+          transition: 'all 0.08s linear',
+        }
+      : null
+
+  const mustacheStyle: React.CSSProperties | null =
+    disguiseEnabled && faceBox
+      ? {
+          position: 'absolute',
+          left: faceBox.x + faceBox.width * 0.1,
+          top: faceBox.y + faceBox.height * 0.58,
+          width: faceBox.width * 0.8,
+          height: faceBox.height * 0.22,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+          transition: 'all 0.08s linear',
+        }
+      : null
+
+  const hatStyle: React.CSSProperties | null =
+    hatEnabled && faceBox
+      ? {
+          position: 'absolute',
+          left: faceBox.x + faceBox.width * -0.15,
+          top: faceBox.y - faceBox.height * 0.45,
+          width: faceBox.width * 1.3,
+          height: faceBox.height * 0.55,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+          transition: 'all 0.08s linear',
+        }
+      : null
+
+  // Fallback: center overlays if no FaceDetector or no face found
+  const showCenteredDisguise = disguiseEnabled && (!hasFaceApi || !faceBox)
+  const showCenteredHat = hatEnabled && (!hasFaceApi || !faceBox)
 
   return (
     <div className="camera-app">
-      <div className="camera-viewfinder" style={{ position: 'relative' }}>
+      <div className="camera-viewfinder" ref={viewfinderRef} style={{ position: 'relative' }}>
         {hasCamera ? (
           <video
             ref={videoRef}
@@ -179,10 +360,7 @@ export default function CameraApp() {
             <div style={{ color: '#666', fontSize: 11, fontFamily: 'Tahoma, sans-serif' }}>
               Or browse sample photos:
             </div>
-            <div
-              style={{ cursor: 'pointer', maxWidth: '80%', maxHeight: '50%' }}
-              onClick={cycleSample}
-            >
+            <div style={{ cursor: 'pointer', maxWidth: '80%', maxHeight: '50%' }} onClick={cycleSample}>
               <img
                 src={SAMPLE_IMAGES[sampleIndex]}
                 alt="Sample"
@@ -203,41 +381,52 @@ export default function CameraApp() {
           </div>
         )}
 
-        {/* Scanline overlay for retro feel */}
+        {/* Scanline overlay */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
           background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)',
           mixBlendMode: 'multiply'
         }} />
 
-        {/* Disguise overlay */}
-        {disguiseEnabled && (
+        {/* Face-tracked glasses */}
+        {glassesStyle && (
+          <img src="/overlays/glasses.png" alt="Glasses" style={glassesStyle} />
+        )}
+        {/* Face-tracked mustache */}
+        {mustacheStyle && (
+          <img src="/overlays/mustache.png" alt="Mustache" style={mustacheStyle} />
+        )}
+        {/* Face-tracked hat */}
+        {hatStyle && (
+          <img src="/overlays/hat.png" alt="Hat" style={hatStyle} />
+        )}
+
+        {/* Centered fallback disguise */}
+        {showCenteredDisguise && (
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexDirection: 'column', gap: 4
           }}>
-            <img
-              src="/overlays/mustache-glasses.png"
-              alt="Disguise"
-              style={{ width: '55%', opacity: 0.9, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
-            />
+            <img src="/overlays/glasses.png" alt="Glasses"
+              style={{ width: '40%', opacity: 0.9, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }} />
+            <img src="/overlays/mustache.png" alt="Mustache"
+              style={{ width: '30%', opacity: 0.9, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }} />
           </div>
         )}
 
-        {/* Hat overlay */}
-        {hatEnabled && (
+        {/* Centered fallback hat */}
+        {showCenteredHat && (
           <div style={{
-            position: 'absolute', top: '-5%', left: 0, right: 0, pointerEvents: 'none',
+            position: 'absolute', top: '5%', left: 0, right: 0, pointerEvents: 'none',
             display: 'flex', justifyContent: 'center'
           }}>
-            <img
-              src="/overlays/hat.png"
-              alt="Hat"
-              style={{ width: '45%', opacity: 0.95, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
-            />
+            <img src="/overlays/hat.png" alt="Hat"
+              style={{ width: '45%', opacity: 0.95, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }} />
           </div>
         )}
 
+        {/* Floating hearts */}
         <AnimatePresence>
           {hearts.map((heart) => (
             <motion.div
@@ -254,17 +443,16 @@ export default function CameraApp() {
         </AnimatePresence>
 
         {/* Flash */}
-        <AnimatePresence>
-          {flash && (
-            <motion.div
-              className="camera-flash"
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-          )}
-        </AnimatePresence>
+        {flash && (
+          <div
+            className="camera-flash"
+            style={{
+              position: 'absolute', inset: 0, background: 'white',
+              opacity: 1, pointerEvents: 'none',
+              animation: 'flashFade 0.2s ease-out forwards'
+            }}
+          />
+        )}
       </div>
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
@@ -339,22 +527,18 @@ export default function CameraApp() {
       )}
 
       {/* Full View */}
-      <AnimatePresence>
-        {viewPhoto && (
-          <motion.div
-            className="camera-fullview"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setViewPhoto(null)}
-          >
-            <button className="camera-fullview-close" onClick={() => setViewPhoto(null)}>
-              <X size={20} />
-            </button>
-            <img src={viewPhoto} alt="Full view" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {viewPhoto && (
+        <div
+          className="camera-fullview"
+          onClick={() => setViewPhoto(null)}
+          style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}
+        >
+          <button className="camera-fullview-close" onClick={() => setViewPhoto(null)} style={{ position: 'absolute', top: 10, right: 10, background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+            <X size={20} />
+          </button>
+          <img src={viewPhoto} alt="Full view" style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} />
+        </div>
+      )}
     </div>
   )
 }
