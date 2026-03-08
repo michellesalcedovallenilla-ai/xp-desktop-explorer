@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Camera, Download, Trash2, X, Glasses } from 'lucide-react'
+import { Heart, Camera, Download, Trash2, X, Glasses, Crown } from 'lucide-react'
 
 interface Photo {
   id: string
@@ -47,6 +47,7 @@ export default function CameraApp() {
   const [activeFilter, setActiveFilter] = useState(0)
   const [sampleIndex, setSampleIndex] = useState(0)
   const [disguiseEnabled, setDisguiseEnabled] = useState(false)
+  const [hatEnabled, setHatEnabled] = useState(false)
   const heartIdRef = useRef(0)
 
   const startCamera = useCallback(async () => {
@@ -188,6 +189,20 @@ export default function CameraApp() {
           </div>
         )}
 
+        {/* Hat overlay */}
+        {hatEnabled && (
+          <div style={{
+            position: 'absolute', top: '-5%', left: 0, right: 0, pointerEvents: 'none',
+            display: 'flex', justifyContent: 'center'
+          }}>
+            <img
+              src="/overlays/hat.png"
+              alt="Hat"
+              style={{ width: '45%', opacity: 0.95, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
+            />
+          </div>
+        )}
+
         <AnimatePresence>
           {hearts.map((heart) => (
             <motion.div
@@ -250,6 +265,13 @@ export default function CameraApp() {
           onClick={() => setHeartsEnabled(!heartsEnabled)}
         >
           <Heart size={18} fill={heartsEnabled ? '#ff4466' : 'none'} />
+        </button>
+        <button
+          className={`camera-btn ${hatEnabled ? 'active' : ''}`}
+          onClick={() => setHatEnabled(!hatEnabled)}
+          title="Hat"
+        >
+          <Crown size={18} color={hatEnabled ? '#ff4466' : undefined} />
         </button>
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
