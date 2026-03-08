@@ -318,7 +318,7 @@ export default function CameraApp() {
       if (hatOn) {
         const hx = face.forehead.x * cw
         const hy = face.forehead.y * ch
-        const hw = faceW * 1.4
+        const hw = faceW * 1.5
         const hh = hw * 0.75
         hat = {
           position: 'absolute',
