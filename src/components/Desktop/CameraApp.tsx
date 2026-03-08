@@ -247,10 +247,18 @@ export default function CameraApp() {
       {/* Controls */}
       <div className="camera-controls">
         <button
+        <button
           className={`camera-btn ${heartsEnabled ? 'active' : ''}`}
           onClick={() => setHeartsEnabled(!heartsEnabled)}
         >
           <Heart size={18} fill={heartsEnabled ? '#ff4466' : 'none'} />
+        </button>
+        <button
+          className={`camera-btn ${hatEnabled ? 'active' : ''}`}
+          onClick={() => setHatEnabled(!hatEnabled)}
+          title="Hat"
+        >
+          <Crown size={18} color={hatEnabled ? '#ff4466' : undefined} />
         </button>
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
