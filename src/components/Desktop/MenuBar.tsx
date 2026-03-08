@@ -267,6 +267,17 @@ export default function MenuBar() {
 
       {/* Running Windows */}
       <div className="xp-running-apps">
+        {/* Widget taskbar buttons */}
+        {widgets.filter(w => w.isVisible).map((widget) => (
+          <button
+            key={widget.id}
+            className="xp-task-btn active"
+            onClick={() => toggleWidget(widget.id)}
+          >
+            {widget.type.charAt(0).toUpperCase() + widget.type.slice(1)}
+          </button>
+        ))}
+        {/* Window taskbar buttons */}
         {windows.map((win) => (
           <button
             key={win.id}
@@ -275,7 +286,7 @@ export default function MenuBar() {
               if (win.isMinimized) {
                 restoreWindow(win.id)
               } else {
-                focusWindow(win.id)
+                minimizeWindow(win.id)
               }
             }}
           >
