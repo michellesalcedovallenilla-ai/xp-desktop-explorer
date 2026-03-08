@@ -364,9 +364,9 @@ export default function CameraApp() {
         }} />
 
         {/* Face-tracked overlays */}
-        {glassesStyle && <img src="/overlays/glasses.png" alt="" style={glassesStyle} />}
-        {mustacheStyle && <img src="/overlays/mustache.png" alt="" style={mustacheStyle} />}
-        {hatStyle && <img src="/overlays/hat.png" alt="" style={hatStyle} />}
+        {glassesStyle && <img src={OVERLAY_SRC.glasses} alt="" style={glassesStyle} />}
+        {mustacheStyle && <img src={OVERLAY_SRC.mustache} alt="" style={mustacheStyle} />}
+        {hatStyle && <img src={OVERLAY_SRC.hat} alt="" style={hatStyle} />}
 
         {/* Face-tracked hearts above head */}
         {faceBox && heartOverlays.map((h, i) => (
