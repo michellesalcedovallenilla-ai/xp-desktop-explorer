@@ -367,8 +367,32 @@ export default function CameraApp() {
       }
     }
 
-    return { mustache, hat, beer }
-  }, [face, hand, mustacheOn, hatOn, beerOn])
+    let arepa: React.CSSProperties | null = null
+    if (hand && arepaOn) {
+      const arepaImg = overlayImages.arepa
+      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
+      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const handWidthPx = dist(indexMcp, pinkyMcp)
+      const aw = Math.max(handWidthPx * 1.8, 45)
+      const ahRatio = arepaImg?.naturalWidth ? (arepaImg.naturalHeight / arepaImg.naturalWidth) : 1
+      const ah = aw * ahRatio
+      const rotDeg = ((hand.rotation) * 180) / Math.PI
+      arepa = {
+        position: 'absolute',
+        left: palm.x - aw / 2,
+        top: palm.y - ah / 2,
+        width: aw,
+        height: ah,
+        transform: `rotate(${rotDeg}deg)`,
+        pointerEvents: 'none',
+        zIndex: 10,
+        objectFit: 'contain',
+      }
+    }
+
+    return { mustache, hat, beer, arepa }
+  }, [face, hand, mustacheOn, hatOn, beerOn, arepaOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
