@@ -52,7 +52,7 @@ const defaultDesktopIcons: DesktopIconData[] = [
   { id: 'hd', label: 'My Computer', icon: 'hd', type: 'app', action: 'finder', x: 5, y: 170, iconWidth: 180 },
   { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 430, y: 270, iconWidth: 120 },
   { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 145, y: 360, iconWidth: 110 },
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 1080, y: 470, iconWidth: 350 },
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 850, y: 430, iconWidth: 350 },
   { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 590, y: 310, iconWidth: 250 }
 ]
 
