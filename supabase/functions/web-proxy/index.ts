@@ -120,7 +120,16 @@ Deno.serve(async (req) => {
       })
     }
 
-    const html = await fetchPage(url)
+    let html: string
+    try {
+      html = await fetchPage(url)
+    } catch (pageErr) {
+      const msg = (pageErr as Error).message || 'Failed to load'
+      // Return 200 with error so client handles gracefully
+      return new Response(JSON.stringify({ error: msg }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     // Strip CSP meta tags that block iframe rendering
     const cleanHtml = html.replace(/<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi, '')
