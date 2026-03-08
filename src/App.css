@@ -4671,6 +4671,27 @@ textarea {
   .clippy-body {
     transform: scale(1.6);
   }
+
+  /* Widget sizing for small laptops */
+  .xp-notes-widget {
+    width: 280px;
+  }
+  .xp-notepad-body {
+    height: 160px;
+  }
+  .xp-music-widget {
+    width: 280px;
+  }
+  .xp-calendar-widget {
+    width: 210px;
+  }
+  .xp-clock-widget {
+    width: 170px;
+  }
+  .xp-clock-svg {
+    width: 120px;
+    height: 120px;
+  }
 }
 
 /* === LAPTOP DESKTOP (1025-1366px) === */
