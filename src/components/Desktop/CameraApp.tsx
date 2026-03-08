@@ -41,6 +41,12 @@ const SAMPLE_IMAGES = [
   '/animals/pig-flying.png',
 ]
 
+const OVERLAY_SRC = {
+  glasses: '/overlays/glasses.png?v=4',
+  mustache: '/overlays/mustache.png?v=4',
+  hat: '/overlays/hat-original.png?v=2',
+}
+
 // Preload overlay images so they're available for canvas drawing
 const overlayImages: Record<string, HTMLImageElement> = {}
 function preloadOverlay(src: string) {
@@ -54,9 +60,9 @@ function preloadOverlay(src: string) {
 }
 
 // Preload all overlays on module load
-preloadOverlay('/overlays/glasses.png')
-preloadOverlay('/overlays/mustache.png')
-preloadOverlay('/overlays/hat.png')
+preloadOverlay(OVERLAY_SRC.glasses)
+preloadOverlay(OVERLAY_SRC.mustache)
+preloadOverlay(OVERLAY_SRC.hat)
 
 export default function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -209,33 +215,33 @@ export default function CameraApp() {
       const fx = rf.x, fy = rf.y, fw = rf.w, fh = rf.h
 
       if (disguiseEnabled) {
-        const glasses = overlayImages['/overlays/glasses.png']
+        const glasses = overlayImages[OVERLAY_SRC.glasses]
         if (glasses?.complete) {
-          const ow = fw * 1.1, oh = fh * 0.28
-          ctx.drawImage(glasses, fx + (fw - ow) / 2, fy + fh * 0.22, ow, oh)
+          const ow = fw * 1.08, oh = fh * 0.24
+          ctx.drawImage(glasses, fx + (fw - ow) / 2, fy + fh * 0.28, ow, oh)
         }
-        const mustache = overlayImages['/overlays/mustache.png']
+        const mustache = overlayImages[OVERLAY_SRC.mustache]
         if (mustache?.complete) {
-          const ow = fw * 0.8, oh = fh * 0.22
-          ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.58, ow, oh)
+          const ow = fw * 0.72, oh = fh * 0.18
+          ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.62, ow, oh)
         }
       }
 
       if (hatEnabled) {
-        const hat = overlayImages['/overlays/hat.png']
+        const hat = overlayImages[OVERLAY_SRC.hat]
         if (hat?.complete) {
-          const ow = fw * 1.3, oh = fh * 0.55
-          ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.7, ow, oh)
+          const ow = fw * 1.15, oh = fh * 0.5
+          ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.62, ow, oh)
         }
       }
 
       if (heartsEnabled) {
         ctx.textAlign = 'center'
-        ctx.font = `${Math.round(fh * 0.2)}px serif`
+        ctx.font = `${Math.max(24, Math.round(fh * 0.16))}px serif`
         const heartPositions = [
-          { dx: 0, dy: -fh * 0.35 },
-          { dx: -fw * 0.25, dy: -fh * 0.45 },
-          { dx: fw * 0.25, dy: -fh * 0.45 },
+          { dx: 0, dy: -fh * 0.12 },
+          { dx: -fw * 0.2, dy: -fh * 0.2 },
+          { dx: fw * 0.2, dy: -fh * 0.2 },
         ]
         for (const hp of heartPositions) {
           ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
@@ -290,9 +296,9 @@ export default function CameraApp() {
     }
   }
 
-  const glassesStyle = disguiseEnabled ? makeOverlayStyle(-0.05, 0.22, 1.1, 0.28) : null
-  const mustacheStyle = disguiseEnabled ? makeOverlayStyle(0.1, 0.58, 0.8, 0.22) : null
-  const hatStyle = hatEnabled ? makeOverlayStyle(-0.15, -0.5, 1.3, 0.55) : null
+  const glassesStyle = disguiseEnabled ? makeOverlayStyle(-0.04, 0.28, 1.08, 0.24) : null
+  const mustacheStyle = disguiseEnabled ? makeOverlayStyle(0.14, 0.62, 0.72, 0.18) : null
+  const hatStyle = hatEnabled ? makeOverlayStyle(-0.08, -0.62, 1.15, 0.5) : null
 
   const showCenteredDisguise = disguiseEnabled && (!hasFaceApi || !faceBox) && hasCamera
   const showCenteredHat = hatEnabled && (!hasFaceApi || !faceBox) && hasCamera
@@ -300,11 +306,11 @@ export default function CameraApp() {
 
   // Hearts above head (display)
   const heartOverlays = heartsEnabled && faceBox ? [
-    { dx: 0, dy: -0.4, size: 0.18 },
-    { dx: -0.2, dy: -0.5, size: 0.15 },
-    { dx: 0.2, dy: -0.5, size: 0.15 },
-    { dx: -0.1, dy: -0.6, size: 0.12 },
-    { dx: 0.1, dy: -0.6, size: 0.12 },
+    { dx: 0, dy: -0.14, size: 0.15 },
+    { dx: -0.2, dy: -0.22, size: 0.12 },
+    { dx: 0.2, dy: -0.22, size: 0.12 },
+    { dx: -0.1, dy: -0.3, size: 0.1 },
+    { dx: 0.1, dy: -0.3, size: 0.1 },
   ] : []
 
   return (
@@ -358,9 +364,9 @@ export default function CameraApp() {
         }} />
 
         {/* Face-tracked overlays */}
-        {glassesStyle && <img src="/overlays/glasses.png" alt="" style={glassesStyle} />}
-        {mustacheStyle && <img src="/overlays/mustache.png" alt="" style={mustacheStyle} />}
-        {hatStyle && <img src="/overlays/hat.png" alt="" style={hatStyle} />}
+        {glassesStyle && <img src={OVERLAY_SRC.glasses} alt="" style={glassesStyle} />}
+        {mustacheStyle && <img src={OVERLAY_SRC.mustache} alt="" style={mustacheStyle} />}
+        {hatStyle && <img src={OVERLAY_SRC.hat} alt="" style={hatStyle} />}
 
         {/* Face-tracked hearts above head */}
         {faceBox && heartOverlays.map((h, i) => (
@@ -384,13 +390,13 @@ export default function CameraApp() {
             position: 'absolute', inset: 0, pointerEvents: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4
           }}>
-            <img src="/overlays/glasses.png" alt="" style={{ width: '40%', opacity: 0.9 }} />
-            <img src="/overlays/mustache.png" alt="" style={{ width: '30%', opacity: 0.9 }} />
+            <img src={OVERLAY_SRC.glasses} alt="" style={{ width: '40%', opacity: 0.9 }} />
+            <img src={OVERLAY_SRC.mustache} alt="" style={{ width: '30%', opacity: 0.9 }} />
           </div>
         )}
         {showCenteredHat && (
           <div style={{ position: 'absolute', top: '5%', left: 0, right: 0, pointerEvents: 'none', display: 'flex', justifyContent: 'center' }}>
-            <img src="/overlays/hat.png" alt="" style={{ width: '45%', opacity: 0.95 }} />
+            <img src={OVERLAY_SRC.hat} alt="" style={{ width: '45%', opacity: 0.95 }} />
           </div>
         )}
 
