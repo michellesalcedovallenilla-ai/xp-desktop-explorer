@@ -4622,7 +4622,36 @@ textarea {
   }
 
   .xp-start-menu {
-    width: 360px;
+    width: 320px;
+  }
+
+  .xp-start-header {
+    padding: 6px 8px;
+  }
+
+  .xp-start-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+
+  .xp-start-username {
+    font-size: 12px;
+  }
+
+  .xp-start-item {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .xp-start-item-icon {
+    width: 20px;
+    font-size: 14px;
+  }
+
+  .xp-start-footer-btn {
+    font-size: 10px;
+    padding: 3px 6px;
   }
 
   .xp-clippy-img-wrapper {
