@@ -189,7 +189,7 @@ export default function CameraApp() {
       if (img?.complete && img.naturalWidth) {
         const palm = toPx(hd.palmCenter)
         const handWidthPx = hd.handWidth * w
-        const bw = Math.max(handWidthPx * 1.45, 54)
+        const bw = Math.max(handWidthPx * 2.0, 75)
         const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(palm.x, palm.y)
