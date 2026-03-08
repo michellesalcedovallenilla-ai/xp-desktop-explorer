@@ -5,10 +5,7 @@ import {
   Music,
   Monitor,
   User,
-  Mail,
-  Camera,
-  Palette,
-  Bomb
+  Mail
 } from 'lucide-react'
 import { useWindowStore } from '../../store/useWindowStore'
 import { projects } from '../../data/projects'
@@ -21,32 +18,14 @@ const folders = [
 ]
 
 const files = [
-  { label: 'About Me.lnk', icon: 'User', action: 'about' },
-  { label: 'Contact.lnk', icon: 'Mail', action: 'contact' },
-  {
-    label: 'Resume.pdf',
-    icon: '3f4acbc7753019394f7b560f1087d41f.png',
-    action: 'resume'
-  },
-  { label: 'Camera.exe', icon: 'Camera', action: 'camera' },
-  { label: 'Music Player.exe', icon: 'Music', action: 'music' },
-  { label: 'MS Paint.exe', icon: 'Palette', action: 'paint' },
-  {
-    label: 'Minesweeper.exe',
-    icon: '7e157e83a9ec0a0686b6cddfa2c6d37b.png',
-    action: 'minesweeper'
-  }
+  { label: 'About Me.lnk', icon: '/icons/about-me.png', action: 'about' },
+  { label: 'Contact.lnk', icon: '/icons/contact.png', action: 'contact' },
+  { label: 'Resume.pdf', icon: '/3f4acbc7753019394f7b560f1087d41f.png', action: 'resume' },
+  { label: 'Camera.exe', icon: '/icons/camera.png', action: 'camera' },
+  { label: 'Music Player.exe', icon: '/icons/music-player.png', action: 'music' },
+  { label: 'MS Paint.exe', icon: '/icons/mspaint.png', action: 'paint' },
+  { label: 'Minesweeper.exe', icon: '/7e157e83a9ec0a0686b6cddfa2c6d37b.png', action: 'minesweeper' }
 ]
-
-const iconMap: Record<string, React.ComponentType<any>> = {
-  User,
-  Mail,
-  FileText,
-  Camera,
-  Music,
-  Palette,
-  Bomb
-}
 
 export default function Finder() {
   const { openWindow } = useWindowStore()
