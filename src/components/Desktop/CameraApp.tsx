@@ -158,6 +158,7 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(hatAnchor.x, hatAnchor.y)
           ctx.rotate(rotation)
+          ctx.scale(-1, -1)
           ctx.drawImage(img, -hw / 2, -hh * 0.62, hw, hh)
           ctx.restore()
         }
