@@ -33,6 +33,7 @@ export interface DesktopIconData {
   x: number
   y: number
   iconWidth?: number
+  locked?: boolean
 }
 
 export interface DockItem {
