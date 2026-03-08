@@ -1,8 +1,145 @@
 import { useState, useRef } from 'react'
 
 const PORTFOLIO_URL = 'https://readymag.website/u2801101920/5411866/'
+const PORTFOLIO_PAGES: Record<string, string> = {
+  'https://readymag.website/u2801101920/5411866/': 'home',
+  'https://readymag.website/u2801101920/5411866/welcome/': 'welcome',
+  'https://readymag.website/u2801101920/5411866/portfolio/': 'portfolio',
+  'https://readymag.website/u2801101920/5411866/aboutme/': 'aboutme',
+  'https://readymag.website/u2801101920/5411866/socials/': 'socials',
+  'https://readymag.website/u2801101920/5411866/faq/': 'faq',
+  'https://readymag.website/u2801101920/5411866/keywords/': 'keywords',
+}
 const INSTAGRAM_URL = 'https://www.instagram.com/mydigitaldrafts/'
 const GOOGLE_URL = 'https://www.google.com/'
+
+function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: string) => void }) {
+  const [showWarning, setShowWarning] = useState(page === 'home')
+
+  const navLinks = [
+    { label: 'portfolio', url: 'https://readymag.website/u2801101920/5411866/portfolio/' },
+    { label: 'about me', url: 'https://readymag.website/u2801101920/5411866/aboutme/' },
+    { label: 'socials', url: 'https://readymag.website/u2801101920/5411866/socials/' },
+    { label: 'Must-Know Info', url: 'https://readymag.website/u2801101920/5411866/faq/' },
+    { label: 'my keywords', url: 'https://readymag.website/u2801101920/5411866/keywords/' },
+  ]
+
+  const pageContent: Record<string, { title: string; body: string }> = {
+    portfolio: { title: 'Portfolio', body: 'A collection of projects, designs, and interactive experiences crafted with passion and creativity.' },
+    aboutme: { title: 'About Me', body: 'Creative designer and developer. I build things that live on the internet — from interactive sites to digital experiences.' },
+    socials: { title: 'Socials', body: 'Find me on Instagram @mydigitaldrafts and across the web.' },
+    faq: { title: 'Must-Know Info', body: 'Everything you need to know about working with me, my process, and what I bring to the table.' },
+    keywords: { title: 'My Keywords', body: 'Design • Development • Creativity • Interactive • Digital • Experience • Innovation' },
+    welcome: { title: 'Welcome', body: 'Welcome to my side of the internet. Explore around!' },
+    home: { title: '', body: '' },
+  }
+
+  const content = pageContent[page]
+
+  return (
+    <div style={{
+      height: '100%',
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
+      color: '#fff',
+      fontFamily: "'Arial', sans-serif",
+      overflow: 'auto',
+      position: 'relative'
+    }}>
+      {/* Blurred background */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'url(https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/image-379fff01-5b6b-4681-8b43-70fd84c97339.png?w=300&e=webp&nll=true)',
+        backgroundSize: 'cover', backgroundPosition: 'center',
+        filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
+      }} />
+
+      {/* Warning popup */}
+      {showWarning && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+          justifyContent: 'center', zIndex: 10, background: 'rgba(0,0,0,0.5)'
+        }}>
+          <div style={{
+            background: '#FFD700', color: '#000', borderRadius: '16px',
+            padding: '30px 40px', maxWidth: '400px', textAlign: 'center', position: 'relative'
+          }}>
+            <button onClick={() => setShowWarning(false)} style={{
+              position: 'absolute', top: '10px', right: '14px',
+              background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#000'
+            }}>✕</button>
+            <h2 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px' }}>WARNING</h2>
+            <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 16px' }}>
+              this ain't a regular site.<br />
+              it's touchable, scrollable, clickable, and loud.<br />
+              volume up. have fun.
+            </p>
+            <p style={{ fontSize: '13px', margin: 0, fontStyle: 'italic' }}>
+              welcome to my side of the internet<br />
+              (aka my resume, just less boring)
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation */}
+      <div style={{ position: 'relative', zIndex: 5, padding: '40px 30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(PORTFOLIO_URL) }}
+            style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
+            My Digital Drafts
+          </a>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            {navLinks.map((link) => (
+              <a key={link.label} href="#" onClick={(e) => { e.preventDefault(); onNavigate(link.url) }}
+                style={{ color: '#ccc', textDecoration: 'none', fontSize: '13px' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#FFD700')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#ccc')}
+              >{link.label}</a>
+            ))}
+          </div>
+        </div>
+
+        {content && content.title && (
+          <div style={{ maxWidth: '600px', margin: '80px auto', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '42px', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1px' }}>{content.title}</h1>
+            <p style={{ fontSize: '16px', lineHeight: '1.8', color: '#ccc' }}>{content.body}</p>
+          </div>
+        )}
+
+        {(page === 'home' || page === 'portfolio') && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '40px' }}>
+            {[
+              'image-952ad33b-466e-47fd-90fa-7d253f913fde',
+              'image-8c416ae5-c92a-43ff-af12-ce43ddd0ae32',
+              'image-b9f14574-36fe-4a4f-b21f-e5c9a8df10b3',
+              'image-35fa2936-1eba-48a4-9326-f7eeda1bd0fa',
+              'image-0865149c-34db-408d-ae22-f372a4588229',
+              'image-10f721cf-d2af-4446-81f3-740bc1c624c1',
+            ].map((id) => (
+              <div key={id} style={{ borderRadius: '8px', overflow: 'hidden', aspectRatio: '1', background: '#222' }}>
+                <img src={`https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/${id}.png?w=300&e=webp&nll=true`}
+                  alt="Project" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {page === 'socials' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: '40px' }}>
+            <a href="https://www.instagram.com/mydigitaldrafts/" target="_blank" rel="noopener noreferrer"
+              style={{ padding: '12px 32px', background: '#FFD700', color: '#000', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>
+              📸 Instagram — @mydigitaldrafts
+            </a>
+            <a href="https://ifyourereadingthishiremenow.my.canva.site/" target="_blank" rel="noopener noreferrer"
+              style={{ padding: '12px 32px', background: '#333', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>
+              🌐 MySpace
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 interface Props {
   windowId: string
@@ -307,6 +444,12 @@ export default function InternetExplorer({ windowId }: Props) {
           </div>
         </div>
       )
+    }
+
+    // Check if it's a portfolio page
+    const portfolioPage = PORTFOLIO_PAGES[currentUrl]
+    if (portfolioPage) {
+      return <PortfolioSite page={portfolioPage} onNavigate={navigateTo} />
     }
 
     // External sites can't be iframed — show a redirect page
