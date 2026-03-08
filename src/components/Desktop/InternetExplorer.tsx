@@ -239,63 +239,74 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    // Instagram — 2012-era Instagram Profile
+    // Instagram — 2012 iOS app style
     if (isInstagram) {
       return (
         <div style={{
-          fontFamily: '"Proxima Nova", "Helvetica Neue", Arial, sans-serif',
-          background: '#fafafa',
+          fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+          background: '#e8e8e8',
           height: '100%',
           overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
         }}>
-          {/* 2012 Instagram top bar */}
+          {/* Top nav bar — iOS 6 style blue gradient */}
           <div style={{
-            background: 'linear-gradient(to bottom, #6C9CB2 0%, #5B8CA3 100%)',
-            borderBottom: '1px solid #3B6D8C',
-            padding: '8px 16px',
+            background: 'linear-gradient(to bottom, #5c8ab2 0%, #3b6d8c 100%)',
+            borderBottom: '1px solid #2a5a7a',
+            padding: '8px 12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+            flexShrink: 0,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '22px' }}>📷</span>
-              <span style={{
-                fontFamily: '"Billabong", cursive, serif',
-                fontSize: '26px',
-                color: '#fff',
-                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                letterSpacing: '1px',
-              }}>Instagram</span>
-            </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <span style={{ color: '#fff', fontSize: '12px', cursor: 'pointer' }}>🔍</span>
-              <span style={{ color: '#fff', fontSize: '12px', cursor: 'pointer' }}>⚙️</span>
-            </div>
+            <span style={{
+              color: '#fff', fontSize: '13px', fontWeight: 'bold',
+              textShadow: '0 -1px 1px rgba(0,0,0,0.3)',
+              background: 'linear-gradient(to bottom, #7fb5d5, #5a9abb)',
+              border: '1px solid #4a8aab',
+              borderRadius: '4px',
+              padding: '4px 10px',
+              cursor: 'pointer',
+            }}>Explore</span>
+            <span style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: '#fff',
+              textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+            }}>INSTAGRAM</span>
+            <span style={{
+              color: '#fff', fontSize: '16px', cursor: 'pointer',
+              textShadow: '0 -1px 1px rgba(0,0,0,0.3)',
+            }}>📤</span>
           </div>
 
-          {/* Profile section — 2012 style with tan/cream card */}
+          {/* Profile card */}
           <div style={{
             background: '#fff',
-            border: '1px solid #dbdbdb',
-            borderRadius: '3px',
-            margin: '16px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            margin: '10px 10px 0',
             overflow: 'hidden',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
           }}>
-            {/* Profile header */}
+            {/* Profile row: pic + stats */}
             <div style={{
-              background: 'linear-gradient(to bottom, #f5f0eb, #ebe5dd)',
-              padding: '20px',
-              borderBottom: '1px solid #d4cfc7',
               display: 'flex',
-              gap: '20px',
+              padding: '12px',
+              gap: '12px',
+              borderBottom: '1px solid #eee',
             }}>
-              {/* Profile pic */}
+              {/* Profile pic — square with rounded corners like 2012 */}
               <div style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '4px',
-                border: '3px solid #fff',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                width: '80px',
+                height: '80px',
+                borderRadius: '6px',
+                border: '2px solid #ddd',
                 background: '#1a1a1a',
                 display: 'flex',
                 alignItems: 'center',
@@ -303,144 +314,149 @@ export default function InternetExplorer({ windowId }: Props) {
                 overflow: 'hidden',
                 flexShrink: 0,
               }}>
-                <span style={{ color: '#fff', fontSize: '28px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
+                <span style={{ color: '#fff', fontSize: '22px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
               </div>
 
-              {/* Info */}
+              {/* Stats */}
               <div style={{ flex: 1 }}>
-                <h1 style={{
-                  fontSize: '20px',
-                  fontWeight: '300',
-                  color: '#333',
-                  margin: '0 0 2px',
-                  letterSpacing: '0.5px',
-                }}>mydigitalcrib</h1>
-                <p style={{ fontSize: '12px', color: '#999', margin: '0 0 10px' }}>hey, welcome to my space :)</p>
-
-                {/* Stats row */}
                 <div style={{
                   display: 'flex',
-                  gap: '24px',
-                  fontSize: '13px',
-                  color: '#333',
+                  textAlign: 'center',
+                  marginBottom: '8px',
                 }}>
-                  <span><strong>33</strong> posts</span>
-                  <span><strong>793</strong> followers</span>
-                  <span><strong>19</strong> following</span>
+                  <div style={{ flex: 1, borderRight: '1px solid #eee' }}>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>33</div>
+                    <div style={{ fontSize: '10px', color: '#999', textTransform: 'lowercase' }}>photos</div>
+                  </div>
+                  <div style={{ flex: 1, borderRight: '1px solid #eee' }}>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>793</div>
+                    <div style={{ fontSize: '10px', color: '#999' }}>followers</div>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>19</div>
+                    <div style={{ fontSize: '10px', color: '#999' }}>following</div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Follow button — 2012 style */}
-              <div>
+                {/* Follow button */}
                 <button style={{
-                  background: 'linear-gradient(to bottom, #6CB4DA, #5BA3C9)',
-                  border: '1px solid #4A8DAF',
-                  borderRadius: '3px',
+                  width: '100%',
+                  background: 'linear-gradient(to bottom, #6cb4da 0%, #4a9cc4 100%)',
+                  border: '1px solid #3d8ab5',
+                  borderRadius: '4px',
                   color: '#fff',
-                  fontSize: '12px',
+                  fontSize: '14px',
                   fontWeight: 'bold',
-                  padding: '5px 16px',
+                  padding: '6px 0',
                   cursor: 'pointer',
-                  textShadow: '0 1px 1px rgba(0,0,0,0.2)',
-                }}>+ Follow</button>
+                  textShadow: '0 -1px 1px rgba(0,0,0,0.2)',
+                }}>Follow</button>
               </div>
             </div>
 
-            {/* Bio area */}
-            <div style={{
-              padding: '14px 20px',
-              borderBottom: '1px solid #efefef',
-              background: '#fff',
-            }}>
-              <p style={{ fontSize: '13px', color: '#555', fontWeight: 'bold', margin: '0 0 4px' }}>Marketing Agency</p>
-              <p style={{ fontSize: '13px', color: '#333', margin: '0 0 3px', lineHeight: '1.5' }}>
+            {/* Bio */}
+            <div style={{ padding: '10px 12px', borderBottom: '1px solid #eee' }}>
+              <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', margin: '0 0 2px' }}>mydigitalcrib</p>
+              <p style={{ fontSize: '13px', color: '#333', margin: '0 0 2px', lineHeight: '1.4' }}>
                 hey bestie 💻<br />
                 we're vibes, your gen z marketing crew.<br />
                 taking your brand to the next level is our thing! 🫶
               </p>
               <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('https://welcometomywebsites.com') }}
-                style={{ fontSize: '13px', color: '#003569', textDecoration: 'none' }}>
-                🔗 welcometomywebsites.com
+                style={{ fontSize: '13px', color: '#3b6d8c', textDecoration: 'none' }}>
+                welcometomywebsites.com
               </a>
             </div>
 
-            {/* Tabs — 2012 style */}
+            {/* Grid / List / Photo Map tabs */}
             <div style={{
               display: 'flex',
-              borderBottom: '1px solid #efefef',
+              alignItems: 'center',
+              borderBottom: '1px solid #eee',
               background: '#fafafa',
             }}>
               <div style={{
                 flex: 1, textAlign: 'center', padding: '10px 0',
-                borderBottom: '2px solid #6CB4DA', color: '#6CB4DA',
-                fontSize: '12px', fontWeight: 'bold', cursor: 'pointer',
+                borderBottom: '2px solid #3b6d8c',
+                cursor: 'pointer',
               }}>
-                📷 GRID
+                <span style={{ fontSize: '18px' }}>⊞</span>
               </div>
               <div style={{
                 flex: 1, textAlign: 'center', padding: '10px 0',
-                color: '#999', fontSize: '12px', cursor: 'pointer',
+                cursor: 'pointer', color: '#bbb',
               }}>
-                📋 LIST
+                <span style={{ fontSize: '18px' }}>☰</span>
               </div>
               <div style={{
-                flex: 1, textAlign: 'center', padding: '10px 0',
-                color: '#999', fontSize: '12px', cursor: 'pointer',
+                flex: 2, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', gap: '6px',
+                padding: '10px 0', cursor: 'pointer', color: '#bbb',
               }}>
-                📍 MAP
+                <span style={{ fontSize: '14px' }}>📍</span>
+                <span style={{ fontSize: '13px', color: '#999' }}>Photo Map</span>
+                <span style={{ fontSize: '12px', color: '#ccc' }}>›</span>
               </div>
             </div>
 
-            {/* Photo grid — 2012 style with polaroid-ish borders */}
+            {/* Photo grid — 2012 Instagram style, tight with thin borders */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '4px',
-              padding: '4px',
+              gap: '2px',
               background: '#fff',
             }}>
               {[
-                { bg: '#2a2a3e', emoji: '🎵', label: 'playlist' },
-                { bg: '#3a3a2e', emoji: '🔍', label: 'ugc content' },
-                { bg: '#4a3a2e', emoji: '📋', label: 'gen z' },
-                { bg: '#2e3a4a', emoji: '📒', label: 'agenda' },
-                { bg: '#3e2a3a', emoji: '☕', label: 'virtual coffee' },
-                { bg: '#2a4a3e', emoji: '💻', label: 'get social' },
-                { bg: '#3a2e4a', emoji: '🎨', label: 'design' },
-                { bg: '#4a4a2e', emoji: '📸', label: 'content' },
-                { bg: '#2e2e4a', emoji: '✨', label: 'vibes' },
+                { bg: 'linear-gradient(135deg, #2a1a3e, #4a2a5e)', emoji: '🎵' },
+                { bg: 'linear-gradient(135deg, #3a3a2e, #5a5a3e)', emoji: '🔍' },
+                { bg: 'linear-gradient(135deg, #4a3a2e, #6a5a3e)', emoji: '📋' },
+                { bg: 'linear-gradient(135deg, #2e3a4a, #3e5a6a)', emoji: '📒' },
+                { bg: 'linear-gradient(135deg, #3e2a3a, #5e3a5a)', emoji: '☕' },
+                { bg: 'linear-gradient(135deg, #2a4a3e, #3a6a5e)', emoji: '💻' },
+                { bg: 'linear-gradient(135deg, #3a2e4a, #5a3e6a)', emoji: '🎨' },
+                { bg: 'linear-gradient(135deg, #4a4a2e, #6a6a3e)', emoji: '📸' },
+                { bg: 'linear-gradient(135deg, #2e2e4a, #3e3e6a)', emoji: '✨' },
               ].map((item, i) => (
                 <div key={i} style={{
                   aspectRatio: '1',
                   background: item.bg,
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  position: 'relative',
                 }}>
-                  <span style={{ fontSize: '28px', marginBottom: '4px' }}>{item.emoji}</span>
-                  <span style={{ fontSize: '10px', color: '#ccc', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{item.label}</span>
+                  <span style={{ fontSize: '32px', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}>{item.emoji}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 2012 footer */}
+          {/* Bottom tab bar — iOS 6 style */}
           <div style={{
-            textAlign: 'center',
-            padding: '12px',
-            fontSize: '11px',
-            color: '#999',
+            marginTop: 'auto',
+            background: 'linear-gradient(to bottom, #393939 0%, #1a1a1a 100%)',
+            borderTop: '1px solid #555',
+            display: 'flex',
+            padding: '6px 0 4px',
+            flexShrink: 0,
           }}>
-            <span>© 2012 Instagram</span>
-            <span style={{ margin: '0 8px' }}>·</span>
-            <a href="#" style={{ color: '#003569', textDecoration: 'none' }}>About</a>
-            <span style={{ margin: '0 8px' }}>·</span>
-            <a href="#" style={{ color: '#003569', textDecoration: 'none' }}>Blog</a>
-            <span style={{ margin: '0 8px' }}>·</span>
-            <a href="#" style={{ color: '#003569', textDecoration: 'none' }}>Terms</a>
+            {['🏠', '⭐', '📷', '💬', '📇'].map((icon, i) => (
+              <div key={i} style={{
+                flex: 1,
+                textAlign: 'center',
+                fontSize: '20px',
+                cursor: 'pointer',
+                opacity: i === 0 ? 1 : 0.5,
+                ...(i === 2 ? {
+                  background: 'linear-gradient(to bottom, #5c8ab2, #3b6d8c)',
+                  borderRadius: '6px',
+                  margin: '-2px 8px 0',
+                  padding: '2px 0',
+                } : {}),
+              }}>
+                {icon}
+              </div>
+            ))}
           </div>
         </div>
       )
