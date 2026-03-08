@@ -38,7 +38,7 @@ export default function MenuBar() {
     }
   }, [])
 
-  const openWindow = (type: string, title: string) => {
+  const openWindow = (type: string, title: string, url?: string) => {
     const { openWindow: ow } = useWindowStore.getState()
     const vw = window.innerWidth
     const vh = window.innerHeight
@@ -63,8 +63,9 @@ export default function MenuBar() {
     const s = sizes[type] || { w: sz(vw, 700, 550, 700), h: sz(vh - 50, 500, 420, 500) }
     const x = isMobile ? 0 : isTablet ? Math.random() * 40 : 100 + Math.random() * 150
     const y = isMobile ? 0 : isTablet ? Math.random() * 30 : 50 + Math.random() * 80
+    const windowId = url ? `window-${type}-${url}` : `window-${type}`
     ow({
-      id: `window-${type}`,
+      id: windowId,
       title,
       type: type as any,
       x,
@@ -72,7 +73,8 @@ export default function MenuBar() {
       width: s.w,
       height: s.h,
       isMinimized: false,
-      isMaximized: false
+      isMaximized: false,
+      url
     })
     setStartOpen(false)
   }
@@ -181,7 +183,7 @@ export default function MenuBar() {
                     <button className="xp-start-item" onClick={() => openWindow('finder', 'My Documents')}>
                       <span className="xp-start-item-icon">📁</span> My Documents
                     </button>
-                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Pictures')}>
+                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Pictures', 'pictures')}>
                       <span className="xp-start-item-icon">🖼️</span> My Pictures
                     </button>
                     <button className="xp-start-item" onClick={() => openWindow('music', 'My Music')}>

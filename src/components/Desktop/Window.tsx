@@ -270,7 +270,7 @@ export default function Window({ window: win }: Props) {
           className="xp-window-content"
           style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
         >
-          <ContentComponent windowId={win.id} projectId={win.projectId} />
+          <ContentComponent windowId={win.id} projectId={win.projectId} initialPath={win.url} />
         </div>
 
         {!['paint', 'ie', 'music', 'messenger'].includes(win.type) && (
