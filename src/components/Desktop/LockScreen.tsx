@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSystemStore } from '../../store/useSystemStore'
+import { useAudioStore } from '../../store/useAudioStore'
 
 const PASSWORD = '1234'
 
 export default function LockScreen() {
   const { isLocked, setLocked } = useSystemStore()
+  const { playStartup } = useAudioStore()
   const [password, setPassword] = useState('')
   const [shake, setShake] = useState(false)
   const [showPasswordField, setShowPasswordField] = useState(false)
@@ -17,6 +19,7 @@ export default function LockScreen() {
       const val = pwd || password
       if (val === PASSWORD) {
         setLocked(false)
+        playStartup()
         setPassword('')
         setShowPasswordField(false)
         setIsAutoTyping(false)

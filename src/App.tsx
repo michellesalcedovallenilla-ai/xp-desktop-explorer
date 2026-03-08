@@ -35,11 +35,6 @@ const App = () => {
   const { isOpen: errorOpen, title: errorTitle, message: errorMessage, closeError } = useErrorDialogStore()
   useKeyboardShortcuts()
 
-  useEffect(() => {
-    if (!isBooting) {
-      playStartup()
-    }
-  }, [isBooting, playStartup])
 
   return (
     <div className="app-root">
