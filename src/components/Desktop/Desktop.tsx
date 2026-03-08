@@ -15,6 +15,15 @@ const Desktop = () => {
 
   const handleIconDoubleClick = useCallback(
     (action: string) => {
+      const { windows, closeWindow } = useWindowStore.getState()
+      const windowId = `window-${action}`
+      const existing = windows.find((w) => w.id === windowId)
+
+      if (existing) {
+        closeWindow(windowId)
+        return
+      }
+
       const vw = window.innerWidth
       const vh = window.innerHeight
       const isMobile = vw <= 480
@@ -46,7 +55,7 @@ const Desktop = () => {
         const x = isMobile ? 0 : isTablet ? Math.random() * 40 : 150 + Math.random() * 100
         const y = isMobile ? 0 : isTablet ? Math.random() * 30 : 60 + Math.random() * 60
         openWindow({
-          id: `window-${action}`,
+          id: windowId,
           title: config.title,
           type: config.type as any,
           x,
