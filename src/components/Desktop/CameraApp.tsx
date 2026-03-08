@@ -23,6 +23,7 @@ const FILTERS = [
 ]
 
 const SAMPLE_IMAGES = [
+  '/animals/michelle.png',
   '/animals/cat.png',
   '/animals/cat ii.png',
   '/animals/cat flying.png',
