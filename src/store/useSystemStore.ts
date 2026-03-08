@@ -45,14 +45,14 @@ interface SystemState {
 }
 
 const defaultDesktopIcons: DesktopIconData[] = [
-  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 30, y: 20, iconWidth: 120 },
-  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 30, y: 120, iconWidth: 100 },
-  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 30, y: 220, iconWidth: 120 },
-  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 30, y: 320, iconWidth: 150 },
-  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 30, y: 420, iconWidth: 110 },
-  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 30, y: 520, iconWidth: 120 },
-  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 160, y: 20, iconWidth: 250 },
+  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 330, y: 55, iconWidth: 120 },
+  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 110, y: 175, iconWidth: 100 },
+  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 580, y: 80, iconWidth: 120 },
+  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 375, y: 260, iconWidth: 150 },
+  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 580, y: 330, iconWidth: 120 },
+  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 195, y: 350, iconWidth: 110 },
   { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 1100, y: 130, iconWidth: 350 },
+  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 760, y: 280, iconWidth: 250 },
 ]
 
 const defaultDockItems: DockItem[] = [
