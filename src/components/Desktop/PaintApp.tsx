@@ -75,13 +75,15 @@ export default function PaintApp() {
     return () => observer.disconnect()
   }, [])
 
-  const getPos = (e: React.MouseEvent) => {
+  const getPos = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current
     if (!canvas) return { x: 0, y: 0 }
     const rect = canvas.getBoundingClientRect()
+    const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? (e as any).changedTouches?.[0]?.clientX ?? 0) : e.clientX
+    const clientY = 'touches' in e ? (e.touches[0]?.clientY ?? (e as any).changedTouches?.[0]?.clientY ?? 0) : e.clientY
     return {
-      x: Math.round(e.clientX - rect.left),
-      y: Math.round(e.clientY - rect.top)
+      x: Math.round(clientX - rect.left),
+      y: Math.round(clientY - rect.top)
     }
   }
 
