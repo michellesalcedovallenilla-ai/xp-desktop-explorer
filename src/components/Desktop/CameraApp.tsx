@@ -160,8 +160,6 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
-          // Flip horizontally to match mirrored video
-          ctx.scale(-1, 1)
           ctx.drawImage(img, -hw / 2, -hh * 0.95, hw, hh)
           ctx.restore()
         }
