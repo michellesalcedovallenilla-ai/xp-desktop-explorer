@@ -378,15 +378,15 @@ export default function CameraApp() {
     }
 
     if (hand && beerOn) {
-      const px = hand.palmCenter.x * cw
-      const py = hand.palmCenter.y * ch
-      const bh = Math.max(hand.handHeight * ch * 1.1, hand.handSize * ch * 1.05)
-      const bw = bh * 0.35
+      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
+      const handWidthPx = hand.handWidth * pxScale
+      const bw = Math.max(handWidthPx * 1.05, 26)
+      const bh = bw / 0.35
       const rotDeg = ((hand.rotation - Math.PI / 2) * 180) / Math.PI
       beer = {
         position: 'absolute',
-        left: px - bw / 2,
-        top: py - bh * 0.62,
+        left: palm.x - bw / 2,
+        top: palm.y - bh * 0.68,
         width: bw,
         height: bh,
         transform: `rotate(${rotDeg}deg)`,
