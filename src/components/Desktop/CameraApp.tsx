@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Heart, Download, Trash2, X, Glasses, Crown, Beer } from 'lucide-react'
+import { Heart, Download, Trash2, X, Glasses, Crown, Beer, Smile } from 'lucide-react'
 import { useMediaPipeTracking, type FaceLandmarks, type HandPosition } from '@/hooks/useMediaPipeTracking'
 
 interface Photo {
@@ -130,8 +130,6 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(eyeCenter.x, eyeCenter.y)
           ctx.rotate(rot)
-          // Flip horizontally to match mirrored video
-          ctx.scale(-1, 1)
           ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
           ctx.restore()
         }
@@ -147,7 +145,6 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(mx, my)
           ctx.rotate(rot)
-          ctx.scale(-1, 1)
           ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
           ctx.restore()
         }
@@ -163,8 +160,6 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
-          // Flip horizontally to match mirrored video
-          ctx.scale(-1, 1)
           ctx.drawImage(img, -hw / 2, -hh * 0.95, hw, hh)
           ctx.restore()
         }
@@ -290,7 +285,7 @@ export default function CameraApp() {
           top: eyeCenter.y - gh / 2,
           width: gw,
           height: gh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -308,7 +303,7 @@ export default function CameraApp() {
           top: my - mh / 2,
           width: mw,
           height: mh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -326,7 +321,7 @@ export default function CameraApp() {
           top: hy - hh * 0.95,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -509,6 +504,9 @@ export default function CameraApp() {
         </button>
         <button className={`camera-btn ${glassesOn ? 'active' : ''}`} onClick={() => setGlassesOn(!glassesOn)} title="Glasses">
           <Glasses size={18} color={glassesOn ? '#ffcc00' : undefined} />
+        </button>
+        <button className={`camera-btn ${mustacheOn ? 'active' : ''}`} onClick={() => setMustacheOn(!mustacheOn)} title="Mustache">
+          <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
         </button>
         <button className={`camera-btn ${beerOn ? 'active' : ''}`} onClick={() => setBeerOn(!beerOn)} title="Polarcita">
           <Beer size={18} color={beerOn ? '#f0a030' : undefined} />
