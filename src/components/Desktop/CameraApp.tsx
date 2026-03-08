@@ -233,7 +233,7 @@ export default function CameraApp() {
     }
 
     ctx.filter = 'none'
-    drawOverlays(ctx, w, h, face, hand)
+    drawOverlays(ctx, w, h, face, leftHand, rightHand)
 
     const dataUrl = canvas.toDataURL('image/png')
     setPhotos(prev => [{ id: Date.now().toString(), dataUrl }, ...prev])
