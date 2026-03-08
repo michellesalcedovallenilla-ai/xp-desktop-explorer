@@ -240,6 +240,23 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
+    // Nostalgic portfolio mock
+    if (isPortfolio) {
+      const page = currentUrl.includes('/aboutme')
+        ? 'aboutme'
+        : currentUrl.includes('/socials')
+          ? 'socials'
+          : currentUrl.includes('/faq')
+            ? 'faq'
+            : currentUrl.includes('/keywords')
+              ? 'keywords'
+              : currentUrl.includes('/portfolio')
+                ? 'portfolio'
+                : 'home'
+
+      return <PortfolioSite page={page} onNavigate={navigateTo} />
+    }
+
     // Instagram — exact 2012 iOS app replica
     if (isInstagram) {
       const igUrl = 'https://www.instagram.com/mydigitalcrib/'
