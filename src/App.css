@@ -4271,28 +4271,31 @@ textarea {
     font-size: 12px;
   }
 
-  /* Desktop icons: smaller, grid-like */
+  /* Desktop icons: compact grid */
   .xp-landscape-icon {
     position: relative !important;
     left: auto !important;
     top: auto !important;
+    width: auto !important;
   }
   .desktop {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 10px 6px;
     align-content: flex-start;
-    justify-content: center;
+    justify-items: center;
     overflow-y: auto;
+    bottom: 36px;
   }
   .xp-landscape-animal {
-    max-width: 70px !important;
-    width: 70px !important;
+    max-width: 55px !important;
+    width: 55px !important;
   }
   .xp-landscape-label {
-    font-size: 10px;
-    max-width: 70px;
+    font-size: 9px;
+    max-width: 65px;
+    margin-top: 2px;
   }
 
   /* Windows: forced fullscreen */
