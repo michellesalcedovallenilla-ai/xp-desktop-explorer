@@ -10,29 +10,30 @@ import {
   VolumeX
 } from 'lucide-react'
 
-// Spotify playlist tracks with their URIs
-const SPOTIFY_PLAYLIST_URI = 'spotify:playlist:3x3dxHjNbb62D1qYrNHcqv'
-
-interface SpotifyTrack {
+interface YTTrack {
   id: string
   title: string
   artist: string
-  duration: number
-  uri: string
+  duration: number // seconds
+  youtubeId: string
 }
 
-const playlistTracks: SpotifyTrack[] = [
-  { id: '1', title: 'Rush', artist: 'Troye Sivan', duration: 195, uri: 'spotify:track:4ZnkygoWIzmMiSJPOuJgcl' },
-  { id: '2', title: 'One of Your Girls', artist: 'Troye Sivan', duration: 195, uri: 'spotify:track:6761sGRbhCFCclVpKmRmBj' },
-  { id: '3', title: 'Got Me Started', artist: 'Troye Sivan', duration: 188, uri: 'spotify:track:4oLxLPpiMpKOrdGrsLYqbN' },
-  { id: '4', title: '360', artist: 'Charli XCX', duration: 173, uri: 'spotify:track:2HIpMRyLBxnY8OxbhKVKlG' },
-  { id: '5', title: 'Apple', artist: 'Charli XCX', duration: 180, uri: 'spotify:track:5TDyIerGJmBDorBqKEz5Gs' },
+const playlistTracks: YTTrack[] = [
+  { id: '1', title: 'Atlantis', artist: 'Bridgit Mendler ft. Kaiydo', duration: 237, youtubeId: 'JK8VoVqLXeY' },
+  { id: '2', title: "Where's My Love", artist: 'SYML', duration: 253, youtubeId: 'goWa6EzkCh4' },
+  { id: '3', title: 'Call the Days', artist: 'Nadia Reid', duration: 213, youtubeId: 'y_Yt-_DS3bI' },
+  { id: '4', title: 'All The Pretty Girls', artist: 'KALEO', duration: 272, youtubeId: 'FNwgOkl5nRY' },
+  { id: '5', title: 'Georgia', artist: 'Vance Joy', duration: 239, youtubeId: 'DQMbHNofCzw' },
+  { id: '6', title: 'Ophelia', artist: 'The Lumineers', duration: 163, youtubeId: 'pTOC_q0NLTk' },
+  { id: '7', title: 'Sunday Morning', artist: 'Maroon 5', duration: 265, youtubeId: 'S2Cti12XBw4' },
+  { id: '8', title: 'Morning Rain', artist: 'Adam Torres', duration: 300, youtubeId: 'qlG_NCpld8g' },
+  { id: '9', title: 'Amadeus', artist: 'JoJo Worthington', duration: 229, youtubeId: 'OOP3jQWxU6o' },
+  { id: '10', title: 'The Words You Say', artist: 'Harrison Storm', duration: 211, youtubeId: 'kiaFCCElq-w' },
 ]
 
-const formatTime = (ms: number) => {
-  const totalSec = Math.floor(ms / 1000)
-  const m = Math.floor(totalSec / 60)
-  const s = totalSec % 60
+const formatTime = (sec: number) => {
+  const m = Math.floor(sec / 60)
+  const s = Math.floor(sec % 60)
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
@@ -44,9 +45,10 @@ export default function MusicPlayer() {
   const [volume, setVolume] = useState(75)
   const [isMuted, setIsMuted] = useState(false)
   const [eqBars, setEqBars] = useState<number[]>(Array(24).fill(5))
-  const controllerRef = useRef<any>(null)
-  const embedRef = useRef<HTMLDivElement>(null)
-  const animFrameRef = useRef<number>()
+  const [playerReady, setPlayerReady] = useState(false)
+  const playerRef = useRef<any>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const progressInterval = useRef<ReturnType<typeof setInterval>>()
 
   const currentTrack = playlistTracks[currentTrackIdx]
 
@@ -56,101 +58,120 @@ export default function MusicPlayer() {
       setEqBars(Array(24).fill(5))
       return
     }
-    const animate = () => {
-      setEqBars(prev => prev.map(() => 10 + Math.random() * 90))
-      animFrameRef.current = requestAnimationFrame(animate)
-    }
-    // Throttle to ~15fps for performance
     const interval = setInterval(() => {
       setEqBars(prev => prev.map(() => 10 + Math.random() * 90))
     }, 80)
+    return () => clearInterval(interval)
+  }, [isPlaying])
+
+  // Track progress
+  useEffect(() => {
+    if (progressInterval.current) clearInterval(progressInterval.current)
+    if (isPlaying && playerRef.current) {
+      progressInterval.current = setInterval(() => {
+        try {
+          const ct = playerRef.current?.getCurrentTime?.() || 0
+          const dur = playerRef.current?.getDuration?.() || 0
+          setPosition(ct)
+          setDuration(dur)
+        } catch {}
+      }, 500)
+    }
     return () => {
-      clearInterval(interval)
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+      if (progressInterval.current) clearInterval(progressInterval.current)
     }
   }, [isPlaying])
 
-  // Load Spotify IFrame API
+  // Load YouTube IFrame API
   useEffect(() => {
-    if (!embedRef.current) return
-
-    // Create the iframe element for Spotify
-    const existingScript = document.querySelector('script[src="https://open.spotify.com/embed/iframe-api/v1"]')
+    const tag = document.createElement('script')
+    tag.src = 'https://www.youtube.com/iframe_api'
     
-    const initEmbed = () => {
-      if (!(window as any).SpotifyIframeApi) return
-      const IFrameAPI = (window as any).SpotifyIframeApi
-      
-      const element = embedRef.current
-      if (!element) return
+    const existing = document.querySelector('script[src="https://www.youtube.com/iframe_api"]')
+    if (!existing) {
+      document.head.appendChild(tag)
+    }
 
-      const options = {
-        width: '100%',
-        height: '80',
-        uri: SPOTIFY_PLAYLIST_URI,
-      }
+    const initPlayer = () => {
+      if (!containerRef.current) return
+      // Create a div for the player
+      const playerDiv = document.createElement('div')
+      playerDiv.id = 'wmp-yt-player-' + Date.now()
+      containerRef.current.appendChild(playerDiv)
 
-      IFrameAPI.createController(element, options, (controller: any) => {
-        controllerRef.current = controller
-        
-        controller.addListener('playback_update', (e: any) => {
-          const data = e.data
-          setPosition(data.position || 0)
-          setDuration(data.duration || 0)
-          setIsPlaying(!data.isPaused)
-        })
-
-        controller.addListener('ready', () => {
-          console.log('Spotify embed ready')
-        })
+      playerRef.current = new (window as any).YT.Player(playerDiv.id, {
+        height: '1',
+        width: '1',
+        videoId: playlistTracks[0].youtubeId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          rel: 0,
+        },
+        events: {
+          onReady: () => {
+            setPlayerReady(true)
+            playerRef.current.setVolume(volume)
+          },
+          onStateChange: (event: any) => {
+            const YT = (window as any).YT
+            if (event.data === YT.PlayerState.PLAYING) {
+              setIsPlaying(true)
+              setDuration(playerRef.current.getDuration())
+            } else if (event.data === YT.PlayerState.PAUSED) {
+              setIsPlaying(false)
+            } else if (event.data === YT.PlayerState.ENDED) {
+              handleNext()
+            }
+          },
+        },
       })
     }
 
-    if (existingScript) {
-      // API already loaded
-      if ((window as any).SpotifyIframeApi) {
-        initEmbed()
-      } else {
-        (window as any).onSpotifyIframeApiReady = (IFrameAPI: any) => {
-          (window as any).SpotifyIframeApi = IFrameAPI
-          initEmbed()
-        }
-      }
+    if ((window as any).YT && (window as any).YT.Player) {
+      initPlayer()
     } else {
-      (window as any).onSpotifyIframeApiReady = (IFrameAPI: any) => {
-        (window as any).SpotifyIframeApi = IFrameAPI
-        initEmbed()
-      }
-      const script = document.createElement('script')
-      script.src = 'https://open.spotify.com/embed/iframe-api/v1'
-      script.async = true
-      document.body.appendChild(script)
+      (window as any).onYouTubeIframeAPIReady = initPlayer
     }
 
     return () => {
-      if (controllerRef.current) {
-        try { controllerRef.current.destroy() } catch {}
-        controllerRef.current = null
-      }
+      try { playerRef.current?.destroy?.() } catch {}
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handlePlayPause = useCallback(() => {
-    if (controllerRef.current) {
-      controllerRef.current.togglePlay()
+  // Volume sync
+  useEffect(() => {
+    if (playerRef.current && playerReady) {
+      if (isMuted) {
+        playerRef.current.mute()
+      } else {
+        playerRef.current.unMute()
+        playerRef.current.setVolume(volume)
+      }
     }
-  }, [])
+  }, [volume, isMuted, playerReady])
+
+  const handlePlayPause = useCallback(() => {
+    if (!playerRef.current || !playerReady) return
+    if (isPlaying) {
+      playerRef.current.pauseVideo()
+    } else {
+      playerRef.current.playVideo()
+    }
+  }, [isPlaying, playerReady])
 
   const handleTrackSelect = useCallback((idx: number) => {
     setCurrentTrackIdx(idx)
-    const track = playlistTracks[idx]
-    if (controllerRef.current) {
-      controllerRef.current.loadUri(track.uri)
-      controllerRef.current.play()
-    }
     setPosition(0)
-  }, [])
+    if (playerRef.current && playerReady) {
+      playerRef.current.loadVideoById(playlistTracks[idx].youtubeId)
+    }
+  }, [playerReady])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleNext = useCallback(() => {
     const nextIdx = (currentTrackIdx + 1) % playlistTracks.length
     handleTrackSelect(nextIdx)
@@ -162,32 +183,30 @@ export default function MusicPlayer() {
   }, [currentTrackIdx, handleTrackSelect])
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!duration) return
+    if (!duration || !playerRef.current) return
     const rect = e.currentTarget.getBoundingClientRect()
     const pct = (e.clientX - rect.left) / rect.width
-    const seekMs = pct * duration
-    if (controllerRef.current) {
-      controllerRef.current.seek(seekMs / 1000)
-    }
-    setPosition(seekMs)
+    const seekSec = pct * duration
+    playerRef.current.seekTo(seekSec, true)
+    setPosition(seekSec)
   }
 
   const progressPct = duration > 0 ? (position / duration) * 100 : 0
 
   return (
     <div className="wmp-xp-container">
-      {/* Hidden Spotify embed */}
+      {/* Hidden YouTube player */}
       <div
-        ref={embedRef}
+        ref={containerRef}
         style={{
           position: 'fixed',
+          left: '-9999px',
+          top: '-9999px',
           width: '1px',
           height: '1px',
           overflow: 'hidden',
           opacity: 0,
           pointerEvents: 'none',
-          left: '-9999px',
-          top: '-9999px',
           zIndex: -1,
         }}
       />
@@ -211,8 +230,6 @@ export default function MusicPlayer() {
             />
           ))}
         </div>
-
-        {/* Green progress line at bottom of visualization */}
         <div className="wmp-xp-viz-progress">
           <div
             className="wmp-xp-viz-progress-fill"
@@ -264,12 +281,8 @@ export default function MusicPlayer() {
           <Repeat size={12} />
         </button>
 
-        {/* Volume */}
         <div className="wmp-xp-volume">
-          <button
-            className="wmp-xp-vol-icon"
-            onClick={() => setIsMuted(!isMuted)}
-          >
+          <button className="wmp-xp-vol-icon" onClick={() => setIsMuted(!isMuted)}>
             {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
           </button>
           <input
@@ -297,9 +310,7 @@ export default function MusicPlayer() {
             <span className="wmp-xp-pl-name">
               {track.title} - {track.artist}
             </span>
-            <span className="wmp-xp-pl-duration">
-              {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
-            </span>
+            <span className="wmp-xp-pl-duration">{formatTime(track.duration)}</span>
           </div>
         ))}
       </div>
