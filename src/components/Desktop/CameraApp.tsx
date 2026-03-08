@@ -192,12 +192,12 @@ export default function CameraApp() {
         const px = hd.palmCenter.x * w
         const py = hd.palmCenter.y * h
         const handWidthPx = hd.handWidth * w
-        const bw = Math.max(handWidthPx * 1.05, 44)
+        const bw = Math.max(handWidthPx * 1.25, 54)
         const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(px, py)
         ctx.rotate(hd.rotation - Math.PI / 2)
-        ctx.drawImage(img, -bw / 2, -bh * 0.68, bw, bh)
+        ctx.drawImage(img, -bw / 2, -bh * 0.52, bw, bh)
         ctx.restore()
       }
     }
