@@ -336,7 +336,7 @@ export default function CameraApp() {
           top: hatAnchor.y - hh * 0.62,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
