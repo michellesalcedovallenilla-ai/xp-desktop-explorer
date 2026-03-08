@@ -296,9 +296,9 @@ export default function CameraApp() {
     }
   }
 
-  const glassesStyle = disguiseEnabled ? makeOverlayStyle(-0.05, 0.22, 1.1, 0.28) : null
-  const mustacheStyle = disguiseEnabled ? makeOverlayStyle(0.1, 0.58, 0.8, 0.22) : null
-  const hatStyle = hatEnabled ? makeOverlayStyle(-0.15, -0.5, 1.3, 0.55) : null
+  const glassesStyle = disguiseEnabled ? makeOverlayStyle(-0.04, 0.28, 1.08, 0.24) : null
+  const mustacheStyle = disguiseEnabled ? makeOverlayStyle(0.14, 0.62, 0.72, 0.18) : null
+  const hatStyle = hatEnabled ? makeOverlayStyle(-0.08, -0.62, 1.15, 0.5) : null
 
   const showCenteredDisguise = disguiseEnabled && (!hasFaceApi || !faceBox) && hasCamera
   const showCenteredHat = hatEnabled && (!hasFaceApi || !faceBox) && hasCamera
