@@ -4554,62 +4554,9 @@ textarea {
     width: 16px;
     height: 16px;
   }
-
-  /* Start Menu — full width, touch-friendly */
+  /* Start Menu — hidden on mobile (using MobileStartMenu component instead) */
   .xp-start-menu {
-    width: 80vw;
-    max-width: 320px;
-    max-height: calc(100vh - 52px);
-    overflow-y: auto;
-    border-radius: 10px 10px 0 0;
-    left: 0;
-    bottom: 100%;
-  }
-  .xp-start-body {
-    flex-direction: column;
-    min-height: auto;
-  }
-  .xp-start-left {
-    max-height: 55vh;
-    overflow-y: auto;
-  }
-  .xp-start-right {
-    border-top: 1px solid #ACA899;
-    border-right: none;
-    max-height: 30vh;
-    overflow-y: auto;
-  }
-  .xp-start-item {
-    padding: 10px 12px;
-    font-size: 14px;
-    gap: 10px;
-    min-height: 40px;
-  }
-  .xp-start-item-icon {
-    font-size: 20px;
-    width: 28px;
-  }
-  .xp-start-sep {
-    margin: 2px 10px;
-  }
-  .xp-start-header {
-    padding: 10px 12px;
-  }
-  .xp-start-avatar {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
-  }
-  .xp-start-username {
-    font-size: 14px;
-  }
-  .xp-start-footer {
-    padding: 8px 12px;
-  }
-  .xp-start-footer-btn {
-    padding: 8px 12px;
-    font-size: 13px;
-    min-height: 36px;
+    display: none;
   }
 
   /* Login */
