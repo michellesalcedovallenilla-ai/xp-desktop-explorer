@@ -393,6 +393,18 @@ export default function CameraApp() {
           </div>
         )}
 
+        {/* Centered heart fallback */}
+        {showCenteredHearts && (
+          <div style={{
+            position: 'absolute', top: '10%', left: 0, right: 0,
+            pointerEvents: 'none', display: 'flex', justifyContent: 'center', gap: 14, zIndex: 10
+          }}>
+            <span style={{ fontSize: 34, filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
+            <span style={{ fontSize: 28, transform: 'translateY(8px)', filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
+            <span style={{ fontSize: 34, filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
+          </div>
+        )}
+
         {/* Flash */}
         {flash && (
           <div style={{
