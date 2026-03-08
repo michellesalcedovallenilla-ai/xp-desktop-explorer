@@ -109,200 +109,118 @@ export default function MenuBar() {
           <span>start</span>
         </button>
 
-        {/* Start Menu */}
-        <AnimatePresence>
-          {startOpen && (
-            <motion.div
-              className="xp-start-menu"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.15 }}
-            >
-              {/* Header */}
-              <div className="xp-start-header">
-                <div className="xp-start-avatar">🐱</div>
-                <span className="xp-start-username">Michelle Salcedo</span>
-              </div>
-
-              {/* Body */}
-              <div className="xp-start-body">
-                {/* Left column - Programs */}
-                <div className="xp-start-left">
-                  <button
-                    className="xp-start-item xp-start-item-bold"
-                    onClick={() => openWindow('ie', 'Internet Explorer')}
-                  >
-                    <span className="xp-start-item-icon">🌐</span> Internet
-                    Explorer
-                  </button>
-                  <button
-                    className="xp-start-item xp-start-item-bold"
-                    onClick={() => openWindow('finder', 'My Computer')}
-                  >
-                    <span className="xp-start-item-icon">💻</span> My Computer
-                  </button>
-                  <button
-                    className="xp-start-item xp-start-item-bold"
-                    onClick={() => openWindow('finder', 'My Documents')}
-                  >
-                    <span className="xp-start-item-icon">📁</span> My Documents
-                  </button>
-                  <div className="xp-start-sep" />
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('about', 'About Me')}
-                  >
-                    <span className="xp-start-item-icon">👤</span> About Me
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('contact', 'Contact')}
-                  >
-                    <span className="xp-start-item-icon">✉️</span> Contact
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('resume', 'Resume.pdf')}
-                  >
-                    <span className="xp-start-item-icon">📄</span> Resume
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('camera', 'Camera')}
-                  >
-                    <span className="xp-start-item-icon">📷</span> Camera
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('music', 'Windows Media Player')}
-                  >
-                    <span className="xp-start-item-icon">🎵</span> Music Player
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('paint', 'Paint')}
-                  >
-                    <span className="xp-start-item-icon">🎨</span> Paint
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('minesweeper', 'Minesweeper')}
-                  >
-                    <span className="xp-start-item-icon">💣</span> Minesweeper
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('solitaire', 'Solitaire')}
-                  >
-                    <span className="xp-start-item-icon">🃏</span> Solitaire
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('messenger', 'MSN Messenger')}
-                  >
-                    <span className="xp-start-item-icon">💬</span> MSN Messenger
-                  </button>
-                  <div className="xp-start-sep" />
-                  <button
-                    className="xp-start-item"
-                    onClick={() => {
-                      setSpotlightOpen(true)
-                      setStartOpen(false)
-                    }}
-                  >
-                    <span className="xp-start-item-icon">🔍</span> Search...
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => {
-                      setSpotlightOpen(true)
-                      setStartOpen(false)
-                    }}
-                  >
-                    <span className="xp-start-item-icon">▶️</span> Run...
-                  </button>
+        {/* Desktop Start Menu (non-mobile) */}
+        {!isMobile && (
+          <AnimatePresence>
+            {startOpen && (
+              <motion.div
+                className="xp-start-menu"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.15 }}
+              >
+                {/* Header */}
+                <div className="xp-start-header">
+                  <div className="xp-start-avatar">🐱</div>
+                  <span className="xp-start-username">Michelle Salcedo</span>
                 </div>
 
-                {/* Right column - Places */}
-                <div className="xp-start-right">
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('finder', 'My Documents')}
-                  >
-                    <span className="xp-start-item-icon">📁</span> My Documents
+                {/* Body */}
+                <div className="xp-start-body">
+                  {/* Left column - Programs */}
+                  <div className="xp-start-left">
+                    <button className="xp-start-item xp-start-item-bold" onClick={() => openWindow('ie', 'Internet Explorer')}>
+                      <span className="xp-start-item-icon">🌐</span> Internet Explorer
+                    </button>
+                    <button className="xp-start-item xp-start-item-bold" onClick={() => openWindow('finder', 'My Computer')}>
+                      <span className="xp-start-item-icon">💻</span> My Computer
+                    </button>
+                    <button className="xp-start-item xp-start-item-bold" onClick={() => openWindow('finder', 'My Documents')}>
+                      <span className="xp-start-item-icon">📁</span> My Documents
+                    </button>
+                    <div className="xp-start-sep" />
+                    <button className="xp-start-item" onClick={() => openWindow('about', 'About Me')}>
+                      <span className="xp-start-item-icon">👤</span> About Me
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('contact', 'Contact')}>
+                      <span className="xp-start-item-icon">✉️</span> Contact
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('resume', 'Resume.pdf')}>
+                      <span className="xp-start-item-icon">📄</span> Resume
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('camera', 'Camera')}>
+                      <span className="xp-start-item-icon">📷</span> Camera
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('music', 'Windows Media Player')}>
+                      <span className="xp-start-item-icon">🎵</span> Music Player
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('paint', 'Paint')}>
+                      <span className="xp-start-item-icon">🎨</span> Paint
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('minesweeper', 'Minesweeper')}>
+                      <span className="xp-start-item-icon">💣</span> Minesweeper
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('solitaire', 'Solitaire')}>
+                      <span className="xp-start-item-icon">🃏</span> Solitaire
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('messenger', 'MSN Messenger')}>
+                      <span className="xp-start-item-icon">💬</span> MSN Messenger
+                    </button>
+                    <div className="xp-start-sep" />
+                    <button className="xp-start-item" onClick={() => { setSpotlightOpen(true); setStartOpen(false) }}>
+                      <span className="xp-start-item-icon">🔍</span> Search...
+                    </button>
+                    <button className="xp-start-item" onClick={() => { setSpotlightOpen(true); setStartOpen(false) }}>
+                      <span className="xp-start-item-icon">▶️</span> Run...
+                    </button>
+                  </div>
+
+                  {/* Right column - Places */}
+                  <div className="xp-start-right">
+                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Documents')}>
+                      <span className="xp-start-item-icon">📁</span> My Documents
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Pictures')}>
+                      <span className="xp-start-item-icon">🖼️</span> My Pictures
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('music', 'My Music')}>
+                      <span className="xp-start-item-icon">🎶</span> My Music
+                    </button>
+                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Computer')}>
+                      <span className="xp-start-item-icon">💻</span> My Computer
+                    </button>
+                    <div className="xp-start-sep" />
+                    <button className="xp-start-item" onClick={() => { showError('Control Panel', 'Access denied.'); setStartOpen(false) }}>
+                      <span className="xp-start-item-icon">⚙️</span> Control Panel
+                    </button>
+                    <button className="xp-start-item" onClick={() => { showError('Printers and Faxes', 'Windows cannot find any printers.'); setStartOpen(false) }}>
+                      <span className="xp-start-item-icon">🖨️</span> Printers
+                    </button>
+                    <button className="xp-start-item" onClick={() => { showError('Help and Support', 'Help is not available.'); setStartOpen(false) }}>
+                      <span className="xp-start-item-icon">❓</span> Help and Support
+                    </button>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="xp-start-footer">
+                  <button className="xp-start-footer-btn" onClick={() => setLocked(true)}>
+                    <span>🔒</span> Log Off
                   </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('finder', 'My Pictures')}
-                  >
-                    <span className="xp-start-item-icon">🖼️</span> My Pictures
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('music', 'My Music')}
-                  >
-                    <span className="xp-start-item-icon">🎶</span> My Music
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => openWindow('finder', 'My Computer')}
-                  >
-                    <span className="xp-start-item-icon">💻</span> My Computer
-                  </button>
-                  <div className="xp-start-sep" />
-                  <button
-                    className="xp-start-item"
-                    onClick={() => {
-                      showError('Control Panel', 'Access denied. You do not have permission to access the Control Panel.')
-                      setStartOpen(false)
-                    }}
-                  >
-                    <span className="xp-start-item-icon">⚙️</span> Control Panel
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => {
-                      showError('Printers and Faxes', 'Windows cannot find any printers. Make sure a printer is connected and try again.')
-                      setStartOpen(false)
-                    }}
-                  >
-                    <span className="xp-start-item-icon">🖨️</span> Printers
-                  </button>
-                  <button
-                    className="xp-start-item"
-                    onClick={() => {
-                      showError('Help and Support', 'Help is not available. This program has performed an illegal operation.')
-                      setStartOpen(false)
-                    }}
-                  >
-                    <span className="xp-start-item-icon">❓</span> Help and
-                    Support
+                  <button className="xp-start-footer-btn" onClick={() => { setShutdownVisible(true); setStartOpen(false) }}>
+                    <span>⏻</span> Turn Off Computer
                   </button>
                 </div>
-              </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
 
-              {/* Footer */}
-              <div className="xp-start-footer">
-                <button
-                  className="xp-start-footer-btn"
-                  onClick={() => setLocked(true)}
-                >
-                  <span>🔒</span> Log Off
-                </button>
-                <button
-                  className="xp-start-footer-btn"
-                  onClick={() => {
-                    setShutdownVisible(true)
-                    setStartOpen(false)
-                  }}
-                >
-                  <span>⏻</span> Turn Off Computer
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Mobile Start Menu */}
+        {isMobile && (
+          <MobileStartMenu isOpen={startOpen} onClose={() => setStartOpen(false)} />
+        )}
       </div>
 
       {/* Quick Launch */}
