@@ -511,9 +511,6 @@ export default function CameraApp() {
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
         </button>
-        <button className={`camera-btn ${glassesOn ? 'active' : ''}`} onClick={() => setGlassesOn(!glassesOn)} title="Glasses">
-          <Glasses size={18} color={glassesOn ? '#ffcc00' : undefined} />
-        </button>
         <button className={`camera-btn ${mustacheOn ? 'active' : ''}`} onClick={() => setMustacheOn(!mustacheOn)} title="Mustache">
           <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
         </button>
