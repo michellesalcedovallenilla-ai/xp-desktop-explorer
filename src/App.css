@@ -4996,13 +4996,23 @@ textarea {
 /* === LANDSCAPE MOBILE === */
 @media (max-height: 480px) and (orientation: landscape) {
   .xp-taskbar {
-    height: 30px;
+    height: 32px;
   }
   .xp-start-btn {
-    height: 28px;
+    height: 30px;
   }
   .desktop {
-    bottom: 30px;
+    bottom: 32px;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 4px 2px !important;
+    padding: 6px !important;
+  }
+  .xp-landscape-animal {
+    width: 40px !important;
+    max-width: 40px !important;
+  }
+  .xp-landscape-icon {
+    width: 56px !important;
   }
   .camera-controls {
     padding: 4px;
@@ -5014,7 +5024,6 @@ textarea {
   .msn-toolbar {
     display: none;
   }
-  /* In landscape mobile, make windows use full width but shorter */
   .xp-titlebar {
     height: 28px;
   }
@@ -5031,9 +5040,8 @@ textarea {
 /* === PORTRAIT TABLET SPECIFIC === */
 @media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
   .desktop {
-    bottom: 36px;
+    bottom: 38px;
   }
-  /* In portrait, position icons more towards top half */
   .xp-sun-img {
     width: 12vw;
   }
@@ -5044,12 +5052,20 @@ textarea {
   .xp-taskbar {
     padding-bottom: env(safe-area-inset-bottom);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 480px) {
     .xp-taskbar {
-      height: calc(40px + env(safe-area-inset-bottom));
+      height: calc(44px + env(safe-area-inset-bottom));
     }
     .desktop {
-      bottom: calc(40px + env(safe-area-inset-bottom));
+      bottom: calc(44px + env(safe-area-inset-bottom));
+    }
+  }
+  @media (min-width: 481px) and (max-width: 768px) {
+    .xp-taskbar {
+      height: calc(38px + env(safe-area-inset-bottom));
+    }
+    .desktop {
+      bottom: calc(38px + env(safe-area-inset-bottom));
     }
   }
 }
