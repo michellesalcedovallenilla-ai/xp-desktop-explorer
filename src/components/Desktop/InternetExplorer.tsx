@@ -12,8 +12,6 @@ const PORTFOLIO_PAGES: Record<string, string> = {
 }
 const INSTAGRAM_URL = 'https://www.instagram.com/mydigitaldrafts/'
 const GOOGLE_URL = 'https://www.google.com/'
-const INSTAGRAM_URL = 'https://www.instagram.com/mydigitaldrafts/'
-const GOOGLE_URL = 'https://www.google.com/'
 
 interface Props {
   windowId: string
