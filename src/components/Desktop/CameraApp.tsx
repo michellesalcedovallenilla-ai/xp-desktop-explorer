@@ -452,9 +452,6 @@ export default function CameraApp() {
 
       {/* Controls */}
       <div className="camera-controls">
-        <button className={`camera-btn ${heartsOn ? 'active' : ''}`} onClick={() => setHeartsOn(!heartsOn)}>
-          <Heart size={18} fill={heartsOn ? '#ff4466' : 'none'} />
-        </button>
         <button className={`camera-btn ${hatOn ? 'active' : ''}`} onClick={() => setHatOn(!hatOn)} title="Hat">
           <Crown size={18} color={hatOn ? '#ff4466' : undefined} />
         </button>
@@ -465,7 +462,7 @@ export default function CameraApp() {
           <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
         </button>
         <button className={`camera-btn ${beerOn ? 'active' : ''}`} onClick={() => setBeerOn(!beerOn)} title="Polarcita">
-          <Beer size={18} color={beerOn ? '#f0a030' : undefined} />
+          <span style={{ fontSize: 16 }}>🇻🇪</span>
         </button>
       </div>
 
