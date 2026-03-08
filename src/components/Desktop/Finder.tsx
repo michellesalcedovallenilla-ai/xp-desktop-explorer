@@ -130,10 +130,21 @@ export default function Finder() {
             <button
               key={p.id}
               className="xp-explorer-file"
-              onClick={() => openProject(p.id, p.title)}
+              onClick={() => {
+                if (p.link) {
+                  window.open(p.link, '_blank')
+                } else {
+                  openProject(p.id, p.title)
+                }
+              }}
             >
               <div className="xp-explorer-file-icon">
-                <span style={{ fontSize: 28 }}>{p.image}</span>
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  style={{ width: 32, height: 32, objectFit: 'contain' }}
+                  draggable={false}
+                />
               </div>
               <span className="xp-explorer-file-name">{p.title}</span>
             </button>

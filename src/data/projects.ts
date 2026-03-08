@@ -2,44 +2,20 @@ import type { MusicTrack, Project } from '../types'
 
 export const projects: Project[] = [
   {
-    id: 'project-1',
-    title: 'Aero Dashboard',
-    description:
-      'A stunning Frutiger Aero-inspired dashboard application with glassmorphic widgets, real-time data visualization, and smooth animations. Built with a focus on the mid-2000s design aesthetic.',
-    technologies: ['React', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
-    image: '🖥️',
-    link: '#',
-    github: '#'
+    id: 'myspace',
+    title: 'MySpace',
+    description: 'My personal MySpace-style page made with Canva.',
+    technologies: ['Canva'],
+    image: '/icons/xp-myspace.png',
+    link: 'https://ifyourereadingthishiremenow.my.canva.site'
   },
   {
-    id: 'project-2',
-    title: 'Crystal Chat',
-    description:
-      'A real-time messaging application inspired by iChat and MSN Messenger. Features translucent chat bubbles, animated emoticons, and contact presence indicators.',
-    technologies: ['Next.js', 'Socket.io', 'PostgreSQL', 'Prisma'],
-    image: '💬',
-    link: '#',
-    github: '#'
-  },
-  {
-    id: 'project-3',
-    title: 'Vista Weather',
-    description:
-      'A weather application with animated 3D weather effects, gradient skies that change based on conditions, and glassmorphic information cards.',
-    technologies: ['React', 'Three.js', 'OpenWeather API', 'CSS Gradients'],
-    image: '🌤️',
-    link: '#',
-    github: '#'
-  },
-  {
-    id: 'project-4',
-    title: 'Aqua Notes',
-    description:
-      'A note-taking app inspired by macOS Stickies with real-time sync, markdown support, and the classic "pinned to desktop" feel with skeuomorphic paper textures.',
-    technologies: ['Vue.js', 'Firebase', 'Markdown-it', 'GSAP'],
-    image: '📝',
-    link: '#',
-    github: '#'
+    id: 'portfolio',
+    title: 'Portfolio',
+    description: 'My portfolio made with Readymag.',
+    technologies: ['Readymag'],
+    image: '/icons/xp-portfolio.png',
+    link: 'https://readymag.website/u2801101920/5411866/'
   }
 ]
 
