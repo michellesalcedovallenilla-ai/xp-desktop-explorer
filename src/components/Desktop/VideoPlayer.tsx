@@ -62,7 +62,7 @@ export default function VideoPlayer() {
         height: '100%',
         width: '100%',
         videoId: YOUTUBE_VIDEO_ID,
-        playerVars: { autoplay: 0, controls: 0, disablekb: 1, modestbranding: 1, rel: 0, fs: 0, iv_load_policy: 3, showinfo: 0 },
+        playerVars: { autoplay: 1, controls: 0, disablekb: 1, modestbranding: 1, rel: 0, fs: 0, iv_load_policy: 3, showinfo: 0 },
         events: {
           onReady: () => {
             setPlayerReady(true)
