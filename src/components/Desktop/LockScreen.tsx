@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSystemStore } from '../../store/useSystemStore'
+import { useAudioStore } from '../../store/useAudioStore'
 
 const PASSWORD = '1234'
 
