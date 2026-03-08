@@ -116,7 +116,8 @@ export default function PaintApp() {
     ctx.putImageData(imageData, 0, 0)
   }, [])
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if ('touches' in e) e.preventDefault()
     const pos = getPos(e)
     const canvas = canvasRef.current
     if (!canvas) return
@@ -126,7 +127,7 @@ export default function PaintApp() {
     setStartPos(pos)
 
     if (tool === 'fill') {
-      const c = e.button === 2 ? secondaryColor : primaryColor
+      const c = ('button' in e && e.button === 2) ? secondaryColor : primaryColor
       floodFill(pos.x, pos.y, c)
       return
     }
