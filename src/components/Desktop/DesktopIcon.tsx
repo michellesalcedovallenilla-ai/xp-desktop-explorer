@@ -27,7 +27,7 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
   const { openWindow } = useWindowStore()
   const { moveDesktopIcon } = useSystemStore()
   const [imgError, setImgError] = useState(false)
-  const animal = ICON_IMAGES[icon.icon]
+  const animal = ICON_IMAGES[icon.icon] || ICON_IMAGES[icon.id] || ICON_IMAGES[icon.action]
   const iconWidth = icon.iconWidth || 120
 
   const handleOpen = () => {
