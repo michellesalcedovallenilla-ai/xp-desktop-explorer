@@ -290,8 +290,12 @@ export default function MSNMessenger() {
 
         {/* Right sidebar with display pictures */}
         <div className="msn-sidebar">
-          <div className="msn-dp-box">🦋</div>
-          <div className="msn-dp-box msn-dp-box-small">{myAvatar}</div>
+          <div className="msn-dp-box">
+            <img src="/msn/dp-top.jpg" alt="Display Picture" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 2 }} />
+          </div>
+          <div className="msn-dp-box msn-dp-box-small">
+            <img src="/msn/dp-bottom.jpg" alt="My Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 2 }} />
+          </div>
         </div>
       </div>
 
