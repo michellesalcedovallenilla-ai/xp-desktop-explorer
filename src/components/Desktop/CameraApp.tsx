@@ -189,6 +189,20 @@ export default function CameraApp() {
           </div>
         )}
 
+        {/* Hat overlay */}
+        {hatEnabled && (
+          <div style={{
+            position: 'absolute', top: '-5%', left: 0, right: 0, pointerEvents: 'none',
+            display: 'flex', justifyContent: 'center'
+          }}>
+            <img
+              src="/overlays/hat.png"
+              alt="Hat"
+              style={{ width: '45%', opacity: 0.95, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
+            />
+          </div>
+        )}
+
         <AnimatePresence>
           {hearts.map((heart) => (
             <motion.div
