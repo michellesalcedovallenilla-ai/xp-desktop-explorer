@@ -5128,3 +5128,38 @@ textarea {
     }
   }
 }
+
+/* === WINDOWS MEDIA PLAYER - VIDEO === */
+.wmp-video-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #ccc;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+}
+
+.wmp-video-area {
+  flex: 1;
+  background: #000;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.wmp-video-area iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.wmp-video-statusbar {
+  background: linear-gradient(180deg, #2a2a4a, #1a1a2e);
+  padding: 2px 8px;
+  border-top: 1px solid #333;
+  color: #aaa;
+}
