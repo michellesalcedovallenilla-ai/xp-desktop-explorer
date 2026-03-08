@@ -144,6 +144,7 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(anchor.x, anchor.y + faceHeightPx * 0.02)
           ctx.rotate(rotation)
+          ctx.scale(-1, -1)
           ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
           ctx.restore()
         }
@@ -317,7 +318,7 @@ export default function CameraApp() {
           top: (anchor.y + faceHeightPx * 0.02) - mh / 2,
           width: mw,
           height: mh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
