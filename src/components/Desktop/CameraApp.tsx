@@ -295,6 +295,7 @@ export default function CameraApp() {
 
   const showCenteredDisguise = disguiseEnabled && (!hasFaceApi || !faceBox) && hasCamera
   const showCenteredHat = hatEnabled && (!hasFaceApi || !faceBox) && hasCamera
+  const showCenteredHearts = heartsEnabled && (!faceBox || !hasFaceApi) && hasCamera
 
   // Hearts above head (display)
   const heartOverlays = heartsEnabled && faceBox ? [
