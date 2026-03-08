@@ -161,8 +161,7 @@ export default function InternetExplorer({ windowId }: Props) {
     currentUrl === 'https://google.com' ||
     currentUrl === 'http://www.google.com'
   const isGoogleSearch = currentUrl.startsWith(`${GOOGLE_URL}search`)
-  const isPortfolioPage = !!PORTFOLIO_PAGES[currentUrl]
-  const isSimulated = isGoogleHome || isGoogleSearch || isPortfolioPage
+  const isSimulated = isGoogleHome || isGoogleSearch
 
   const fetchProxy = useCallback(async (url: string) => {
     setProxyLoading(true)
