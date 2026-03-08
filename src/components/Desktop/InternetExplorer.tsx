@@ -243,13 +243,15 @@ export default function InternetExplorer({ windowId }: Props) {
     if (isInstagram) {
       const igUrl = 'https://www.instagram.com/mydigitalcrib/'
       const openIg = () => {
-        const a = document.createElement('a')
-        a.href = igUrl
-        a.target = '_blank'
-        a.rel = 'noopener noreferrer'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
+        try {
+          window.top?.location.assign(igUrl)
+        } catch {
+          try {
+            window.parent.location.assign(igUrl)
+          } catch {
+            window.location.href = igUrl
+          }
+        }
       }
       return (
         <div style={{
