@@ -411,7 +411,7 @@ export default function CameraApp() {
             playsInline
             muted
             className="camera-video"
-            style={{ filter: filterStyle }}
+            style={{ filter: liveFilterStyle }}
           />
         ) : (
           <div style={{
