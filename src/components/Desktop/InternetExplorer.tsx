@@ -273,7 +273,7 @@ export default function InternetExplorer({ windowId }: Props) {
             boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 3px rgba(0,0,0,0.25)',
           }}>
             {/* Explore button */}
-            <div style={{
+            <div onClick={openIg} style={{
               background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
               border: '1px solid #4a85a5',
               borderRadius: '4px',
@@ -326,7 +326,7 @@ export default function InternetExplorer({ windowId }: Props) {
                 borderBottom: '1px solid #efefef',
               }}>
                 {/* Avatar */}
-                <div style={{
+                <div onClick={openIg} style={{
                   width: '77px', height: '77px',
                   borderRadius: '5px',
                   border: '1px solid #d0d0d0',
@@ -335,6 +335,7 @@ export default function InternetExplorer({ windowId }: Props) {
                   flexShrink: 0,
                   boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
                   overflow: 'hidden',
+                  cursor: 'pointer',
                 }}>
                   <span style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
                 </div>
@@ -349,22 +350,22 @@ export default function InternetExplorer({ windowId }: Props) {
                     overflow: 'hidden',
                     marginBottom: '8px',
                   }}>
-                    <div style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0' }}>
+                    <div onClick={openIg} style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0', cursor: 'pointer' }}>
                       <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>33</div>
                       <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>photos</div>
                     </div>
-                    <div style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0' }}>
+                    <div onClick={openIg} style={{ flex: 1, textAlign: 'center', padding: '6px 0', borderRight: '1px solid #d0d0d0', cursor: 'pointer' }}>
                       <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>793</div>
                       <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>followers</div>
                     </div>
-                    <div style={{ flex: 1, textAlign: 'center', padding: '6px 0' }}>
+                    <div onClick={openIg} style={{ flex: 1, textAlign: 'center', padding: '6px 0', cursor: 'pointer' }}>
                       <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#333', lineHeight: 1 }}>19</div>
                       <div style={{ fontSize: '9px', color: '#999', marginTop: '2px' }}>following</div>
                     </div>
                   </div>
 
                   {/* Follow button — exact 2012 blue */}
-                  <button style={{
+                  <button onClick={openIg} style={{
                     width: '100%',
                     background: 'linear-gradient(to bottom, #6db3d5 0%, #4a99c4 100%)',
                     border: '1px solid #3886b0',
@@ -388,7 +389,7 @@ export default function InternetExplorer({ windowId }: Props) {
                   we're vibes, your gen z marketing crew.<br />
                   taking your brand to the next level is our thing! 🫶
                 </p>
-                <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('https://welcometomywebsites.com') }}
+                <a href="#" onClick={(e) => { e.preventDefault(); openIg() }}
                   style={{ fontSize: '13px', color: '#3b6d8c', textDecoration: 'none' }}>
                   welcometomywebsites.com
                 </a>
@@ -402,7 +403,7 @@ export default function InternetExplorer({ windowId }: Props) {
                 background: '#fafafa',
               }}>
                 {/* Grid tab — active */}
-                <div style={{
+                <div onClick={openIg} style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   padding: '10px 0', cursor: 'pointer',
                   borderBottom: '2px solid #3b6d8c',
@@ -414,7 +415,7 @@ export default function InternetExplorer({ windowId }: Props) {
                   </svg>
                 </div>
                 {/* List tab */}
-                <div style={{
+                <div onClick={openIg} style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   padding: '10px 0', cursor: 'pointer',
                 }}>
@@ -424,7 +425,7 @@ export default function InternetExplorer({ windowId }: Props) {
                   </svg>
                 </div>
                 {/* Photo Map */}
-                <div style={{
+                <div onClick={openIg} style={{
                   flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
                   gap: '5px', padding: '10px 0', cursor: 'pointer',
                 }}>
@@ -457,7 +458,7 @@ export default function InternetExplorer({ windowId }: Props) {
                   { bg: '#3a6a5a', emoji: '🎨' },
                   { bg: '#6a5a8a', emoji: '✨' },
                 ].map((item, i) => (
-                  <div key={i} style={{
+                  <div key={i} onClick={openIg} style={{
                     aspectRatio: '1',
                     background: item.bg,
                     display: 'flex',
@@ -490,7 +491,7 @@ export default function InternetExplorer({ windowId }: Props) {
               { icon: '💬', active: false },
               { icon: '📇', active: false },
             ].map((tab, i) => (
-              <div key={i} style={{
+              <div key={i} onClick={openIg} style={{
                 flex: 1,
                 textAlign: 'center',
                 fontSize: '22px',
