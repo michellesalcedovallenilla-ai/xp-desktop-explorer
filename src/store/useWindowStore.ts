@@ -15,14 +15,8 @@ interface WindowStore {
 }
 
 export const useWindowStore = create<WindowStore>((set) => ({
-  windows: [
-    { id: 'window-clock', title: 'Clock', type: 'finder' as any, x: 280, y: 60, width: 250, height: 280, zIndex: 10, isMinimized: true, isMaximized: false },
-    { id: 'window-calculator', title: 'Calculator', type: 'finder' as any, x: 700, y: 60, width: 240, height: 300, zIndex: 11, isMinimized: true, isMaximized: false },
-    { id: 'window-notepad', title: 'Notepad', type: 'finder' as any, x: 200, y: 200, width: 500, height: 400, zIndex: 12, isMinimized: true, isMaximized: false },
-    { id: 'window-calendar', title: 'Calendar', type: 'finder' as any, x: 450, y: 100, width: 320, height: 350, zIndex: 13, isMinimized: true, isMaximized: false },
-    { id: 'window-music', title: 'Windows Media Player', type: 'music' as any, x: 500, y: 150, width: 700, height: 500, zIndex: 14, isMinimized: true, isMaximized: false },
-  ],
-  nextZIndex: 15,
+  windows: [],
+  nextZIndex: 10,
   openWindow: (win) =>
     set((s) => {
       const existing = s.windows.find((w) => w.id === win.id)
