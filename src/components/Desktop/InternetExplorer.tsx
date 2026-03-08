@@ -709,9 +709,9 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
             🔗 cool links
           </h2>
           <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', lineHeight: '2' }}>
-            <li><span style={{ color: '#00ffff' }}>📸 Instagram — @mydigitalcrib</span></li>
-            <li><span style={{ color: '#00ffff' }}>🎵 MySpace — vibes only</span></li>
-            <li><span style={{ color: '#00ffff' }}>✉️ Contact — dm me!</span></li>
+            <li><a href="https://www.instagram.com/mydigitalcrib/" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none' }}>📸 Instagram — @mydigitalcrib</a></li>
+            <li><a href="https://ifyourereadingthishiremenow.my.canva.site" target="_blank" rel="noopener noreferrer" style={{ color: '#00ffff', textDecoration: 'none' }}>🎵 MySpace — vibes only</a></li>
+            <li><a href="mailto:michellesalcedovallenilla@gmail.com" style={{ color: '#00ffff', textDecoration: 'none' }}>✉️ Contact — dm me!</a></li>
           </ul>
         </div>
 
@@ -738,7 +738,7 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
               cursor: 'pointer',
             }}
           >
-            🌐 Visit My Real Portfolio ↗
+            🌐 Visit My Main Portfolio ↗
           </a>
           <p style={{ fontSize: '10px', color: '#888', marginTop: '8px', fontFamily: '"Courier New", monospace' }}>
             (opens in a new tab)
