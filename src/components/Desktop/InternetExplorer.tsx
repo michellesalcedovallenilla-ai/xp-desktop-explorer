@@ -2,16 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 
 const PORTFOLIO_URL = 'https://readymag.website/u2801101920/5411866/'
-const PORTFOLIO_PAGES: Record<string, string> = {
-  'https://readymag.website/u2801101920/5411866/': 'home',
-  'https://readymag.website/u2801101920/5411866/welcome/': 'welcome',
-  'https://readymag.website/u2801101920/5411866/portfolio/': 'portfolio',
-  'https://readymag.website/u2801101920/5411866/aboutme/': 'aboutme',
-  'https://readymag.website/u2801101920/5411866/socials/': 'socials',
-  'https://readymag.website/u2801101920/5411866/faq/': 'faq',
-  'https://readymag.website/u2801101920/5411866/keywords/': 'keywords',
-}
-const INSTAGRAM_URL = 'https://www.instagram.com/mydigitaldrafts/'
 const GOOGLE_URL = 'https://www.google.com/'
 
 function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: string) => void }) {
@@ -46,7 +36,6 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
       overflow: 'auto',
       position: 'relative'
     }}>
-      {/* Blurred background */}
       <div style={{
         position: 'absolute', inset: 0,
         backgroundImage: 'url(https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/image-379fff01-5b6b-4681-8b43-70fd84c97339.png?w=300&e=webp&nll=true)',
@@ -54,7 +43,6 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
         filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
       }} />
 
-      {/* Warning popup */}
       {showWarning && (
         <div style={{
           position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
@@ -82,7 +70,6 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
         </div>
       )}
 
-      {/* Navigation */}
       <div style={{ position: 'relative', zIndex: 5, padding: '40px 30px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(PORTFOLIO_URL) }}
@@ -155,16 +142,13 @@ export default function InternetExplorer({ windowId }: Props) {
   const [proxyHtml, setProxyHtml] = useState<string | null>(null)
   const [proxyLoading, setProxyLoading] = useState(false)
   const [proxyError, setProxyError] = useState<string | null>(null)
-  const [proxyHtml, setProxyHtml] = useState<string | null>(null)
-  const [proxyLoading, setProxyLoading] = useState(false)
-  const [proxyError, setProxyError] = useState<string | null>(null)
 
   const isGoogleHome =
     currentUrl === GOOGLE_URL ||
     currentUrl === 'https://google.com' ||
     currentUrl === 'http://www.google.com'
   const isGoogleSearch = currentUrl.startsWith(`${GOOGLE_URL}search`)
-  const isSimulated = isGoogleHome || isGoogleSearch
+  const isSimulated = isGoogleHome // Only home page is simulated now
 
   const fetchProxy = useCallback(async (url: string) => {
     setProxyLoading(true)
@@ -196,53 +180,17 @@ export default function InternetExplorer({ windowId }: Props) {
     }
   }, [])
 
-  const fetchLiveSearch = useCallback(async (query: string) => {
-    setLiveSearchLoading(true)
-    setLiveSearchError(null)
-    try {
-      const { data, error } = await supabase.functions.invoke('web-proxy', {
-        body: { mode: 'search', query },
-      })
-      if (error) throw error
-      if (data?.error) throw new Error(data.error)
-      setLiveSearchResults(Array.isArray(data?.results) ? data.results : [])
-    } catch (err: any) {
-      setLiveSearchResults([])
-      setLiveSearchError(err.message || 'Search failed')
-    } finally {
-      setLiveSearchLoading(false)
-    }
-  }, [])
-
   const lastFetchedUrl = useRef('')
   useEffect(() => {
-    if (!isSimulated && currentUrl && currentUrl !== 'about:blank' && currentUrl !== lastFetchedUrl.current) {
+    if (!isSimulated && !isGoogleSearch && currentUrl && currentUrl !== 'about:blank' && currentUrl !== lastFetchedUrl.current) {
       lastFetchedUrl.current = currentUrl
       fetchProxy(currentUrl)
-    } else if (isSimulated) {
+    } else if (isSimulated || isGoogleSearch) {
       setProxyHtml(null)
       setProxyError(null)
       lastFetchedUrl.current = ''
     }
-  }, [currentUrl, isSimulated, fetchProxy])
-
-  useEffect(() => {
-    if (!isGoogleSearch) {
-      setLiveSearchResults([])
-      setLiveSearchError(null)
-      return
-    }
-
-    const query = new URL(currentUrl).searchParams.get('q')?.trim() ?? ''
-    if (!query) {
-      setLiveSearchResults([])
-      setLiveSearchError(null)
-      return
-    }
-
-    setSearchQuery(query)
-    fetchLiveSearch(query)
-  }, [currentUrl, isGoogleSearch, fetchLiveSearch])
+  }, [currentUrl, isSimulated, isGoogleSearch, fetchProxy])
 
   const navigateTo = (url: string) => {
     let finalUrl = url
@@ -295,12 +243,19 @@ export default function InternetExplorer({ windowId }: Props) {
       const temp = currentUrl
       setCurrentUrl('about:blank')
       setTimeout(() => setCurrentUrl(temp), 50)
+    } else if (isGoogleSearch) {
+      // Force iframe reload by toggling URL
+      const temp = currentUrl
+      setCurrentUrl('about:blank')
+      setTimeout(() => setCurrentUrl(temp), 50)
     } else {
+      lastFetchedUrl.current = ''
       fetchProxy(currentUrl)
     }
   }
 
   const renderContent = () => {
+    // Simulated Google homepage
     if (isGoogleHome) {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', fontFamily: 'Arial, sans-serif' }}>
@@ -320,62 +275,22 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
+    // Real Google search results via iframe with igu=1
     if (isGoogleSearch) {
       const urlObj = new URL(currentUrl)
       const query = urlObj.searchParams.get('q') || ''
+      const googleIframeUrl = `https://www.google.com/search?igu=1&q=${encodeURIComponent(query)}`
 
       return (
-        <div style={{ padding: '20px 30px', fontFamily: 'Arial, sans-serif' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #ebebeb', paddingBottom: '15px', marginBottom: '20px', alignItems: 'center' }}>
-            <span style={{ fontSize: '24px', fontWeight: 'bold', marginRight: '30px' }}>
-              <span style={{ color: '#4285F4' }}>G</span><span style={{ color: '#EA4335' }}>o</span><span style={{ color: '#FBBC05' }}>o</span><span style={{ color: '#4285F4' }}>g</span><span style={{ color: '#34A853' }}>l</span><span style={{ color: '#EA4335' }}>e</span>
-            </span>
-            <form onSubmit={(e) => { e.preventDefault(); navigateTo(`${GOOGLE_URL}search?q=${encodeURIComponent(searchQuery || query)}`) }} style={{ flex: 1, maxWidth: '600px', display: 'flex' }}>
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ flex: 1, padding: '8px 15px', fontSize: '16px', borderRadius: '24px 0 0 24px', border: '1px solid #dfe1e5', outline: 'none' }} />
-              <button type="submit" style={{ padding: '0 20px', borderRadius: '0 24px 24px 0', border: '1px solid #dfe1e5', borderLeft: 'none', background: '#fff', cursor: 'pointer' }}>🔍</button>
-            </form>
-          </div>
-
-          {liveSearchLoading ? (
-            <p style={{ color: '#70757a', fontSize: '14px' }}>Searching the web...</p>
-          ) : liveSearchError ? (
-            <p style={{ color: '#b00020', fontSize: '14px' }}>{liveSearchError}</p>
-          ) : (
-            <>
-              <p style={{ color: '#70757a', fontSize: '14px', marginBottom: '20px' }}>
-                About {liveSearchResults.length} results
-              </p>
-
-              {liveSearchResults.length === 0 ? (
-                <p style={{ color: '#4d5156', fontSize: '14px' }}>No results found.</p>
-              ) : (
-                liveSearchResults.map((result) => (
-                  <div key={`${result.url}-${result.title}`} style={{ marginBottom: '28px', maxWidth: '700px' }}>
-                    <div style={{ fontSize: '14px', color: '#202124', marginBottom: '2px' }}>{result.displayUrl}</div>
-                    <a
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        navigateTo(result.url)
-                      }}
-                      style={{ fontSize: '20px', color: '#1a0dab', textDecoration: 'none', display: 'block', marginBottom: '4px' }}
-                    >
-                      {result.title}
-                    </a>
-                    <div style={{ color: '#4d5156', fontSize: '14px', lineHeight: '1.4' }}>
-                      {result.snippet || result.url}
-                    </div>
-                  </div>
-                ))
-              )}
-            </>
-          )}
-        </div>
+        <iframe
+          src={googleIframeUrl}
+          style={{ width: '100%', height: '100%', border: 'none' }}
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+          title="Google Search Results"
+          referrerPolicy="no-referrer"
+        />
       )
     }
-
-    // Portfolio and other external sites are loaded via proxy below
 
     // Proxy-loaded content
     if (proxyLoading) {
