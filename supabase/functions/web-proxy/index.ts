@@ -72,10 +72,10 @@ function isAllowedUrl(urlString: string): boolean {
 }
 
 async function searchWeb(query: string): Promise<SearchResult[]> {
-  const response = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {
+  const response = await fetch(`https://www.bing.com/search?q=${encodeURIComponent(query)}&format=rss`, {
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept": "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
       "Accept-Language": "en-US,en;q=0.5",
     },
   });
@@ -84,30 +84,32 @@ async function searchWeb(query: string): Promise<SearchResult[]> {
     throw new Error(`Search provider failed with status ${response.status}`);
   }
 
-  const html = await response.text();
+  const xml = await response.text();
   const results: SearchResult[] = [];
 
-  const resultRegex = /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?<a[^>]*class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
-  let match: RegExpExecArray | null;
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let itemMatch: RegExpExecArray | null;
 
-  while ((match = resultRegex.exec(html)) && results.length < 10) {
-    const realUrl = extractRealUrl(match[1]);
-    if (!realUrl || !isAllowedUrl(realUrl)) continue;
+  while ((itemMatch = itemRegex.exec(xml)) && results.length < 10) {
+    const item = itemMatch[1];
+    const titleMatch = item.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
+    const linkMatch = item.match(/<link>([\s\S]*?)<\/link>/i);
+    const descMatch = item.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i);
 
-    const title = decodeHtml(match[2]);
-    const snippet = decodeHtml(match[3]);
-    let displayUrl = realUrl;
+    const url = decodeHtml(linkMatch?.[1] ?? "").trim();
+    if (!url || !isAllowedUrl(url)) continue;
 
+    let displayUrl = url;
     try {
-      displayUrl = new URL(realUrl).hostname;
+      displayUrl = new URL(url).hostname;
     } catch {
-      // ignore parse error
+      // ignore
     }
 
     results.push({
-      title: title || realUrl,
-      url: realUrl,
-      snippet,
+      title: decodeHtml(titleMatch?.[1] ?? url),
+      url,
+      snippet: decodeHtml(descMatch?.[1] ?? ""),
       displayUrl,
     });
   }
