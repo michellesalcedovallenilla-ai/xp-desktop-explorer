@@ -27,22 +27,26 @@ export default function MenuBar() {
   const openWindow = (type: string, title: string) => {
     const { openWindow: ow } = useWindowStore.getState()
     const vw = window.innerWidth
+    const vh = window.innerHeight
     const isMobile = vw <= 480
     const isTablet = vw > 480 && vw <= 768
+    const isSmallLaptop = vw > 768 && vw <= 1024
+    const sz = (mobile: number, tablet: number, smallLaptop: number, desktop: number) =>
+      isMobile ? mobile : isTablet ? tablet : isSmallLaptop ? smallLaptop : desktop
     const sizes: Record<string, { w: number; h: number }> = {
-      minesweeper: { w: isMobile ? vw : 320, h: isMobile ? vw : 420 },
-      solitaire: { w: isMobile ? vw : isTablet ? 500 : 700, h: isMobile ? window.innerHeight - 50 : 550 },
-      paint: { w: isMobile ? vw : isTablet ? 500 : 700, h: isMobile ? window.innerHeight - 50 : 500 },
-      camera: { w: isMobile ? vw : isTablet ? 480 : 640, h: isMobile ? window.innerHeight - 50 : 520 },
-      music: { w: isMobile ? vw : isTablet ? 480 : 700, h: isMobile ? window.innerHeight - 50 : 500 },
-      ie: { w: isMobile ? vw : isTablet ? 600 : 850, h: isMobile ? window.innerHeight - 50 : 600 },
-      contact: { w: isMobile ? vw : isTablet ? 480 : 600, h: isMobile ? window.innerHeight - 50 : 500 },
-      resume: { w: isMobile ? vw : isTablet ? 500 : 650, h: isMobile ? window.innerHeight - 50 : 550 },
-      about: { w: isMobile ? vw : isTablet ? 500 : 700, h: isMobile ? window.innerHeight - 50 : 500 },
-      finder: { w: isMobile ? vw : isTablet ? 500 : 750, h: isMobile ? window.innerHeight - 50 : 450 },
-      messenger: { w: isMobile ? vw : isTablet ? 420 : 500, h: isMobile ? window.innerHeight - 50 : 550 },
+      minesweeper: { w: sz(vw, 320, 300, 320), h: sz(vh - 50, 420, 380, 420) },
+      solitaire: { w: sz(vw, 500, 550, 700), h: sz(vh - 50, 550, 450, 550) },
+      paint: { w: sz(vw, 500, 550, 700), h: sz(vh - 50, 500, 420, 500) },
+      camera: { w: sz(vw, 480, 480, 640), h: sz(vh - 50, 420, 380, 520) },
+      music: { w: sz(vw, 480, 500, 700), h: sz(vh - 50, 420, 400, 500) },
+      ie: { w: sz(vw, 600, 650, 850), h: sz(vh - 50, 450, 420, 600) },
+      contact: { w: sz(vw, 480, 450, 600), h: sz(vh - 50, 420, 380, 500) },
+      resume: { w: sz(vw, 500, 500, 650), h: sz(vh - 50, 450, 420, 550) },
+      about: { w: sz(vw, 500, 520, 700), h: sz(vh - 50, 420, 400, 500) },
+      finder: { w: sz(vw, 500, 550, 750), h: sz(vh - 50, 400, 380, 450) },
+      messenger: { w: sz(vw, 420, 400, 500), h: sz(vh - 50, 450, 420, 550) },
     }
-    const s = sizes[type] || { w: isMobile ? vw : 700, h: isMobile ? window.innerHeight - 50 : 500 }
+    const s = sizes[type] || { w: sz(vw, 700, 550, 700), h: sz(vh - 50, 500, 420, 500) }
     const x = isMobile ? 0 : isTablet ? Math.random() * 40 : 100 + Math.random() * 150
     const y = isMobile ? 0 : isTablet ? Math.random() * 30 : 50 + Math.random() * 80
     ow({
