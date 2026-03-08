@@ -239,87 +239,208 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    // Instagram — Legacy Profile View
+    // Instagram — 2012-era Instagram Profile
     if (isInstagram) {
       return (
         <div style={{
-          fontFamily: 'Arial, sans-serif',
-          background: '#fff',
+          fontFamily: '"Proxima Nova", "Helvetica Neue", Arial, sans-serif',
+          background: '#fafafa',
           height: '100%',
           overflow: 'auto',
         }}>
-          {/* Instagram-style header */}
+          {/* 2012 Instagram top bar */}
           <div style={{
-            background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)',
-            padding: '30px 40px',
-            color: '#fff',
+            background: 'linear-gradient(to bottom, #6C9CB2 0%, #5B8CA3 100%)',
+            borderBottom: '1px solid #3B6D8C',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '22px' }}>📷</span>
+              <span style={{
+                fontFamily: '"Billabong", cursive, serif',
+                fontSize: '26px',
+                color: '#fff',
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                letterSpacing: '1px',
+              }}>Instagram</span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <span style={{ color: '#fff', fontSize: '12px', cursor: 'pointer' }}>🔍</span>
+              <span style={{ color: '#fff', fontSize: '12px', cursor: 'pointer' }}>⚙️</span>
+            </div>
+          </div>
+
+          {/* Profile section — 2012 style with tan/cream card */}
+          <div style={{
+            background: '#fff',
+            border: '1px solid #dbdbdb',
+            borderRadius: '3px',
+            margin: '16px',
+            overflow: 'hidden',
+          }}>
+            {/* Profile header */}
+            <div style={{
+              background: 'linear-gradient(to bottom, #f5f0eb, #ebe5dd)',
+              padding: '20px',
+              borderBottom: '1px solid #d4cfc7',
+              display: 'flex',
+              gap: '20px',
+            }}>
+              {/* Profile pic */}
               <div style={{
-                width: '80px', height: '80px', borderRadius: '50%',
-                background: 'rgba(255,255,255,0.2)', border: '3px solid #fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '36px',
-              }}>📷</div>
+                width: '100px',
+                height: '100px',
+                borderRadius: '4px',
+                border: '3px solid #fff',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                background: '#1a1a1a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                flexShrink: 0,
+              }}>
+                <span style={{ color: '#fff', fontSize: '28px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>vibes</span>
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1 }}>
+                <h1 style={{
+                  fontSize: '20px',
+                  fontWeight: '300',
+                  color: '#333',
+                  margin: '0 0 2px',
+                  letterSpacing: '0.5px',
+                }}>mydigitalcrib</h1>
+                <p style={{ fontSize: '12px', color: '#999', margin: '0 0 10px' }}>hey, welcome to my space :)</p>
+
+                {/* Stats row */}
+                <div style={{
+                  display: 'flex',
+                  gap: '24px',
+                  fontSize: '13px',
+                  color: '#333',
+                }}>
+                  <span><strong>33</strong> posts</span>
+                  <span><strong>793</strong> followers</span>
+                  <span><strong>19</strong> following</span>
+                </div>
+              </div>
+
+              {/* Follow button — 2012 style */}
               <div>
-                <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 4px' }}>My Digital Crib</h1>
-                <p style={{ fontSize: '14px', margin: 0, opacity: 0.9 }}>
-                  <strong>@mydigitalcrib</strong> • Digital Creator
-                </p>
+                <button style={{
+                  background: 'linear-gradient(to bottom, #6CB4DA, #5BA3C9)',
+                  border: '1px solid #4A8DAF',
+                  borderRadius: '3px',
+                  color: '#fff',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  padding: '5px 16px',
+                  cursor: 'pointer',
+                  textShadow: '0 1px 1px rgba(0,0,0,0.2)',
+                }}>+ Follow</button>
               </div>
             </div>
+
+            {/* Bio area */}
+            <div style={{
+              padding: '14px 20px',
+              borderBottom: '1px solid #efefef',
+              background: '#fff',
+            }}>
+              <p style={{ fontSize: '13px', color: '#555', fontWeight: 'bold', margin: '0 0 4px' }}>Marketing Agency</p>
+              <p style={{ fontSize: '13px', color: '#333', margin: '0 0 3px', lineHeight: '1.5' }}>
+                hey bestie 💻<br />
+                we're vibes, your gen z marketing crew.<br />
+                taking your brand to the next level is our thing! 🫶
+              </p>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('https://welcometomywebsites.com') }}
+                style={{ fontSize: '13px', color: '#003569', textDecoration: 'none' }}>
+                🔗 welcometomywebsites.com
+              </a>
+            </div>
+
+            {/* Tabs — 2012 style */}
+            <div style={{
+              display: 'flex',
+              borderBottom: '1px solid #efefef',
+              background: '#fafafa',
+            }}>
+              <div style={{
+                flex: 1, textAlign: 'center', padding: '10px 0',
+                borderBottom: '2px solid #6CB4DA', color: '#6CB4DA',
+                fontSize: '12px', fontWeight: 'bold', cursor: 'pointer',
+              }}>
+                📷 GRID
+              </div>
+              <div style={{
+                flex: 1, textAlign: 'center', padding: '10px 0',
+                color: '#999', fontSize: '12px', cursor: 'pointer',
+              }}>
+                📋 LIST
+              </div>
+              <div style={{
+                flex: 1, textAlign: 'center', padding: '10px 0',
+                color: '#999', fontSize: '12px', cursor: 'pointer',
+              }}>
+                📍 MAP
+              </div>
+            </div>
+
+            {/* Photo grid — 2012 style with polaroid-ish borders */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '4px',
+              padding: '4px',
+              background: '#fff',
+            }}>
+              {[
+                { bg: '#2a2a3e', emoji: '🎵', label: 'playlist' },
+                { bg: '#3a3a2e', emoji: '🔍', label: 'ugc content' },
+                { bg: '#4a3a2e', emoji: '📋', label: 'gen z' },
+                { bg: '#2e3a4a', emoji: '📒', label: 'agenda' },
+                { bg: '#3e2a3a', emoji: '☕', label: 'virtual coffee' },
+                { bg: '#2a4a3e', emoji: '💻', label: 'get social' },
+                { bg: '#3a2e4a', emoji: '🎨', label: 'design' },
+                { bg: '#4a4a2e', emoji: '📸', label: 'content' },
+                { bg: '#2e2e4a', emoji: '✨', label: 'vibes' },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  aspectRatio: '1',
+                  background: item.bg,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  position: 'relative',
+                }}>
+                  <span style={{ fontSize: '28px', marginBottom: '4px' }}>{item.emoji}</span>
+                  <span style={{ fontSize: '10px', color: '#ccc', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{item.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Profile stats */}
+          {/* 2012 footer */}
           <div style={{
-            display: 'flex', gap: '32px', padding: '20px 40px',
-            borderBottom: '1px solid #dbdbdb',
+            textAlign: 'center',
+            padding: '12px',
+            fontSize: '11px',
+            color: '#999',
           }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>456</div>
-              <div style={{ fontSize: '12px', color: '#8e8e8e' }}>Posts</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>23K</div>
-              <div style={{ fontSize: '12px', color: '#8e8e8e' }}>Followers</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>1,234</div>
-              <div style={{ fontSize: '12px', color: '#8e8e8e' }}>Following</div>
-            </div>
-          </div>
-
-          {/* Bio */}
-          <div style={{ padding: '20px 40px', borderBottom: '1px solid #dbdbdb' }}>
-            <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 8px', color: '#262626' }}>
-              📸 Vintage computing aesthetics & digital curation
-            </p>
-            <p style={{ fontSize: '14px', color: '#262626', margin: 0 }}>
-              🖥️ Retro tech • Design • Digital experiences
-            </p>
-          </div>
-
-          {/* Legacy notice */}
-          <div style={{
-            margin: '20px 40px',
-            padding: '16px 20px',
-            background: '#FFF8E1',
-            border: '1px solid #FFE082',
-            borderRadius: '4px',
-            fontSize: '12px',
-            color: '#5D4037',
-            lineHeight: '1.5',
-          }}>
-            <strong>⚠️ Legacy Profile View</strong><br />
-            Instagram requires modern authentication to display full content.
-            This is a text-only legacy view.<br />
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); window.open('https://www.instagram.com/mydigitalcrib/', '_blank') }}
-              style={{ color: '#0000CC', textDecoration: 'underline', marginTop: '4px', display: 'inline-block' }}
-            >
-              Open in a new window ↗
-            </a>
+            <span>© 2012 Instagram</span>
+            <span style={{ margin: '0 8px' }}>·</span>
+            <a href="#" style={{ color: '#003569', textDecoration: 'none' }}>About</a>
+            <span style={{ margin: '0 8px' }}>·</span>
+            <a href="#" style={{ color: '#003569', textDecoration: 'none' }}>Blog</a>
+            <span style={{ margin: '0 8px' }}>·</span>
+            <a href="#" style={{ color: '#003569', textDecoration: 'none' }}>Terms</a>
           </div>
         </div>
       )
