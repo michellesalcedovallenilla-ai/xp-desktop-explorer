@@ -6,7 +6,7 @@ import { useWindowStore } from '../../store/useWindowStore'
 import { useClock } from '../../hooks/useClock'
 
 export default function MenuBar() {
-  const { isSpotlightOpen, setSpotlightOpen, setLocked, setShutdownVisible } =
+  const { isSpotlightOpen, setSpotlightOpen, setLocked, setShutdownVisible, widgets, toggleWidget } =
     useSystemStore()
   const { windows, minimizeWindow, restoreWindow, focusWindow } =
     useWindowStore()
