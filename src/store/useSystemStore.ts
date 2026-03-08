@@ -45,14 +45,18 @@ interface SystemState {
 }
 
 const defaultDesktopIcons: DesktopIconData[] = [
-  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 570, y: 70, iconWidth: 120 },
-  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 160, y: 150, iconWidth: 100 },
-  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 1000, y: 100, iconWidth: 120 },
-  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 320, y: 260, iconWidth: 150 },
-  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 500, y: 330, iconWidth: 120 },
-  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 100, y: 380, iconWidth: 110 },
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 1120, y: 250, iconWidth: 350 },
-  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 750, y: 280, iconWidth: 250 },
+  // === SKY ANIMALS (flying creatures - belong in the sky) ===
+  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 520, y: 30, iconWidth: 110 },
+  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 180, y: 100, iconWidth: 90 },
+  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 1050, y: 60, iconWidth: 100 },
+  // === GROUND ANIMALS (standing on the Bliss hill) ===
+  // Positioned along the hill curve: left side lower, right side slightly higher
+  // Lower on hill = larger (closer), higher on hill = smaller (farther)
+  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 80, y: 420, iconWidth: 100 },
+  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 300, y: 340, iconWidth: 140 },
+  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 530, y: 380, iconWidth: 110 },
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 750, y: 310, iconWidth: 300 },
+  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 1100, y: 350, iconWidth: 220 },
 ]
 
 const defaultDockItems: DockItem[] = [
