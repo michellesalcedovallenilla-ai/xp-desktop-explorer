@@ -180,12 +180,15 @@ export default function MusicPlayer() {
       <div
         ref={embedRef}
         style={{
-          position: 'absolute',
+          position: 'fixed',
           width: '1px',
           height: '1px',
           overflow: 'hidden',
           opacity: 0,
           pointerEvents: 'none',
+          left: '-9999px',
+          top: '-9999px',
+          zIndex: -1,
         }}
       />
 
