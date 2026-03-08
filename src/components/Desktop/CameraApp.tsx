@@ -321,7 +321,7 @@ export default function CameraApp() {
           top: hy - hh * 0.95,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
