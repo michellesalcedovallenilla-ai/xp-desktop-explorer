@@ -236,6 +236,8 @@ export default function CameraApp() {
     }
   }, [mustacheOn, hatOn, beerOn, arepaOn, plumbobOn, handsOn])
 
+  const { playShutter } = useAudioStore()
+
   // Actual capture logic
   const captureNow = useCallback(() => {
     const canvas = canvasRef.current
@@ -272,9 +274,14 @@ export default function CameraApp() {
 
     const dataUrl = canvas.toDataURL('image/png')
     setPhotos(prev => [{ id: Date.now().toString(), dataUrl }, ...prev])
+    playShutter()
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
-  }, [hasCamera, activeFilter, face, leftHand, rightHand, drawOverlays])
+  }, [hasCamera, activeFilter, face, leftHand, rightHand, drawOverlays, playShutter])
+
+  // Use a ref so the countdown effect always calls the latest captureNow
+  const captureNowRef = useRef(captureNow)
+  captureNowRef.current = captureNow
 
   // Take photo with 3-second countdown
   const takePhoto = useCallback(() => {
@@ -285,13 +292,13 @@ export default function CameraApp() {
   useEffect(() => {
     if (countdown === null) return
     if (countdown === 0) {
-      captureNow()
+      captureNowRef.current()
       setCountdown(null)
       return
     }
     const timer = setTimeout(() => setCountdown(prev => prev !== null ? prev - 1 : null), 1000)
     return () => clearTimeout(timer)
-  }, [countdown, captureNow])
+  }, [countdown])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
