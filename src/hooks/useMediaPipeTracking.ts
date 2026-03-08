@@ -2,28 +2,29 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { FaceLandmarker, HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
 export interface FaceLandmarks {
-  // Key points for overlay positioning (normalized 0-1 coords)
   leftEye: { x: number; y: number; z: number }
   rightEye: { x: number; y: number; z: number }
   noseTip: { x: number; y: number; z: number }
   upperLip: { x: number; y: number; z: number }
+  mouthLeft: { x: number; y: number; z: number }
+  mouthRight: { x: number; y: number; z: number }
   forehead: { x: number; y: number; z: number }
   chin: { x: number; y: number; z: number }
   leftTemple: { x: number; y: number; z: number }
   rightTemple: { x: number; y: number; z: number }
-  // Derived
   faceWidth: number
   faceHeight: number
-  rotation: number // head tilt in radians
+  eyeDistance: number
+  mouthWidth: number
+  rotation: number
 }
 
 export interface HandPosition {
-  // Palm center (normalized 0-1)
   palmCenter: { x: number; y: number }
-  // Wrist point
   wrist: { x: number; y: number }
-  // Size estimate
   handSize: number
+  handWidth: number
+  handHeight: number
   rotation: number
 }
 
@@ -43,7 +44,6 @@ export function useMediaPipeTracking(
   const initRef = useRef(false)
   const [ready, setReady] = useState(false)
 
-  // Initialize models
   useEffect(() => {
     if (!enabled || initRef.current) return
     initRef.current = true
@@ -62,7 +62,7 @@ export function useMediaPipeTracking(
           FaceLandmarker.createFromOptions(vision, {
             baseOptions: {
               modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
-              delegate: 'GPU'
+              delegate: 'GPU',
             },
             runningMode: 'VIDEO',
             numFaces: 1,
@@ -72,7 +72,7 @@ export function useMediaPipeTracking(
           HandLandmarker.createFromOptions(vision, {
             baseOptions: {
               modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
-              delegate: 'GPU'
+              delegate: 'GPU',
             },
             runningMode: 'VIDEO',
             numHands: 1,
@@ -102,7 +102,6 @@ export function useMediaPipeTracking(
     }
   }, [enabled])
 
-  // Detection loop
   const detect = useCallback(() => {
     const video = videoRef.current
     if (!video || video.readyState < 2 || !faceLandmarkerRef.current || !handLandmarkerRef.current) {
@@ -119,26 +118,20 @@ export function useMediaPipeTracking(
       let face: FaceLandmarks | null = null
       let hand: HandPosition | null = null
 
-      if (faceResults.faceLandmarks && faceResults.faceLandmarks.length > 0) {
+      if (faceResults.faceLandmarks?.length) {
         const lm = faceResults.faceLandmarks[0]
-        // Key landmark indices (MediaPipe Face Mesh):
-        // 33 = left eye outer, 263 = right eye outer
-        // 159 = left eye top, 386 = right eye top  
-        // 1 = nose tip, 10 = forehead, 152 = chin
-        // 13 = upper lip center
-        // 234 = left temple, 454 = right temple
-        // 468 = left iris center, 473 = right iris center (if available)
 
-        const leftEye = lm[33] || lm[159]
-        const rightEye = lm[263] || lm[386]
+        const leftEye = lm[33]
+        const rightEye = lm[263]
         const noseTip = lm[1]
         const upperLip = lm[13]
+        const mouthLeft = lm[61]
+        const mouthRight = lm[291]
         const forehead = lm[10]
         const chin = lm[152]
         const leftTemple = lm[234]
         const rightTemple = lm[454]
 
-        // Video is mirrored, so we flip X coordinates
         const mirrorX = (p: { x: number; y: number; z: number }) => ({
           x: 1 - p.x,
           y: p.y,
@@ -149,6 +142,8 @@ export function useMediaPipeTracking(
         const mRightEye = mirrorX(rightEye)
         const mNoseTip = mirrorX(noseTip)
         const mUpperLip = mirrorX(upperLip)
+        const mMouthLeft = mirrorX(mouthLeft)
+        const mMouthRight = mirrorX(mouthRight)
         const mForehead = mirrorX(forehead)
         const mChin = mirrorX(chin)
         const mLeftTemple = mirrorX(leftTemple)
@@ -156,6 +151,14 @@ export function useMediaPipeTracking(
 
         const faceWidth = Math.abs(mRightTemple.x - mLeftTemple.x)
         const faceHeight = Math.abs(mChin.y - mForehead.y)
+        const eyeDistance = Math.hypot(
+          mRightEye.x - mLeftEye.x,
+          mRightEye.y - mLeftEye.y
+        )
+        const mouthWidth = Math.hypot(
+          mMouthRight.x - mMouthLeft.x,
+          mMouthRight.y - mMouthLeft.y
+        )
         const rotation = Math.atan2(mRightEye.y - mLeftEye.y, mRightEye.x - mLeftEye.x)
 
         face = {
@@ -163,27 +166,31 @@ export function useMediaPipeTracking(
           rightEye: mRightEye,
           noseTip: mNoseTip,
           upperLip: mUpperLip,
+          mouthLeft: mMouthLeft,
+          mouthRight: mMouthRight,
           forehead: mForehead,
           chin: mChin,
           leftTemple: mLeftTemple,
           rightTemple: mRightTemple,
           faceWidth,
           faceHeight,
+          eyeDistance,
+          mouthWidth,
           rotation,
         }
       }
 
-      if (handResults.landmarks && handResults.landmarks.length > 0) {
+      if (handResults.landmarks?.length) {
         const lm = handResults.landmarks[0]
-        // 0 = wrist, 9 = middle finger MCP (palm center approx)
         const wrist = lm[0]
         const palmCenter = lm[9]
+        const indexMcp = lm[5]
+        const pinkyMcp = lm[17]
         const middleTip = lm[12]
 
-        const handSize = Math.hypot(
-          palmCenter.x - wrist.x,
-          palmCenter.y - wrist.y
-        )
+        const handWidth = Math.hypot(indexMcp.x - pinkyMcp.x, indexMcp.y - pinkyMcp.y)
+        const handHeight = Math.hypot(middleTip.x - wrist.x, middleTip.y - wrist.y)
+        const handSize = Math.max(handWidth, handHeight)
 
         const rotation = Math.atan2(
           palmCenter.y - wrist.y,
@@ -194,6 +201,8 @@ export function useMediaPipeTracking(
           palmCenter: { x: 1 - palmCenter.x, y: palmCenter.y },
           wrist: { x: 1 - wrist.x, y: wrist.y },
           handSize,
+          handWidth,
+          handHeight,
           rotation,
         }
       }
@@ -215,7 +224,6 @@ export function useMediaPipeTracking(
     return () => cancelAnimationFrame(loopRef.current)
   }, [enabled, ready, detect])
 
-  // Cleanup
   useEffect(() => {
     return () => {
       cancelAnimationFrame(loopRef.current)
