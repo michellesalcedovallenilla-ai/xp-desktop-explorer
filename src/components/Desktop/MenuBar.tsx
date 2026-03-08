@@ -268,7 +268,9 @@ export default function MenuBar() {
       {/* Running Windows */}
       <div className="xp-running-apps">
         {/* Widget taskbar buttons */}
-        {widgets.map((widget) => (
+        {widgets
+          .filter((w) => w.type !== 'music')
+          .map((widget) => (
           <button
             key={widget.id}
             className={`xp-task-btn ${widget.isVisible ? 'active' : ''}`}
