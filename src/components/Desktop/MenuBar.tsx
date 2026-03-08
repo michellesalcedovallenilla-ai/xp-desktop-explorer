@@ -306,7 +306,7 @@ export default function MenuBar() {
         ))}
         {/* Music Player taskbar button - opens as window */}
         <button
-          className={`xp-task-btn ${windows.some(w => w.id === 'window-music' && !w.isMinimized) ? 'active' : ''}`}
+          className={`xp-task-btn widget-btn ${windows.some(w => w.id === 'window-music' && !w.isMinimized) ? 'active' : ''}`}
           onClick={() => {
             const musicWin = windows.find(w => w.id === 'window-music')
             if (musicWin) {
