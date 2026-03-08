@@ -50,6 +50,7 @@ const defaultDesktopIcons: DesktopIconData[] = [
   { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 38, y: 4, iconWidth: 8 },
   { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 12, y: 14, iconWidth: 7 },
   { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 80, y: 6, iconWidth: 7 },
+  { id: 'portfolio', label: 'Portfolio', icon: 'portfolio', type: 'app', action: 'portfolio-link', x: 58, y: 2, iconWidth: 7 },
   // === GROUND ANIMALS (standing on the Bliss hill, feet on grass) ===
   // Hill horizon: ~52-58% from top (higher on right, lower on left)
   { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 5, y: 56, iconWidth: 7 },
