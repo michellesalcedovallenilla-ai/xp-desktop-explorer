@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Wifi, Volume2 } from 'lucide-react'
 import { useSystemStore } from '../../store/useSystemStore'
 import { useWindowStore } from '../../store/useWindowStore'
+import { useErrorDialogStore } from '../../store/useErrorDialogStore'
 import { useClock } from '../../hooks/useClock'
 
 export default function MenuBar() {
