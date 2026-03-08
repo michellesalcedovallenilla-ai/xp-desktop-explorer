@@ -113,22 +113,21 @@ export default function CameraApp() {
     hd: HandPosition | null
   ) => {
     if (f) {
-      // Convert normalized coords to pixels
-      const eyeCenter = {
-        x: (f.leftEye.x + f.rightEye.x) / 2 * w,
-        y: (f.leftEye.y + f.rightEye.y) / 2 * h,
-      }
+      const eyeCenterX = ((f.leftEye.x + f.rightEye.x) / 2) * w
+      const eyeCenterY = ((f.leftEye.y + f.rightEye.y) / 2) * h
+      const eyeDistancePx = f.eyeDistance * w
       const faceW = f.faceWidth * w
       const faceH = f.faceHeight * h
+      const mouthWidthPx = f.mouthWidth * w
       const rot = f.rotation
 
       if (glassesOn) {
         const img = overlayImages.glasses
         if (img?.complete && img.naturalWidth) {
-          const gw = faceW * 1.3
+          const gw = Math.max(eyeDistancePx * 2.25, faceW * 0.78)
           const gh = gw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
-          ctx.translate(eyeCenter.x, eyeCenter.y)
+          ctx.translate(eyeCenterX, eyeCenterY + faceH * 0.02)
           ctx.rotate(rot)
           ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
           ctx.restore()
@@ -138,9 +137,9 @@ export default function CameraApp() {
       if (mustacheOn) {
         const img = overlayImages.mustache
         if (img?.complete && img.naturalWidth) {
-          const mx = f.upperLip.x * w
-          const my = f.upperLip.y * h
-          const mw = faceW * 0.6
+          const mx = ((f.noseTip.x + f.upperLip.x) / 2) * w
+          const my = (f.upperLip.y * h) + faceH * 0.03
+          const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
           const mh = mw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(mx, my)
@@ -154,13 +153,14 @@ export default function CameraApp() {
         const img = overlayImages.hat
         if (img?.complete && img.naturalWidth) {
           const hx = f.forehead.x * w
-          const hy = f.forehead.y * h
-          const hw = faceW * 1.5
+          const hy = (f.forehead.y * h) + faceH * 0.08
+          const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
           const hh = hw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
-          ctx.drawImage(img, -hw / 2, -hh * 0.95, hw, hh)
+          ctx.scale(-1, 1)
+          ctx.drawImage(img, -hw / 2, -hh * 0.72, hw, hh)
           ctx.restore()
         }
       }
