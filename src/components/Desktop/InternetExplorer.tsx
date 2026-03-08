@@ -304,10 +304,7 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    const portfolioPage = PORTFOLIO_PAGES[currentUrl]
-    if (portfolioPage) {
-      return <PortfolioSite page={portfolioPage} onNavigate={navigateTo} />
-    }
+    // Portfolio and other external sites are loaded via proxy below
 
     // Proxy-loaded content
     if (proxyLoading) {
