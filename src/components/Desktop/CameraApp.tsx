@@ -461,6 +461,7 @@ export default function CameraApp() {
         {overlays.mustache && <img src={OVERLAY_PATHS.mustache} alt="" style={overlays.mustache} />}
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
+        {overlays.arepa && <img src={OVERLAY_PATHS.arepa} alt="" style={overlays.arepa} />}
 
         {/* Flash */}
         {flash && (
