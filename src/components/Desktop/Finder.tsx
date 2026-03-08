@@ -18,12 +18,12 @@ const folders = [
 ]
 
 const files = [
-  { label: 'About Me.lnk', icon: '/icons/about-me.png', action: 'about' },
-  { label: 'Contact.lnk', icon: '/icons/contact.png', action: 'contact' },
+  { label: 'About Me.lnk', icon: '/icons/about-me.png?v=2', action: 'about' },
+  { label: 'Contact.lnk', icon: '/icons/contact.png?v=2', action: 'contact' },
   { label: 'Resume.pdf', icon: '/3f4acbc7753019394f7b560f1087d41f.png', action: 'resume' },
-  { label: 'Camera.exe', icon: '/icons/camera.png', action: 'camera' },
-  { label: 'Music Player.exe', icon: '/icons/music-player.png', action: 'music' },
-  { label: 'MS Paint.exe', icon: '/icons/mspaint.png', action: 'paint' },
+  { label: 'Camera.exe', icon: '/icons/camera.png?v=2', action: 'camera' },
+  { label: 'Music Player.exe', icon: '/icons/music-player.png?v=2', action: 'music' },
+  { label: 'MS Paint.exe', icon: '/icons/mspaint.png?v=2', action: 'paint' },
   { label: 'Minesweeper.exe', icon: '/7e157e83a9ec0a0686b6cddfa2c6d37b.png', action: 'minesweeper' }
 ]
 
