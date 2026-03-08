@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   Play,
   Pause,
@@ -6,283 +6,304 @@ import {
   SkipForward,
   Shuffle,
   Repeat,
-  Volume2
+  Volume2,
+  VolumeX
 } from 'lucide-react'
-import { useSystemStore } from '../../store/useSystemStore'
-import { formatShortTime } from '../../lib/utils'
-import type { MusicTrack } from '../../types'
+
+// Spotify playlist tracks with their URIs
+const SPOTIFY_PLAYLIST_URI = 'spotify:playlist:3x3dxHjNbb62D1qYrNHcqv'
+
+interface SpotifyTrack {
+  id: string
+  title: string
+  artist: string
+  duration: number
+  uri: string
+}
+
+const playlistTracks: SpotifyTrack[] = [
+  { id: '1', title: 'Rush', artist: 'Troye Sivan', duration: 195, uri: 'spotify:track:4ZnkygoWIzmMiSJPOuJgcl' },
+  { id: '2', title: 'One of Your Girls', artist: 'Troye Sivan', duration: 195, uri: 'spotify:track:6761sGRbhCFCclVpKmRmBj' },
+  { id: '3', title: 'Got Me Started', artist: 'Troye Sivan', duration: 188, uri: 'spotify:track:4oLxLPpiMpKOrdGrsLYqbN' },
+  { id: '4', title: '360', artist: 'Charli XCX', duration: 173, uri: 'spotify:track:2HIpMRyLBxnY8OxbhKVKlG' },
+  { id: '5', title: 'Apple', artist: 'Charli XCX', duration: 180, uri: 'spotify:track:5TDyIerGJmBDorBqKEz5Gs' },
+]
+
+const formatTime = (ms: number) => {
+  const totalSec = Math.floor(ms / 1000)
+  const m = Math.floor(totalSec / 60)
+  const s = totalSec % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
 
 export default function MusicPlayer() {
-  const { playlist, currentTrack, setCurrentTrack, isPlaying, setIsPlaying } =
-    useSystemStore()
-  const [progress, setProgress] = useState(0)
+  const [currentTrackIdx, setCurrentTrackIdx] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [position, setPosition] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(75)
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const [isMuted, setIsMuted] = useState(false)
+  const [eqBars, setEqBars] = useState<number[]>(Array(24).fill(5))
+  const controllerRef = useRef<any>(null)
+  const embedRef = useRef<HTMLDivElement>(null)
+  const animFrameRef = useRef<number>()
 
-  // Sync isPlaying state with the actual audio element
+  const currentTrack = playlistTracks[currentTrackIdx]
+
+  // Animate EQ bars
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100
-      if (isPlaying) {
-        audioRef.current
-          .play()
-          .catch((e) => console.warn('Autoplay blocked:', e))
+    if (!isPlaying) {
+      setEqBars(Array(24).fill(5))
+      return
+    }
+    const animate = () => {
+      setEqBars(prev => prev.map(() => 10 + Math.random() * 90))
+      animFrameRef.current = requestAnimationFrame(animate)
+    }
+    // Throttle to ~15fps for performance
+    const interval = setInterval(() => {
+      setEqBars(prev => prev.map(() => 10 + Math.random() * 90))
+    }, 80)
+    return () => {
+      clearInterval(interval)
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+    }
+  }, [isPlaying])
+
+  // Load Spotify IFrame API
+  useEffect(() => {
+    if (!embedRef.current) return
+
+    // Create the iframe element for Spotify
+    const existingScript = document.querySelector('script[src="https://open.spotify.com/embed/iframe-api/v1"]')
+    
+    const initEmbed = () => {
+      if (!(window as any).SpotifyIframeApi) return
+      const IFrameAPI = (window as any).SpotifyIframeApi
+      
+      const element = embedRef.current
+      if (!element) return
+
+      const options = {
+        width: '100%',
+        height: '80',
+        uri: SPOTIFY_PLAYLIST_URI,
+      }
+
+      IFrameAPI.createController(element, options, (controller: any) => {
+        controllerRef.current = controller
+        
+        controller.addListener('playback_update', (e: any) => {
+          const data = e.data
+          setPosition(data.position || 0)
+          setDuration(data.duration || 0)
+          setIsPlaying(!data.isPaused)
+        })
+
+        controller.addListener('ready', () => {
+          console.log('Spotify embed ready')
+        })
+      })
+    }
+
+    if (existingScript) {
+      // API already loaded
+      if ((window as any).SpotifyIframeApi) {
+        initEmbed()
       } else {
-        audioRef.current.pause()
+        (window as any).onSpotifyIframeApiReady = (IFrameAPI: any) => {
+          (window as any).SpotifyIframeApi = IFrameAPI
+          initEmbed()
+        }
+      }
+    } else {
+      (window as any).onSpotifyIframeApiReady = (IFrameAPI: any) => {
+        (window as any).SpotifyIframeApi = IFrameAPI
+        initEmbed()
+      }
+      const script = document.createElement('script')
+      script.src = 'https://open.spotify.com/embed/iframe-api/v1'
+      script.async = true
+      document.body.appendChild(script)
+    }
+
+    return () => {
+      if (controllerRef.current) {
+        try { controllerRef.current.destroy() } catch {}
+        controllerRef.current = null
       }
     }
-  }, [isPlaying, currentTrack, volume])
+  }, [])
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) setProgress(audioRef.current.currentTime)
-  }
-
-  const handleLoadedMetadata = () => {
-    if (audioRef.current) setDuration(audioRef.current.duration)
-  }
-
-  const handleEnded = () => handleNext()
-
-  const handlePlayPause = () => setIsPlaying(!isPlaying)
-
-  const handleNext = () => {
-    if (!currentTrack) return
-    const idx = playlist.findIndex((t) => t.id === currentTrack.id)
-    const next = playlist[(idx + 1) % playlist.length]
-    setCurrentTrack(next)
-    setIsPlaying(true)
-  }
-
-  const handlePrev = () => {
-    if (!currentTrack) return
-    const idx = playlist.findIndex((t) => t.id === currentTrack.id)
-    const prev = playlist[(idx - 1 + playlist.length) % playlist.length]
-    setCurrentTrack(prev)
-    setIsPlaying(true)
-  }
-
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value)
-    if (audioRef.current) {
-      audioRef.current.currentTime = value
-      setProgress(value)
+  const handlePlayPause = useCallback(() => {
+    if (controllerRef.current) {
+      controllerRef.current.togglePlay()
     }
+  }, [])
+
+  const handleTrackSelect = useCallback((idx: number) => {
+    setCurrentTrackIdx(idx)
+    const track = playlistTracks[idx]
+    if (controllerRef.current) {
+      controllerRef.current.loadUri(track.uri)
+      controllerRef.current.play()
+    }
+    setPosition(0)
+  }, [])
+
+  const handleNext = useCallback(() => {
+    const nextIdx = (currentTrackIdx + 1) % playlistTracks.length
+    handleTrackSelect(nextIdx)
+  }, [currentTrackIdx, handleTrackSelect])
+
+  const handlePrev = useCallback(() => {
+    const prevIdx = (currentTrackIdx - 1 + playlistTracks.length) % playlistTracks.length
+    handleTrackSelect(prevIdx)
+  }, [currentTrackIdx, handleTrackSelect])
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!duration) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const pct = (e.clientX - rect.left) / rect.width
+    const seekMs = pct * duration
+    if (controllerRef.current) {
+      controllerRef.current.seek(seekMs / 1000)
+    }
+    setPosition(seekMs)
   }
 
-  const currentSrc = (currentTrack as MusicTrack & { src?: string })?.src || ''
+  const progressPct = duration > 0 ? (position / duration) * 100 : 0
 
   return (
-    <div className="xp-wmp-full">
-      <audio
-        ref={audioRef}
-        src={currentSrc}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onEnded={handleEnded}
+    <div className="wmp-xp-container">
+      {/* Hidden Spotify embed */}
+      <div
+        ref={embedRef}
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden',
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
       />
-      {/* WMP Visualization */}
-      <div className="xp-wmp-visual-full">
-        <div
-          className="xp-wmp-eq"
-          style={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'flex-end',
-            height: '100%',
-            gap: '2px'
-          }}
-        >
-          {[...Array(32)].map((_, i) => (
+
+      {/* WMP Menu Bar */}
+      <div className="wmp-xp-menubar">
+        <button className="wmp-xp-menu-item">File</button>
+        <button className="wmp-xp-menu-item">Edit</button>
+        <button className="wmp-xp-menu-item">View</button>
+        <button className="wmp-xp-menu-item">Help</button>
+      </div>
+
+      {/* Visualization Area */}
+      <div className="wmp-xp-visualization">
+        <div className="wmp-xp-eq-container">
+          {eqBars.map((h, i) => (
             <div
               key={i}
-              className={`xp-wmp-eq-bar`}
-              style={{
-                flex: 1,
-                backgroundColor: '#39FF14',
-                height: isPlaying ? '20%' : '5%',
-                minHeight: '2px',
-                animation: isPlaying
-                  ? `wmp-eq ${0.3 + Math.random() * 0.5}s infinite alternate ease-in-out`
-                  : 'none',
-                animationDelay: `${Math.random() * 0.5}s`,
-                boxShadow: '0 0 5px #39FF14'
-              }}
+              className="wmp-xp-eq-bar"
+              style={{ height: `${h}%` }}
             />
           ))}
         </div>
-      </div>
 
-      {/* Now Playing */}
-      <div className="xp-wmp-now-playing">
-        <h3>{currentTrack?.title || 'No Track Selected'}</h3>
-        <p>{currentTrack?.artist || 'Unknown Artist'}</p>
-      </div>
-
-      {/* Progress Container */}
-      <div style={{ padding: '8px 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '11px', color: '#AAA' }}>
-            {formatShortTime(progress)}
-          </span>
-          <input
-            type="range"
-            min="0"
-            max={duration || 100}
-            value={progress}
-            onChange={handleProgressChange}
-            style={{ flex: 1, height: '4px', cursor: 'pointer' }}
+        {/* Green progress line at bottom of visualization */}
+        <div className="wmp-xp-viz-progress">
+          <div
+            className="wmp-xp-viz-progress-fill"
+            style={{ width: `${progressPct}%` }}
           />
-          <span style={{ fontSize: '11px', color: '#AAA' }}>
-            {formatShortTime(duration)}
-          </span>
         </div>
       </div>
 
-      {/* Controls */}
-      <div
-        className="xp-wmp-controls"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '16px',
-          padding: '12px',
-          background: 'linear-gradient(to bottom, #444, #222)',
-          borderTop: '1px solid #555'
-        }}
-      >
-        <button
-          className="xp-wmp-ctrl"
-          title="Shuffle"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#fff',
-            cursor: 'pointer',
-            opacity: 0.7
-          }}
-        >
-          <Shuffle size={14} />
+      {/* Track Info */}
+      <div className="wmp-xp-trackinfo">
+        <div className="wmp-xp-track-title">{currentTrack.title}</div>
+        <div className="wmp-xp-track-artist">{currentTrack.artist}</div>
+      </div>
+
+      {/* Progress / Seek Bar */}
+      <div className="wmp-xp-progress-row">
+        <span className="wmp-xp-time">{formatTime(position)}</span>
+        <div className="wmp-xp-progress-track" onClick={handleSeek}>
+          <div
+            className="wmp-xp-progress-thumb"
+            style={{ left: `${progressPct}%` }}
+          />
+          <div
+            className="wmp-xp-progress-fill"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+        <span className="wmp-xp-time">{formatTime(duration)}</span>
+      </div>
+
+      {/* Playback Controls */}
+      <div className="wmp-xp-controls">
+        <button className="wmp-xp-ctrl-btn" title="Shuffle">
+          <Shuffle size={12} />
         </button>
-        <button
-          className="xp-wmp-ctrl"
-          onClick={handlePrev}
-          title="Previous"
-          style={{
-            background: '#555',
-            border: '1px solid #777',
-            borderRadius: '50%',
-            padding: '6px',
-            color: '#fff',
-            cursor: 'pointer'
-          }}
-        >
-          <SkipBack size={16} />
+        <button className="wmp-xp-ctrl-btn" onClick={handlePrev} title="Previous">
+          <SkipBack size={14} fill="currentColor" />
         </button>
-        <button
-          className="xp-wmp-play"
-          onClick={handlePlayPause}
-          title={isPlaying ? 'Pause' : 'Play'}
-          style={{
-            background: '#39FF14',
-            border: 'none',
-            borderRadius: '50%',
-            padding: '12px',
-            color: '#000',
-            cursor: 'pointer',
-            boxShadow: '0 0 10px rgba(57, 255, 20, 0.4)'
-          }}
-        >
-          {isPlaying ? (
-            <Pause size={24} fill="currentColor" />
-          ) : (
-            <Play size={24} fill="currentColor" style={{ marginLeft: '4px' }} />
-          )}
+        <button className="wmp-xp-play-btn" onClick={handlePlayPause} title={isPlaying ? 'Pause' : 'Play'}>
+          {isPlaying
+            ? <Pause size={18} fill="currentColor" />
+            : <Play size={18} fill="currentColor" style={{ marginLeft: '2px' }} />
+          }
         </button>
-        <button
-          className="xp-wmp-ctrl"
-          onClick={handleNext}
-          title="Next"
-          style={{
-            background: '#555',
-            border: '1px solid #777',
-            borderRadius: '50%',
-            padding: '6px',
-            color: '#fff',
-            cursor: 'pointer'
-          }}
-        >
-          <SkipForward size={16} />
+        <button className="wmp-xp-ctrl-btn" onClick={handleNext} title="Next">
+          <SkipForward size={14} fill="currentColor" />
         </button>
-        <button
-          className="xp-wmp-ctrl"
-          title="Repeat"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#fff',
-            cursor: 'pointer',
-            opacity: 0.7
-          }}
-        >
-          <Repeat size={14} />
+        <button className="wmp-xp-ctrl-btn" title="Repeat">
+          <Repeat size={12} />
         </button>
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginLeft: 'auto'
-          }}
-        >
-          <Volume2 size={14} color="#AAA" />
+        {/* Volume */}
+        <div className="wmp-xp-volume">
+          <button
+            className="wmp-xp-vol-icon"
+            onClick={() => setIsMuted(!isMuted)}
+          >
+            {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+          </button>
           <input
             type="range"
+            className="wmp-xp-vol-slider"
             min="0"
             max="100"
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
-            style={{ width: '60px', height: '4px', cursor: 'pointer' }}
+            value={isMuted ? 0 : volume}
+            onChange={(e) => {
+              setVolume(Number(e.target.value))
+              setIsMuted(false)
+            }}
           />
         </div>
       </div>
 
-      {/* Small decorative playlist list */}
-      <div
-        className="xp-wmp-playlist-full"
-        style={{
-          padding: '8px 0',
-          borderTop: '2px solid #555',
-          flex: 1,
-          overflowY: 'auto'
-        }}
-      >
-        {playlist.map((track) => (
+      {/* Playlist */}
+      <div className="wmp-xp-playlist">
+        {playlistTracks.map((track, idx) => (
           <div
             key={track.id}
-            style={{
-              padding: '6px 16px',
-              fontSize: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              justifyContent: 'space-between',
-              backgroundColor:
-                currentTrack?.id === track.id ? '#3169C6' : 'transparent',
-              color: currentTrack?.id === track.id ? 'white' : '#DDD'
-            }}
-            onClick={() => {
-              setCurrentTrack(track)
-              setIsPlaying(true)
-            }}
+            className={`wmp-xp-playlist-row ${idx === currentTrackIdx ? 'active' : ''}`}
+            onClick={() => handleTrackSelect(idx)}
           >
-            <span>
+            <span className="wmp-xp-pl-name">
               {track.title} - {track.artist}
             </span>
-            <span>{formatShortTime(track.duration)}</span>
+            <span className="wmp-xp-pl-duration">
+              {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
+            </span>
           </div>
         ))}
+      </div>
+
+      {/* Status Bar */}
+      <div className="wmp-xp-statusbar">
+        Windows Media Player
       </div>
     </div>
   )
