@@ -158,12 +158,14 @@ export default function CameraApp() {
         if (img?.complete && img.naturalWidth) {
           const hx = f.forehead.x * w
           const hy = f.forehead.y * h
-          const hw = faceW * 1.4
+          const hw = faceW * 1.5
           const hh = hw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
-          ctx.drawImage(img, -hw / 2, -hh * 0.85, hw, hh)
+          // Flip horizontally to match mirrored video
+          ctx.scale(-1, 1)
+          ctx.drawImage(img, -hw / 2, -hh * 0.95, hw, hh)
           ctx.restore()
         }
       }
