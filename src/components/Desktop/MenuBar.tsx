@@ -183,7 +183,7 @@ export default function MenuBar() {
                     <button className="xp-start-item" onClick={() => openWindow('finder', 'My Documents')}>
                       <span className="xp-start-item-icon">📁</span> My Documents
                     </button>
-                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Pictures')}>
+                    <button className="xp-start-item" onClick={() => openWindow('finder', 'My Pictures', 'pictures')}>
                       <span className="xp-start-item-icon">🖼️</span> My Pictures
                     </button>
                     <button className="xp-start-item" onClick={() => openWindow('music', 'My Music')}>
