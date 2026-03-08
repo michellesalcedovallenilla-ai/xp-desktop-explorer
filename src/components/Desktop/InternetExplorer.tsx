@@ -17,9 +17,9 @@ interface Props {
 // Hardcoded search results — always shown
 const HARDCODED_RESULTS = [
   {
-    title: 'My Digital Crib (@mydigitalcrib) • Instagram photos and videos',
+    title: 'mydigitalcrib (@mydigitalcrib) • Instagram photos and videos',
     url: 'https://www.instagram.com/mydigitalcrib/',
-    snippet: '23K Followers, 456 Posts - See Instagram photos and videos from My Digital Crib (@mydigitalcrib) — Vintage computing aesthetics & digital curation',
+    snippet: '793 Followers, 33 Posts - Marketing Agency. hey bestie 💻 we\'re vibes, your gen z marketing crew. taking your brand to the next level is our thing! 🫶',
     displayUrl: 'www.instagram.com/mydigitalcrib',
   },
   {
