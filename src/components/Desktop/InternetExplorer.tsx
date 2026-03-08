@@ -1,6 +1,17 @@
 import { useState, useRef } from 'react'
 
 const PORTFOLIO_URL = 'https://readymag.website/u2801101920/5411866/'
+const PORTFOLIO_PAGES: Record<string, string> = {
+  'https://readymag.website/u2801101920/5411866/': 'home',
+  'https://readymag.website/u2801101920/5411866/welcome/': 'welcome',
+  'https://readymag.website/u2801101920/5411866/portfolio/': 'portfolio',
+  'https://readymag.website/u2801101920/5411866/aboutme/': 'aboutme',
+  'https://readymag.website/u2801101920/5411866/socials/': 'socials',
+  'https://readymag.website/u2801101920/5411866/faq/': 'faq',
+  'https://readymag.website/u2801101920/5411866/keywords/': 'keywords',
+}
+const INSTAGRAM_URL = 'https://www.instagram.com/mydigitaldrafts/'
+const GOOGLE_URL = 'https://www.google.com/'
 const INSTAGRAM_URL = 'https://www.instagram.com/mydigitaldrafts/'
 const GOOGLE_URL = 'https://www.google.com/'
 
