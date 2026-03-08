@@ -1109,9 +1109,13 @@
 
 .xp-calc-buttons {
   display: grid;
-  grid-template-columns: repeat(5, 1fr) 4px 1fr;
+  grid-template-columns: repeat(4, 1fr) 4px repeat(3, 1fr);
   gap: 2px;
   padding: 4px 8px 8px;
+}
+
+.xp-calc-buttons .xp-calc-span3 {
+  grid-column: span 3;
 }
 
 .xp-calc-btn {
