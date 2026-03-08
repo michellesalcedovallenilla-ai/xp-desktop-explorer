@@ -307,12 +307,12 @@ export default function CameraApp() {
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
-        const gw = Math.max(eyeDistancePx * 2.25, faceW * 0.78)
+        const gw = Math.max(eyeDistancePx * 2.4, faceW * 0.8)
         const gh = gw * 0.35
         glasses = {
           position: 'absolute',
           left: eyeCenterX - gw / 2,
-          top: (eyeCenterY + faceH * 0.02) - gh / 2,
+          top: (eyeCenterY + faceH * 0.06) - gh / 2,
           width: gw,
           height: gh,
           transform: `rotate(${rotDeg}deg)`,
@@ -324,8 +324,8 @@ export default function CameraApp() {
 
       if (mustacheOn) {
         const mx = (noseTip.x + upperLip.x) / 2
-        const my = upperLip.y + faceH * 0.03
-        const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
+        const my = upperLip.y + faceH * 0.09
+        const mw = Math.max(mouthWidthPx * 1.65, faceW * 0.44)
         const mh = mw * 0.35
         mustache = {
           position: 'absolute',
@@ -342,8 +342,8 @@ export default function CameraApp() {
 
       if (hatOn) {
         const hx = forehead.x
-        const hy = forehead.y + faceH * 0.08
-        const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
+        const hy = forehead.y + faceH * 0.2
+        const hw = Math.max(faceW * 1.32, eyeDistancePx * 3.1)
         const hh = hw * 0.75
         hat = {
           position: 'absolute',
@@ -351,7 +351,7 @@ export default function CameraApp() {
           top: hy - hh * 0.72,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
