@@ -27,7 +27,7 @@ interface Props {
 export default function MobileStartMenu({ isOpen, onClose }: Props) {
   const { setSpotlightOpen, setLocked, setShutdownVisible } = useSystemStore()
   const { showError } = useErrorDialogStore()
-  const [activeSection, setActiveSection] = useState<string | null>(null)
+  // removed activeSection state - flat menu only
 
   const openWindow = (type: string, title: string) => {
     const { openWindow: ow } = useWindowStore.getState()
