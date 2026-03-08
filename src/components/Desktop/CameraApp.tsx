@@ -233,7 +233,7 @@ export default function CameraApp() {
         ctx.restore()
       }
     }
-  }, [mustacheOn, hatOn, beerOn, arepaOn])
+  }, [mustacheOn, hatOn, beerOn, arepaOn, plumbobOn, handsOn])
 
   // Take photo
   const takePhoto = useCallback(() => {
