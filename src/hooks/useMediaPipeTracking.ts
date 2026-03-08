@@ -1,17 +1,28 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { FaceLandmarker, HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
+interface Point3D {
+  x: number
+  y: number
+  z: number
+}
+
+interface Point2D {
+  x: number
+  y: number
+}
+
 export interface FaceLandmarks {
-  leftEye: { x: number; y: number; z: number }
-  rightEye: { x: number; y: number; z: number }
-  noseTip: { x: number; y: number; z: number }
-  upperLip: { x: number; y: number; z: number }
-  mouthLeft: { x: number; y: number; z: number }
-  mouthRight: { x: number; y: number; z: number }
-  forehead: { x: number; y: number; z: number }
-  chin: { x: number; y: number; z: number }
-  leftTemple: { x: number; y: number; z: number }
-  rightTemple: { x: number; y: number; z: number }
+  leftEye: Point3D
+  rightEye: Point3D
+  noseTip: Point3D
+  upperLip: Point3D
+  mouthLeft: Point3D
+  mouthRight: Point3D
+  forehead: Point3D
+  chin: Point3D
+  leftTemple: Point3D
+  rightTemple: Point3D
   faceWidth: number
   faceHeight: number
   eyeDistance: number
@@ -20,8 +31,8 @@ export interface FaceLandmarks {
 }
 
 export interface HandPosition {
-  palmCenter: { x: number; y: number }
-  wrist: { x: number; y: number }
+  palmCenter: Point2D
+  wrist: Point2D
   handSize: number
   handWidth: number
   handHeight: number
@@ -31,6 +42,94 @@ export interface HandPosition {
 interface TrackingResult {
   face: FaceLandmarks | null
   hand: HandPosition | null
+}
+
+const FACE = {
+  LEFT_EYE_OUTER: 33,
+  RIGHT_EYE_OUTER: 263,
+  NOSE_TIP: 1,
+  UPPER_LIP: 13,
+  MOUTH_LEFT: 61,
+  MOUTH_RIGHT: 291,
+  FOREHEAD: 10,
+  CHIN: 152,
+  LEFT_TEMPLE: 234,
+  RIGHT_TEMPLE: 454,
+} as const
+
+const HAND = {
+  WRIST: 0,
+  PALM_CENTER: 9,
+  INDEX_MCP: 5,
+  PINKY_MCP: 17,
+  MIDDLE_TIP: 12,
+} as const
+
+const MIRROR_PREVIEW = true
+const SMOOTH_ALPHA_FACE = 0.5
+const SMOOTH_ALPHA_HAND = 0.45
+
+const dist2 = (a: Point2D, b: Point2D) => Math.hypot(a.x - b.x, a.y - b.y)
+const dist3XY = (a: Point3D, b: Point3D) => Math.hypot(a.x - b.x, a.y - b.y)
+
+function mirror3(p: Point3D): Point3D {
+  if (!MIRROR_PREVIEW) return p
+  return { x: 1 - p.x, y: p.y, z: p.z }
+}
+
+function mirror2(p: Point2D): Point2D {
+  if (!MIRROR_PREVIEW) return p
+  return { x: 1 - p.x, y: p.y }
+}
+
+function smoothPoint3(prev: Point3D, next: Point3D, alpha: number): Point3D {
+  return {
+    x: prev.x + (next.x - prev.x) * alpha,
+    y: prev.y + (next.y - prev.y) * alpha,
+    z: prev.z + (next.z - prev.z) * alpha,
+  }
+}
+
+function smoothPoint2(prev: Point2D, next: Point2D, alpha: number): Point2D {
+  return {
+    x: prev.x + (next.x - prev.x) * alpha,
+    y: prev.y + (next.y - prev.y) * alpha,
+  }
+}
+
+function smoothFace(prev: FaceLandmarks | null, next: FaceLandmarks): FaceLandmarks {
+  if (!prev) return next
+
+  return {
+    leftEye: smoothPoint3(prev.leftEye, next.leftEye, SMOOTH_ALPHA_FACE),
+    rightEye: smoothPoint3(prev.rightEye, next.rightEye, SMOOTH_ALPHA_FACE),
+    noseTip: smoothPoint3(prev.noseTip, next.noseTip, SMOOTH_ALPHA_FACE),
+    upperLip: smoothPoint3(prev.upperLip, next.upperLip, SMOOTH_ALPHA_FACE),
+    mouthLeft: smoothPoint3(prev.mouthLeft, next.mouthLeft, SMOOTH_ALPHA_FACE),
+    mouthRight: smoothPoint3(prev.mouthRight, next.mouthRight, SMOOTH_ALPHA_FACE),
+    forehead: smoothPoint3(prev.forehead, next.forehead, SMOOTH_ALPHA_FACE),
+    chin: smoothPoint3(prev.chin, next.chin, SMOOTH_ALPHA_FACE),
+    leftTemple: smoothPoint3(prev.leftTemple, next.leftTemple, SMOOTH_ALPHA_FACE),
+    rightTemple: smoothPoint3(prev.rightTemple, next.rightTemple, SMOOTH_ALPHA_FACE),
+    faceWidth: prev.faceWidth + (next.faceWidth - prev.faceWidth) * SMOOTH_ALPHA_FACE,
+    faceHeight: prev.faceHeight + (next.faceHeight - prev.faceHeight) * SMOOTH_ALPHA_FACE,
+    eyeDistance: prev.eyeDistance + (next.eyeDistance - prev.eyeDistance) * SMOOTH_ALPHA_FACE,
+    mouthWidth: prev.mouthWidth + (next.mouthWidth - prev.mouthWidth) * SMOOTH_ALPHA_FACE,
+    rotation: prev.rotation + (next.rotation - prev.rotation) * SMOOTH_ALPHA_FACE,
+  }
+}
+
+function smoothHand(prev: HandPosition | null, next: HandPosition): HandPosition {
+  if (!prev) return next
+
+  return {
+    palmCenter: smoothPoint2(prev.palmCenter, next.palmCenter, SMOOTH_ALPHA_HAND),
+    wrist: smoothPoint2(prev.wrist, next.wrist, SMOOTH_ALPHA_HAND),
+    handSize: prev.handSize + (next.handSize - prev.handSize) * SMOOTH_ALPHA_HAND,
+    handWidth: prev.handWidth + (next.handWidth - prev.handWidth) * SMOOTH_ALPHA_HAND,
+    handHeight: prev.handHeight + (next.handHeight - prev.handHeight) * SMOOTH_ALPHA_HAND,
+    rotation: prev.rotation + (next.rotation - prev.rotation) * SMOOTH_ALPHA_HAND,
+  }
 }
 
 export function useMediaPipeTracking(
@@ -43,6 +142,8 @@ export function useMediaPipeTracking(
   const loopRef = useRef<number>(0)
   const initRef = useRef(false)
   const [ready, setReady] = useState(false)
+  const smoothedFaceRef = useRef<FaceLandmarks | null>(null)
+  const smoothedHandRef = useRef<HandPosition | null>(null)
 
   useEffect(() => {
     if (!enabled || initRef.current) return
@@ -66,8 +167,8 @@ export function useMediaPipeTracking(
             },
             runningMode: 'VIDEO',
             numFaces: 1,
-            minFaceDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5,
+            minFaceDetectionConfidence: 0.55,
+            minTrackingConfidence: 0.55,
           }),
           HandLandmarker.createFromOptions(vision, {
             baseOptions: {
@@ -76,8 +177,8 @@ export function useMediaPipeTracking(
             },
             runningMode: 'VIDEO',
             numHands: 1,
-            minHandDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5,
+            minHandDetectionConfidence: 0.55,
+            minTrackingConfidence: 0.55,
           }),
         ])
 
@@ -121,111 +222,66 @@ export function useMediaPipeTracking(
       if (faceResults.faceLandmarks?.length) {
         const lm = faceResults.faceLandmarks[0]
 
-        // FaceMesh landmarks
-        const leftEyeOuter = lm[33]
-        const leftEyeInner = lm[133]
-        const leftEyeTop = lm[159]
-        const leftEyeBottom = lm[145]
+        const leftEye = mirror3(lm[FACE.LEFT_EYE_OUTER])
+        const rightEye = mirror3(lm[FACE.RIGHT_EYE_OUTER])
+        const noseTip = mirror3(lm[FACE.NOSE_TIP])
+        const upperLip = mirror3(lm[FACE.UPPER_LIP])
+        const mouthLeft = mirror3(lm[FACE.MOUTH_LEFT])
+        const mouthRight = mirror3(lm[FACE.MOUTH_RIGHT])
+        const forehead = mirror3(lm[FACE.FOREHEAD])
+        const chin = mirror3(lm[FACE.CHIN])
+        const leftTemple = mirror3(lm[FACE.LEFT_TEMPLE])
+        const rightTemple = mirror3(lm[FACE.RIGHT_TEMPLE])
 
-        const rightEyeOuter = lm[263]
-        const rightEyeInner = lm[362]
-        const rightEyeTop = lm[386]
-        const rightEyeBottom = lm[374]
-
-        const noseTip = lm[1]
-        const upperLip = lm[13]
-        const mouthLeft = lm[61]
-        const mouthRight = lm[291]
-        const forehead = lm[10]
-        const chin = lm[152]
-        const leftTemple = lm[234]
-        const rightTemple = lm[454]
-
-        const average = (...pts: { x: number; y: number; z: number }[]) => ({
-          x: pts.reduce((s, p) => s + p.x, 0) / pts.length,
-          y: pts.reduce((s, p) => s + p.y, 0) / pts.length,
-          z: pts.reduce((s, p) => s + p.z, 0) / pts.length,
-        })
-
-        const leftEyeCenter = average(leftEyeOuter, leftEyeInner, leftEyeTop, leftEyeBottom)
-        const rightEyeCenter = average(rightEyeOuter, rightEyeInner, rightEyeTop, rightEyeBottom)
-
-        // Mirror X because preview is mirrored with scaleX(-1)
-        const mirrorX = (p: { x: number; y: number; z: number }) => ({
-          x: 1 - p.x,
-          y: p.y,
-          z: p.z,
-        })
-
-        const mLeftEye = mirrorX(leftEyeCenter)
-        const mRightEye = mirrorX(rightEyeCenter)
-        const mNoseTip = mirrorX(noseTip)
-        const mUpperLip = mirrorX(upperLip)
-        const mMouthLeft = mirrorX(mouthLeft)
-        const mMouthRight = mirrorX(mouthRight)
-        const mForehead = mirrorX(forehead)
-        const mChin = mirrorX(chin)
-        const mLeftTemple = mirrorX(leftTemple)
-        const mRightTemple = mirrorX(rightTemple)
-
-        const faceWidth = Math.abs(mRightTemple.x - mLeftTemple.x)
-        const faceHeight = Math.abs(mChin.y - mForehead.y)
-        const eyeDistance = Math.hypot(
-          mRightEye.x - mLeftEye.x,
-          mRightEye.y - mLeftEye.y
-        )
-        const mouthWidth = Math.hypot(
-          mMouthRight.x - mMouthLeft.x,
-          mMouthRight.y - mMouthLeft.y
-        )
-
-        // IMPORTANT: mirrored coordinates invert left/right direction, so use left-right vector
-        const rotation = Math.atan2(mLeftEye.y - mRightEye.y, mLeftEye.x - mRightEye.x)
-
-        face = {
-          leftEye: mLeftEye,
-          rightEye: mRightEye,
-          noseTip: mNoseTip,
-          upperLip: mUpperLip,
-          mouthLeft: mMouthLeft,
-          mouthRight: mMouthRight,
-          forehead: mForehead,
-          chin: mChin,
-          leftTemple: mLeftTemple,
-          rightTemple: mRightTemple,
-          faceWidth,
-          faceHeight,
-          eyeDistance,
-          mouthWidth,
-          rotation,
+        const nextFace: FaceLandmarks = {
+          leftEye,
+          rightEye,
+          noseTip,
+          upperLip,
+          mouthLeft,
+          mouthRight,
+          forehead,
+          chin,
+          leftTemple,
+          rightTemple,
+          faceWidth: dist3XY(leftTemple, rightTemple),
+          faceHeight: dist3XY(forehead, chin),
+          eyeDistance: dist3XY(leftEye, rightEye),
+          mouthWidth: dist3XY(mouthLeft, mouthRight),
+          rotation: Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x),
         }
+
+        face = smoothFace(smoothedFaceRef.current, nextFace)
+        smoothedFaceRef.current = face
+      } else {
+        smoothedFaceRef.current = null
       }
 
       if (handResults.landmarks?.length) {
         const lm = handResults.landmarks[0]
-        const wrist = lm[0]
-        const palmCenter = lm[9]
-        const indexMcp = lm[5]
-        const pinkyMcp = lm[17]
-        const middleTip = lm[12]
 
-        const handWidth = Math.hypot(indexMcp.x - pinkyMcp.x, indexMcp.y - pinkyMcp.y)
-        const handHeight = Math.hypot(middleTip.x - wrist.x, middleTip.y - wrist.y)
-        const handSize = Math.max(handWidth, handHeight)
+        const wrist = mirror2(lm[HAND.WRIST])
+        const palmCenter = mirror2(lm[HAND.PALM_CENTER])
+        const indexMcp = mirror2(lm[HAND.INDEX_MCP])
+        const pinkyMcp = mirror2(lm[HAND.PINKY_MCP])
+        const middleTip = mirror2(lm[HAND.MIDDLE_TIP])
 
-        const rotation = Math.atan2(
-          palmCenter.y - wrist.y,
-          palmCenter.x - wrist.x
-        )
+        const handWidth = dist2(indexMcp, pinkyMcp)
+        const handHeight = dist2(middleTip, wrist)
 
-        hand = {
-          palmCenter: { x: 1 - palmCenter.x, y: palmCenter.y },
-          wrist: { x: 1 - wrist.x, y: wrist.y },
-          handSize,
+        const nextHand: HandPosition = {
+          palmCenter,
+          wrist,
           handWidth,
           handHeight,
-          rotation,
+          handSize: Math.max(handWidth, handHeight),
+          rotation: Math.atan2(indexMcp.y - pinkyMcp.y, indexMcp.x - pinkyMcp.x),
         }
+
+        hand = smoothHand(smoothedHandRef.current, nextHand)
+        smoothedHandRef.current = hand
+      } else {
+        smoothedHandRef.current = null
       }
 
       setTracking({ face, hand })
