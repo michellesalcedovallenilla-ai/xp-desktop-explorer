@@ -4271,28 +4271,31 @@ textarea {
     font-size: 12px;
   }
 
-  /* Desktop icons: smaller, grid-like */
+  /* Desktop icons: compact grid */
   .xp-landscape-icon {
     position: relative !important;
     left: auto !important;
     top: auto !important;
+    width: auto !important;
   }
   .desktop {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 10px 6px;
     align-content: flex-start;
-    justify-content: center;
+    justify-items: center;
     overflow-y: auto;
+    bottom: 36px;
   }
   .xp-landscape-animal {
-    max-width: 70px !important;
-    width: 70px !important;
+    max-width: 55px !important;
+    width: 55px !important;
   }
   .xp-landscape-label {
-    font-size: 10px;
-    max-width: 70px;
+    font-size: 9px;
+    max-width: 65px;
+    margin-top: 2px;
   }
 
   /* Windows: forced fullscreen */
@@ -4336,6 +4339,10 @@ textarea {
   .xp-running-apps {
     gap: 1px;
   }
+  /* Hide widget buttons on mobile - only show open windows */
+  .xp-running-apps .xp-task-btn.widget-btn {
+    display: none;
+  }
   .xp-task-btn {
     max-width: 80px;
     padding: 2px 4px;
@@ -4357,10 +4364,16 @@ textarea {
   .xp-start-menu {
     width: calc(100vw - 8px);
     max-width: 360px;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
   }
   .xp-start-body {
     flex-direction: column;
     min-height: auto;
+  }
+  .xp-start-left {
+    max-height: 50vh;
+    overflow-y: auto;
   }
   .xp-start-right {
     border-top: 1px solid #ACA899;
@@ -4397,29 +4410,9 @@ textarea {
     height: 36px;
   }
 
-  /* Clippy */
+  /* Clippy - hide on mobile to avoid clutter */
   .xp-clippy-container {
-    bottom: 44px;
-    right: 8px;
-  }
-  .xp-clippy-img-wrapper {
-    width: 80px;
-  }
-  .xp-clippy-bubble {
-    max-width: 180px;
-    font-size: 10px;
-    margin-right: 10px;
-  }
-  .clippy-container {
-    right: 8px;
-    bottom: 44px;
-  }
-  .clippy-body {
-    transform: scale(1.2);
-  }
-  .clippy-speech {
-    max-width: 160px;
-    font-size: 10px;
+    display: none;
   }
 
   /* Explorer */
