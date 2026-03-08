@@ -159,7 +159,6 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(hx, hy)
           ctx.rotate(rot)
-          ctx.scale(-1, 1)
           ctx.drawImage(img, -hw / 2, -hh * 0.72, hw, hh)
           ctx.restore()
         }
@@ -191,12 +190,13 @@ export default function CameraApp() {
       if (img?.complete && img.naturalWidth) {
         const px = hd.palmCenter.x * w
         const py = hd.palmCenter.y * h
-        const bh = Math.max(hd.handHeight * h * 1.1, hd.handSize * h * 1.05)
-        const bw = bh * (img.naturalWidth / img.naturalHeight)
+        const handWidthPx = hd.handWidth * w
+        const bw = Math.max(handWidthPx * 1.05, 44)
+        const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(px, py)
         ctx.rotate(hd.rotation - Math.PI / 2)
-        ctx.drawImage(img, -bw / 2, -bh * 0.62, bw, bh)
+        ctx.drawImage(img, -bw / 2, -bh * 0.68, bw, bh)
         ctx.restore()
       }
     }
@@ -251,7 +251,26 @@ export default function CameraApp() {
   }
 
   const cycleSample = () => setSampleIndex(prev => (prev + 1) % SAMPLE_IMAGES.length)
+  const liveFilterStyle = hasCamera && anyOverlay ? 'none' : FILTERS[activeFilter].css
   const filterStyle = FILTERS[activeFilter].css
+
+  // Convert normalized landmark coordinates to displayed (object-fit: cover) viewport coordinates
+  const mapToViewfinder = useCallback((x: number, y: number, container: HTMLDivElement | null) => {
+    if (!container || !videoRef.current) return { x: 0, y: 0 }
+    const cw = container.clientWidth
+    const ch = container.clientHeight
+    const vw = videoRef.current.videoWidth || cw
+    const vh = videoRef.current.videoHeight || ch
+    const scale = Math.max(cw / vw, ch / vh)
+    const dw = vw * scale
+    const dh = vh * scale
+    const offsetX = (cw - dw) / 2
+    const offsetY = (ch - dh) / 2
+    return {
+      x: x * dw + offsetX,
+      y: y * dh + offsetY,
+    }
+  }, [])
 
   // Convert face/hand landmarks to CSS overlay positions for live preview
   const getOverlayCSS = useCallback((
@@ -260,6 +279,10 @@ export default function CameraApp() {
     if (!container) return { glasses: null, mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
     const cw = container.clientWidth
     const ch = container.clientHeight
+    const vw = videoRef.current?.videoWidth || cw
+    const vh = videoRef.current?.videoHeight || ch
+    const scale = Math.max(cw / vw, ch / vh)
+    const pxScale = vw * scale
 
     let glasses: React.CSSProperties | null = null
     let mustache: React.CSSProperties | null = null
@@ -268,12 +291,18 @@ export default function CameraApp() {
     let beer: React.CSSProperties | null = null
 
     if (face) {
-      const eyeCenterX = ((face.leftEye.x + face.rightEye.x) / 2) * cw
-      const eyeCenterY = ((face.leftEye.y + face.rightEye.y) / 2) * ch
-      const eyeDistancePx = face.eyeDistance * cw
-      const faceW = face.faceWidth * cw
-      const faceH = face.faceHeight * ch
-      const mouthWidthPx = face.mouthWidth * cw
+      const leftEye = mapToViewfinder(face.leftEye.x, face.leftEye.y, container)
+      const rightEye = mapToViewfinder(face.rightEye.x, face.rightEye.y, container)
+      const forehead = mapToViewfinder(face.forehead.x, face.forehead.y, container)
+      const upperLip = mapToViewfinder(face.upperLip.x, face.upperLip.y, container)
+      const noseTip = mapToViewfinder(face.noseTip.x, face.noseTip.y, container)
+
+      const eyeCenterX = (leftEye.x + rightEye.x) / 2
+      const eyeCenterY = (leftEye.y + rightEye.y) / 2
+      const eyeDistancePx = face.eyeDistance * pxScale
+      const faceW = face.faceWidth * pxScale
+      const faceH = face.faceHeight * (vh * scale)
+      const mouthWidthPx = face.mouthWidth * pxScale
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
@@ -293,8 +322,8 @@ export default function CameraApp() {
       }
 
       if (mustacheOn) {
-        const mx = ((face.noseTip.x + face.upperLip.x) / 2) * cw
-        const my = (face.upperLip.y * ch) + faceH * 0.03
+        const mx = (noseTip.x + upperLip.x) / 2
+        const my = upperLip.y + faceH * 0.03
         const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
         const mh = mw * 0.35
         mustache = {
@@ -311,8 +340,8 @@ export default function CameraApp() {
       }
 
       if (hatOn) {
-        const hx = face.forehead.x * cw
-        const hy = (face.forehead.y * ch) + faceH * 0.08
+        const hx = forehead.x
+        const hy = forehead.y + faceH * 0.08
         const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
         const hh = hw * 0.75
         hat = {
@@ -321,7 +350,7 @@ export default function CameraApp() {
           top: hy - hh * 0.72,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -329,8 +358,6 @@ export default function CameraApp() {
       }
 
       if (heartsOn) {
-        const foreheadX = face.forehead.x * cw
-        const foreheadY = face.forehead.y * ch
         const positions = [
           { dx: 0, dy: -faceH * 0.15, size: faceW * 0.14 },
           { dx: -faceW * 0.18, dy: -faceH * 0.25, size: faceW * 0.12 },
@@ -340,8 +367,8 @@ export default function CameraApp() {
         ]
         hearts = positions.map(p => ({
           position: 'absolute' as const,
-          left: foreheadX + p.dx - p.size / 2,
-          top: foreheadY + p.dy - p.size / 2,
+          left: forehead.x + p.dx - p.size / 2,
+          top: forehead.y + p.dy - p.size / 2,
           fontSize: p.size,
           pointerEvents: 'none' as const,
           zIndex: 10,
@@ -351,15 +378,15 @@ export default function CameraApp() {
     }
 
     if (hand && beerOn) {
-      const px = hand.palmCenter.x * cw
-      const py = hand.palmCenter.y * ch
-      const bh = Math.max(hand.handHeight * ch * 1.1, hand.handSize * ch * 1.05)
-      const bw = bh * 0.35
+      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
+      const handWidthPx = hand.handWidth * pxScale
+      const bw = Math.max(handWidthPx * 1.05, 26)
+      const bh = bw / 0.35
       const rotDeg = ((hand.rotation - Math.PI / 2) * 180) / Math.PI
       beer = {
         position: 'absolute',
-        left: px - bw / 2,
-        top: py - bh * 0.62,
+        left: palm.x - bw / 2,
+        top: palm.y - bh * 0.68,
         width: bw,
         height: bh,
         transform: `rotate(${rotDeg}deg)`,
@@ -384,7 +411,7 @@ export default function CameraApp() {
             playsInline
             muted
             className="camera-video"
-            style={{ filter: filterStyle }}
+            style={{ filter: liveFilterStyle }}
           />
         ) : (
           <div style={{
