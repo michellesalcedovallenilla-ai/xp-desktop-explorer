@@ -3063,126 +3063,205 @@ textarea {
   background-color: red;
 }
 
-/* === MS PAINT === */
+/* === MS PAINT (XP Authentic) === */
 .xp-paint {
   display: flex;
   flex-direction: column;
   height: 100%;
   background: #ECE9D8;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
 }
 
-.xp-paint-menu {
-  height: 18px;
-  background: #ECE9D8;
+.xp-paint-menubar {
   display: flex;
   align-items: center;
-  padding: 0 4px;
+  padding: 1px 4px;
+  background: #ECE9D8;
   border-bottom: 1px solid #ACA899;
+  gap: 0;
 }
 
-.xp-paint-body {
+.xp-paint-menu-item {
+  padding: 2px 6px;
+  cursor: default;
+  font-size: 11px;
+  color: #000;
+}
+
+.xp-paint-menu-item:hover {
+  background: #316AC5;
+  color: #fff;
+}
+
+.xp-paint-workspace {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
-.xp-paint-tools {
-  width: 48px;
+.xp-paint-sidebar {
+  width: 56px;
   background: #ECE9D8;
   border-right: 1px solid #ACA899;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 4px 2px;
+  padding: 2px;
   flex-shrink: 0;
 }
 
-.xp-paint-tool {
-  width: 28px;
-  height: 28px;
+.xp-paint-toolbox {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  padding: 2px;
+  border: 1px solid #808080;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+  background: #ECE9D8;
+  margin-bottom: 4px;
+}
+
+.xp-paint-tool-btn {
+  width: 23px;
+  height: 22px;
   border: 1px solid transparent;
-  background: none;
+  background: #ECE9D8;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 2px;
+  padding: 0;
+  line-height: 1;
 }
 
-.xp-paint-tool:hover {
-  border-color: #3169C6;
-  background: rgba(49, 105, 198, 0.1);
+.xp-paint-tool-btn:hover {
+  border: 1px outset #ddd;
 }
 
-.xp-paint-tool.active {
-  border-color: #3169C6;
-  background: rgba(49, 105, 198, 0.2);
-  box-shadow: 0 0 0 1px rgba(49, 105, 198, 0.3) inset;
+.xp-paint-tool-btn.active {
+  border: 1px inset #808080;
+  background: #B0C4DE;
 }
 
-.xp-paint-size {
-  width: 100%;
-  padding: 2px;
+.xp-paint-options {
+  border: 1px solid #808080;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
-.xp-paint-size input {
-  width: 100%;
+.xp-paint-size-btn {
+  width: 24px;
+  height: 12px;
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
-.xp-paint-canvas-wrap {
+.xp-paint-size-btn.active {
+  border: 1px inset #808080;
+  background: #B0C4DE;
+}
+
+.xp-paint-canvas-area {
   flex: 1;
   overflow: auto;
   background: #808080;
-  padding: 4px;
+  position: relative;
 }
 
 .xp-paint-canvas {
   width: 100%;
   height: 100%;
   cursor: crosshair;
-  background: white;
+  background: #fff;
   display: block;
-  image-rendering: pixelated;
 }
 
-.xp-paint-palette {
-  height: 32px;
+.xp-paint-bottom {
   background: #ECE9D8;
   border-top: 1px solid #ACA899;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 6px;
-}
-
-.xp-paint-current-color {
-  width: 22px;
-  height: 22px;
-  border: 2px inset #808080;
   flex-shrink: 0;
 }
 
-.xp-paint-colors {
+.xp-paint-palette-area {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  max-height: 28px;
-  overflow: hidden;
+  align-items: center;
+  padding: 2px 4px;
+  gap: 4px;
 }
 
-.xp-paint-color-btn {
-  width: 12px;
-  height: 12px;
-  border: 1px solid #666;
+.xp-paint-active-colors {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.xp-paint-fg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #808080;
+  z-index: 2;
+}
+
+.xp-paint-bg {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #808080;
+  z-index: 1;
+}
+
+.xp-paint-color-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.xp-paint-color-row {
+  display: flex;
+  gap: 0px;
+}
+
+.xp-paint-color-cell {
+  width: 16px;
+  height: 14px;
+  border: 1px solid #808080;
   cursor: pointer;
   padding: 0;
+  margin: 0;
 }
 
-.xp-paint-color-btn.active {
-  border: 2px solid #000;
-  box-shadow: 0 0 0 1px white inset;
+.xp-paint-color-cell:hover {
+  border-color: #fff;
+}
+
+.xp-paint-statusbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1px 6px;
+  font-size: 10px;
+  color: #444;
+  border-top: 1px solid #ACA899;
+  background: #ECE9D8;
+  height: 18px;
+  align-items: center;
 }
 
 /* === MINESWEEPER === */
