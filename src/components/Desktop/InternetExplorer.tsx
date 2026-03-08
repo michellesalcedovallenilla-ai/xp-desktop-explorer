@@ -146,13 +146,6 @@ interface Props {
   windowId: string
 }
 
-interface LiveSearchResult {
-  title: string
-  url: string
-  snippet: string
-  displayUrl: string
-}
-
 export default function InternetExplorer({ windowId }: Props) {
   const [addressBar, setAddressBar] = useState(GOOGLE_URL)
   const [currentUrl, setCurrentUrl] = useState(GOOGLE_URL)
