@@ -64,10 +64,15 @@ export default function Window({ window: win }: Props) {
     win.type
   )
 
-  // Responsive: detect mobile/tablet
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768)
+  // Responsive: detect mobile
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 480)
+  const [isTabletView, setIsTabletView] = useState(window.innerWidth > 480 && window.innerWidth <= 768)
   useEffect(() => {
-    const onResize = () => setIsMobileView(window.innerWidth <= 768)
+    const onResize = () => {
+      const vw = window.innerWidth
+      setIsMobileView(vw <= 480)
+      setIsTabletView(vw > 480 && vw <= 768)
+    }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
