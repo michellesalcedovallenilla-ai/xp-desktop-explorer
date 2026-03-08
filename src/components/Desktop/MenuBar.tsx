@@ -26,14 +26,27 @@ export default function MenuBar() {
 
   const openWindow = (type: string, title: string) => {
     const { openWindow: ow } = useWindowStore.getState()
+    const sizes: Record<string, { w: number; h: number }> = {
+      minesweeper: { w: 320, h: 420 },
+      solitaire: { w: 700, h: 550 },
+      paint: { w: 700, h: 500 },
+      camera: { w: 640, h: 520 },
+      music: { w: 700, h: 500 },
+      ie: { w: 850, h: 600 },
+      contact: { w: 600, h: 500 },
+      resume: { w: 650, h: 550 },
+      about: { w: 700, h: 500 },
+      finder: { w: 750, h: 450 },
+    }
+    const s = sizes[type] || { w: 700, h: 500 }
     ow({
       id: `window-${type}`,
       title,
       type: type as any,
       x: 100 + Math.random() * 150,
       y: 50 + Math.random() * 80,
-      width: 700,
-      height: 500,
+      width: s.w,
+      height: s.h,
       isMinimized: false,
       isMaximized: false
     })
