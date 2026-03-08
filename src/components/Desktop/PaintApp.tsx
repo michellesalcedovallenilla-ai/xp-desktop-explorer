@@ -205,7 +205,7 @@ export default function PaintApp() {
     }
   }
 
-  const handleMouseUp = () => {
+  const handlePointerUp = () => {
     setIsDrawing(false)
     setStartPos(null)
     setSnapshot(null)
