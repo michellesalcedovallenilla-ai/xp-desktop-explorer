@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Download, Trash2, X, Crown, Smile } from 'lucide-react'
 import { useMediaPipeTracking, type FaceLandmarks, type HandPosition } from '@/hooks/useMediaPipeTracking'
+import { useAudioStore } from '@/store/useAudioStore'
 
 interface Photo {
   id: string
