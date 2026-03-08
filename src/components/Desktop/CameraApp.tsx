@@ -323,8 +323,10 @@ export default function CameraApp() {
       const rotDeg = (rotation * 180) / Math.PI
 
       if (glassesOn) {
+        const glassesImg = overlayImages.glasses
         const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
-        const gh = gw * 0.35
+        const ghRatio = glassesImg?.naturalWidth ? (glassesImg.naturalHeight / glassesImg.naturalWidth) : 0.35
+        const gh = gw * ghRatio
         glasses = {
           position: 'absolute',
           left: eyeCenter.x - gw / 2,
@@ -339,9 +341,11 @@ export default function CameraApp() {
       }
 
       if (mustacheOn) {
+        const mustacheImg = overlayImages.mustache
         const anchor = lerp(noseTip, upperLip, 0.68)
         const mw = Math.max(mouthWidthPx * 1.45, faceWidthPx * 0.4)
-        const mh = mw * 0.35
+        const mhRatio = mustacheImg?.naturalWidth ? (mustacheImg.naturalHeight / mustacheImg.naturalWidth) : 0.35
+        const mh = mw * mhRatio
         mustache = {
           position: 'absolute',
           left: anchor.x - mw / 2,
@@ -356,8 +360,10 @@ export default function CameraApp() {
       }
 
       if (hatOn) {
+        const hatImg = overlayImages.hat
         const hw = Math.max(faceWidthPx * 1.35, eyeDistancePx * 3)
-        const hh = hw * 0.75
+        const hhRatio = hatImg?.naturalWidth ? (hatImg.naturalHeight / hatImg.naturalWidth) : 0.75
+        const hh = hw * hhRatio
         const hatAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.18 }
         hat = {
           position: 'absolute',
