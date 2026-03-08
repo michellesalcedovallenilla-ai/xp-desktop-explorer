@@ -40,6 +40,8 @@ const OVERLAY_PATHS = {
   hat: '/overlays/hat.png',
   polarcita: '/overlays/polarcita.png',
   arepa: '/overlays/arepa.png',
+  plumbob: '/overlays/plumbob.png',
+  hands: '/overlays/hands.png',
 }
 
 // Preload overlay images for canvas drawing
