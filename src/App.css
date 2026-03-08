@@ -4623,6 +4623,17 @@ textarea {
 
   .xp-start-menu {
     width: 320px;
+    max-height: min(560px, calc(100vh - 40px));
+  }
+
+  .xp-start-body {
+    min-height: 0;
+  }
+
+  .xp-start-left,
+  .xp-start-right {
+    max-height: min(460px, calc(100vh - 130px));
+    overflow-y: auto;
   }
 
   .xp-start-header {
