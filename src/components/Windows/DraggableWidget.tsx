@@ -63,12 +63,16 @@ export default function DraggableWidget({
     window.addEventListener('mouseup', onUp)
   }
 
+  // Clamp position to viewport
+  const clampedX = Math.min(widget.x, window.innerWidth - 200)
+  const clampedY = Math.min(widget.y, window.innerHeight - 200)
+
   return (
     <motion.div
       className={`xp-widget ${className}`}
       style={{
-        left: widget.x,
-        top: widget.y,
+        left: Math.max(0, clampedX),
+        top: Math.max(30, clampedY),
         zIndex: widget.zIndex,
         position: 'absolute',
         pointerEvents: 'auto'
