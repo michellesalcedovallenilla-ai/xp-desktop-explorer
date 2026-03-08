@@ -40,6 +40,8 @@ const OVERLAY_PATHS = {
   hat: '/overlays/hat.png',
   polarcita: '/overlays/polarcita.png',
   arepa: '/overlays/arepa.png',
+  plumbob: '/overlays/plumbob.png',
+  hands: '/overlays/hands.png',
 }
 
 // Preload overlay images for canvas drawing
@@ -71,8 +73,11 @@ export default function CameraApp() {
   const [hatOn, setHatOn] = useState(false)
   const [beerOn, setBeerOn] = useState(false)
   const [arepaOn, setArepaOn] = useState(false)
+  const [plumbobOn, setPlumbobOn] = useState(false)
+  const [handsOn, setHandsOn] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
 
-  const anyOverlay = mustacheOn || hatOn || beerOn || arepaOn
+  const anyOverlay = mustacheOn || hatOn || beerOn || arepaOn || plumbobOn || handsOn
 
   // MediaPipe tracking
   const { face, leftHand, rightHand, ready: trackingReady } = useMediaPipeTracking(
@@ -167,6 +172,36 @@ export default function CameraApp() {
         }
       }
 
+      if (plumbobOn) {
+        const img = overlayImages.plumbob
+        if (img?.complete && img.naturalWidth) {
+          const pw = Math.max(faceWidthPx * 0.35, eyeDistancePx * 0.8)
+          const ph = pw * (img.naturalHeight / img.naturalWidth)
+          const plumbobAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.55 }
+          ctx.save()
+          ctx.translate(plumbobAnchor.x, plumbobAnchor.y)
+          ctx.rotate(rotation)
+          ctx.scale(-1, -1)
+          ctx.drawImage(img, -pw / 2, -ph / 2, pw, ph)
+          ctx.restore()
+        }
+      }
+
+      if (handsOn) {
+        const img = overlayImages.hands
+        if (img?.complete && img.naturalWidth) {
+          const hw = Math.max(faceWidthPx * 1.4, eyeDistancePx * 3.2)
+          const hh = hw * (img.naturalHeight / img.naturalWidth)
+          const handsAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.35 }
+          ctx.save()
+          ctx.translate(handsAnchor.x, handsAnchor.y)
+          ctx.rotate(rotation)
+          ctx.scale(-1, -1)
+          ctx.drawImage(img, -hw / 2, -hh * 0.5, hw, hh)
+          ctx.restore()
+        }
+      }
+
     }
 
     if (lh && beerOn) {
@@ -198,10 +233,10 @@ export default function CameraApp() {
         ctx.restore()
       }
     }
-  }, [mustacheOn, hatOn, beerOn, arepaOn])
+  }, [mustacheOn, hatOn, beerOn, arepaOn, plumbobOn, handsOn])
 
-  // Take photo
-  const takePhoto = useCallback(() => {
+  // Actual capture logic
+  const captureNow = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -214,7 +249,6 @@ export default function CameraApp() {
       h = video.videoHeight || 480
       canvas.width = w
       canvas.height = h
-      // Mirror
       ctx.save()
       ctx.translate(w, 0)
       ctx.scale(-1, 1)
@@ -240,6 +274,23 @@ export default function CameraApp() {
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
   }, [hasCamera, activeFilter, face, leftHand, rightHand, drawOverlays])
+
+  // Take photo with 3-second countdown
+  const takePhoto = useCallback(() => {
+    if (countdown !== null) return // already counting
+    setCountdown(3)
+  }, [countdown])
+
+  useEffect(() => {
+    if (countdown === null) return
+    if (countdown === 0) {
+      captureNow()
+      setCountdown(null)
+      return
+    }
+    const timer = setTimeout(() => setCountdown(prev => prev !== null ? prev - 1 : null), 1000)
+    return () => clearTimeout(timer)
+  }, [countdown, captureNow])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
@@ -274,7 +325,7 @@ export default function CameraApp() {
   const getOverlayCSS = useCallback((
     container: HTMLDivElement | null
   ) => {
-    if (!container) return { mustache: null, hat: null, beer: null }
+    if (!container) return { mustache: null, hat: null, beer: null, arepa: null, plumbob: null, hands: null }
 
     const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
     const lerp = (a: { x: number; y: number }, b: { x: number; y: number }, t: number) => ({
@@ -345,6 +396,61 @@ export default function CameraApp() {
 
     }
 
+    let plumbob: React.CSSProperties | null = null
+    let handsOv: React.CSSProperties | null = null
+
+    if (face) {
+      const forehead = mapToViewfinder(face.forehead.x, face.forehead.y, container)
+      const chin = mapToViewfinder(face.chin.x, face.chin.y, container)
+      const leftTemple = mapToViewfinder(face.leftTemple.x, face.leftTemple.y, container)
+      const rightTemple = mapToViewfinder(face.rightTemple.x, face.rightTemple.y, container)
+      const leftEye = mapToViewfinder(face.leftEye.x, face.leftEye.y, container)
+      const rightEye = mapToViewfinder(face.rightEye.x, face.rightEye.y, container)
+      const eyeDistancePx = Math.hypot(rightEye.x - leftEye.x, rightEye.y - leftEye.y)
+      const faceWidthPx = dist(leftTemple, rightTemple)
+      const faceHeightPx = dist(forehead, chin)
+      const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
+      const rotDeg = (rotation * 180) / Math.PI
+
+      if (plumbobOn) {
+        const pImg = overlayImages.plumbob
+        const pw = Math.max(faceWidthPx * 0.35, eyeDistancePx * 0.8)
+        const phRatio = pImg?.naturalWidth ? (pImg.naturalHeight / pImg.naturalWidth) : 1.5
+        const ph = pw * phRatio
+        const anchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.55 }
+        plumbob = {
+          position: 'absolute',
+          left: anchor.x - pw / 2,
+          top: anchor.y - ph / 2,
+          width: pw,
+          height: ph,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+
+      if (handsOn) {
+        const hImg = overlayImages.hands
+        const hw = Math.max(faceWidthPx * 1.4, eyeDistancePx * 3.2)
+        const hhRatio = hImg?.naturalWidth ? (hImg.naturalHeight / hImg.naturalWidth) : 0.7
+        const hh = hw * hhRatio
+        const anchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.35 }
+        handsOv = {
+          position: 'absolute',
+          left: anchor.x - hw / 2,
+          top: anchor.y - hh * 0.5,
+          width: hw,
+          height: hh,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+    }
+
     if (leftHand && beerOn) {
       const beerImg = overlayImages.polarcita
       const palm = mapToViewfinder(leftHand.palmCenter.x, leftHand.palmCenter.y, container)
@@ -392,8 +498,8 @@ export default function CameraApp() {
       }
     }
 
-    return { mustache, hat, beer, arepa }
-  }, [face, leftHand, rightHand, mustacheOn, hatOn, beerOn, arepaOn])
+    return { mustache, hat, beer, arepa, plumbob, hands: handsOv }
+  }, [face, leftHand, rightHand, mustacheOn, hatOn, beerOn, arepaOn, plumbobOn, handsOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
@@ -463,6 +569,23 @@ export default function CameraApp() {
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
         {overlays.arepa && <img src={OVERLAY_PATHS.arepa} alt="" style={overlays.arepa} />}
+        {overlays.plumbob && <img src={OVERLAY_PATHS.plumbob} alt="" style={overlays.plumbob} />}
+        {overlays.hands && <img src={OVERLAY_PATHS.hands} alt="" style={overlays.hands} />}
+
+        {/* Countdown */}
+        {countdown !== null && countdown > 0 && (
+          <div style={{
+            position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            pointerEvents: 'none', zIndex: 30,
+          }}>
+            <span style={{
+              fontSize: 80, fontWeight: 'bold', color: 'white', textShadow: '0 0 20px rgba(0,0,0,0.8)',
+              fontFamily: 'Tahoma, sans-serif', animation: 'countdownPulse 1s ease-in-out',
+            }} key={countdown}>
+              {countdown}
+            </span>
+          </div>
+        )}
 
         {/* Flash */}
         {flash && (
@@ -509,6 +632,12 @@ export default function CameraApp() {
         </button>
         <button className={`camera-btn ${arepaOn ? 'active' : ''}`} onClick={() => setArepaOn(!arepaOn)} title="Arepa">
           <span style={{ fontSize: 16 }}>🫓</span>
+        </button>
+        <button className={`camera-btn ${plumbobOn ? 'active' : ''}`} onClick={() => setPlumbobOn(!plumbobOn)} title="Sims Plumbob">
+          <span style={{ fontSize: 16 }}>💎</span>
+        </button>
+        <button className={`camera-btn ${handsOn ? 'active' : ''}`} onClick={() => setHandsOn(!handsOn)} title="Hands">
+          <span style={{ fontSize: 16 }}>🫳</span>
         </button>
       </div>
 
