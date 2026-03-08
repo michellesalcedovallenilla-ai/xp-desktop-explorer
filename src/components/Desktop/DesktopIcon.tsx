@@ -5,14 +5,14 @@ import type { DesktopIconData } from '../../types'
 
 // Map icon IDs to animal image paths
 const ICON_IMAGES: Record<string, { src: string; alt: string }> = {
-  hd: { src: '/animals/cat ii.png', alt: 'Cat - My Computer' },
-  projects: { src: '/animals/cow iii.png', alt: 'Cow - Projects' },
-  music: { src: '/animals/fish flying.png', alt: 'Fish - Music' },
-  camera: { src: '/animals/pig flying.png', alt: 'Pig - Camera' },
+  hd: { src: '/animals/cat%20ii.png', alt: 'Cat - My Computer' },
+  projects: { src: '/animals/cow%20iii.png', alt: 'Cow - Projects' },
+  music: { src: '/animals/fish%20flying.png', alt: 'Fish - Music' },
+  camera: { src: '/animals/pig%20flying.png', alt: 'Pig - Camera' },
   minesweeper: { src: '/animals/dino.png', alt: 'Dinosaur - Games' },
   about: { src: '/animals/oso.png', alt: 'Bear - About Me' },
   contact: { src: '/animals/chiguire.png', alt: 'Capybara - Contact' },
-  ie: { src: '/animals/cat flying.png', alt: 'Cat - Internet Explorer' },
+  ie: { src: '/animals/cat%20flying.png', alt: 'Cat - Internet Explorer' },
   resume: { src: '/animals/cat.png', alt: 'Cat - Resume' }
 }
 
@@ -113,7 +113,6 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       }}
       onDoubleClick={() => {
         onDoubleClick()
-        handleOpen()
       }}
     >
       {animal && !imgError ? (

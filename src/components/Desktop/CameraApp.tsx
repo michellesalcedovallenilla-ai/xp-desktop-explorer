@@ -63,7 +63,6 @@ export default function CameraApp() {
   }, [])
 
   useEffect(() => {
-    startCamera()
     return () => {
       if (videoRef.current?.srcObject) {
         ;(videoRef.current.srcObject as MediaStream)
@@ -71,7 +70,7 @@ export default function CameraApp() {
           .forEach((t) => t.stop())
       }
     }
-  }, [startCamera])
+  }, [])
 
   useEffect(() => {
     if (!heartsEnabled) return
@@ -143,27 +142,43 @@ export default function CameraApp() {
           <div
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              height: '100%', background: '#111', overflow: 'hidden', cursor: 'pointer',
-              position: 'relative'
+              height: '100%', background: '#111', overflow: 'hidden',
+              position: 'relative', flexDirection: 'column', gap: 12
             }}
-            onClick={cycleSample}
           >
-            <img
-              src={SAMPLE_IMAGES[sampleIndex]}
-              alt="Sample"
-              className="camera-sample-img"
-              crossOrigin="anonymous"
+            <button
+              onClick={startCamera}
               style={{
-                maxWidth: '100%', maxHeight: '100%', objectFit: 'contain',
-                filter: filterStyle, transition: 'filter 0.3s ease'
+                padding: '10px 24px', fontSize: 13, fontFamily: 'Tahoma, sans-serif',
+                background: '#2a4a6a', color: '#8cf', border: '1px solid #6cf',
+                borderRadius: 4, cursor: 'pointer', zIndex: 2
               }}
-            />
+            >
+              📷 Start Camera
+            </button>
+            <div style={{ color: '#666', fontSize: 11, fontFamily: 'Tahoma, sans-serif' }}>
+              Or browse sample photos:
+            </div>
+            <div
+              style={{ cursor: 'pointer', maxWidth: '80%', maxHeight: '50%' }}
+              onClick={cycleSample}
+            >
+              <img
+                src={SAMPLE_IMAGES[sampleIndex]}
+                alt="Sample"
+                className="camera-sample-img"
+                crossOrigin="anonymous"
+                style={{
+                  maxWidth: '100%', maxHeight: '100%', objectFit: 'contain',
+                  filter: filterStyle, transition: 'filter 0.3s ease'
+                }}
+              />
+            </div>
             <div style={{
-              position: 'absolute', bottom: 6, left: 0, right: 0,
               textAlign: 'center', color: '#aaa', fontSize: 10,
               fontFamily: 'Tahoma, sans-serif', pointerEvents: 'none'
             }}>
-              Click to change photo · Apply filters below!
+              Click image to change · Apply filters below!
             </div>
           </div>
         )}
