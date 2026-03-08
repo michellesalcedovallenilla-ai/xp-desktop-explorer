@@ -241,8 +241,10 @@ export default function InternetExplorer({ windowId }: Props) {
 
     // Instagram — exact 2012 iOS app replica
     if (isInstagram) {
+      const openIg = () => window.open('https://www.instagram.com/mydigitalcrib/', '_blank')
       return (
-        <div style={{
+        <div onClick={openIg} style={{
+          cursor: 'pointer',
           fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
           background: '#ededed',
           height: '100%',
