@@ -220,6 +220,7 @@ export default function CameraApp() {
           ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.58, ow, oh)
         }
       }
+
       if (hatEnabled) {
         const hat = overlayImages['/overlays/hat.png']
         if (hat?.complete) {
@@ -227,10 +228,10 @@ export default function CameraApp() {
           ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.7, ow, oh)
         }
       }
+
       if (heartsEnabled) {
-        // Draw hearts above head
-        ctx.font = `${Math.round(fh * 0.2)}px serif`
         ctx.textAlign = 'center'
+        ctx.font = `${Math.round(fh * 0.2)}px serif`
         const heartPositions = [
           { dx: 0, dy: -fh * 0.35 },
           { dx: -fw * 0.25, dy: -fh * 0.45 },
@@ -240,6 +241,16 @@ export default function CameraApp() {
           ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
         }
       }
+    } else if (heartsEnabled) {
+      // fallback when no face is detected
+      const baseSize = Math.max(28, Math.round(h * 0.08))
+      ctx.textAlign = 'center'
+      ctx.font = `${baseSize}px serif`
+      const cx = w / 2
+      const cy = h * 0.2
+      ctx.fillText('❤️', cx, cy)
+      ctx.fillText('❤️', cx - baseSize * 0.9, cy + baseSize * 0.05)
+      ctx.fillText('❤️', cx + baseSize * 0.9, cy + baseSize * 0.05)
     }
 
     const dataUrl = canvas.toDataURL('image/png')
@@ -285,6 +296,7 @@ export default function CameraApp() {
 
   const showCenteredDisguise = disguiseEnabled && (!hasFaceApi || !faceBox) && hasCamera
   const showCenteredHat = hatEnabled && (!hasFaceApi || !faceBox) && hasCamera
+  const showCenteredHearts = heartsEnabled && (!faceBox || !hasFaceApi) && hasCamera
 
   // Hearts above head (display)
   const heartOverlays = heartsEnabled && faceBox ? [
@@ -379,6 +391,18 @@ export default function CameraApp() {
         {showCenteredHat && (
           <div style={{ position: 'absolute', top: '5%', left: 0, right: 0, pointerEvents: 'none', display: 'flex', justifyContent: 'center' }}>
             <img src="/overlays/hat.png" alt="" style={{ width: '45%', opacity: 0.95 }} />
+          </div>
+        )}
+
+        {/* Centered heart fallback */}
+        {showCenteredHearts && (
+          <div style={{
+            position: 'absolute', top: '10%', left: 0, right: 0,
+            pointerEvents: 'none', display: 'flex', justifyContent: 'center', gap: 14, zIndex: 10
+          }}>
+            <span style={{ fontSize: 34, filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
+            <span style={{ fontSize: 28, transform: 'translateY(8px)', filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
+            <span style={{ fontSize: 34, filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
           </div>
         )}
 
