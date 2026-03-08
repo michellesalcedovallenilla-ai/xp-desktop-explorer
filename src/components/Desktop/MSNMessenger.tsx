@@ -10,7 +10,6 @@ interface GuestbookMessage {
   created_at: string
 }
 
-// MSN emoticon map
 const MSN_EMOTICONS: Record<string, string> = {
   ':)': '😊', ':D': '😄', ';)': '😉', ':(': '😢',
   ':O': '😲', ':P': '😛', '(B)': '😎', '(Y)': '👍',
@@ -32,7 +31,6 @@ const MSN_STATUSES = [
 
 const MSN_AVATARS = ['🧑', '👩', '👨', '🧒', '👧', '👦', '🐱', '🐶', '🦊', '🐸', '🐰', '🐼']
 
-// Winks / animated messages
 const MSN_WINKS = [
   { label: '💃 Bailando', text: '~*~💃 ¡Bailando! 💃~*~' },
   { label: '🎉 Fiesta', text: '~*~🎉🥳 ¡¡FIESTA!! 🥳🎉~*~' },
@@ -77,10 +75,8 @@ export default function MSNMessenger() {
   const [isShaking, setIsShaking] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
   const { playError } = useAudioStore()
 
-  // Load messages
   useEffect(() => {
     const fetchMessages = async () => {
       const { data } = await supabase
@@ -97,7 +93,6 @@ export default function MSNMessenger() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'guestbook_messages' }, (payload) => {
         const newMsg = payload.new as GuestbookMessage
         setMessages(prev => [...prev, newMsg])
-        // If it's a nudge, shake!
         if (newMsg.message === '🫨 ¡¡ZUMBIDO!! 🫨') {
           triggerNudgeEffect()
         }
@@ -107,20 +102,12 @@ export default function MSNMessenger() {
     return () => { supabase.removeChannel(channel) }
   }, [])
 
-  // Auto-scroll
   useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight
-    }
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight
   }, [messages])
 
-  // Typing indicator
   useEffect(() => {
-    if (messageText.length > 0) {
-      setIsTyping(true)
-    } else {
-      setIsTyping(false)
-    }
+    setIsTyping(messageText.length > 0)
   }, [messageText])
 
   const triggerNudgeEffect = useCallback(() => {
@@ -132,69 +119,39 @@ export default function MSNMessenger() {
   const sendNudge = useCallback(async () => {
     const trimNick = nickname.trim()
     if (!trimNick) { setError('¡Escribe tu nickname primero!'); return }
-
     if (Date.now() - lastNudgeTime < 8000) {
       setError('¡Espera para enviar otro zumbido!')
       return
     }
-
-    // Local shake immediately
     triggerNudgeEffect()
-
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({
-        nickname: trimNick,
-        status: status,
-        message: '🫨 ¡¡ZUMBIDO!! 🫨',
-      })
-
-    if (insertError) {
-      setError('Error al enviar zumbido')
-    } else {
-      lastNudgeTime = Date.now()
-    }
+      .insert({ nickname: trimNick, status, message: '🫨 ¡¡ZUMBIDO!! 🫨' })
+    if (insertError) setError('Error al enviar zumbido')
+    else lastNudgeTime = Date.now()
   }, [nickname, status, triggerNudgeEffect])
 
   const handlePost = useCallback(async () => {
     const trimNick = nickname.trim()
     const trimMsg = messageText.trim()
-
     if (!trimNick) { setError('¡Escribe tu nickname!'); return }
     if (!trimMsg) { setError('¡Escribe un mensaje!'); return }
     if (trimNick.length > 30) { setError('Nickname muy largo (máx 30)'); return }
     if (trimMsg.length > 500) { setError('Mensaje muy largo (máx 500)'); return }
-
-    if (Date.now() - lastPostTime < 5000) {
-      setError('¡Más lento! Espera unos segundos.')
-      return
-    }
+    if (Date.now() - lastPostTime < 5000) { setError('¡Más lento! Espera unos segundos.'); return }
 
     setIsPosting(true)
     setError('')
-
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({
-        nickname: trimNick,
-        status: status,
-        message: trimMsg,
-      })
-
-    if (insertError) {
-      setError('Error al enviar. ¡Intenta de nuevo!')
-    } else {
-      lastPostTime = Date.now()
-      setMessageText('')
-    }
+      .insert({ nickname: trimNick, status, message: trimMsg })
+    if (insertError) setError('Error al enviar. ¡Intenta de nuevo!')
+    else { lastPostTime = Date.now(); setMessageText('') }
     setIsPosting(false)
   }, [nickname, messageText, status])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handlePost()
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handlePost() }
   }
 
   const insertEmoticon = (code: string) => {
@@ -208,29 +165,49 @@ export default function MSNMessenger() {
   }
 
   const statusObj = MSN_STATUSES.find(s => s.label === status) || MSN_STATUSES[0]
-
   const isNudgeMessage = (msg: string) => msg === '🫨 ¡¡ZUMBIDO!! 🫨'
+  const myAvatar = nickname.trim() ? MSN_AVATARS[nickname.trim().charCodeAt(0) % MSN_AVATARS.length] : '🧑'
 
   return (
-    <div className={`msn-messenger ${isShaking ? 'msn-shake' : ''}`} ref={containerRef}>
-      {/* MSN Menu Bar */}
+    <div className={`msn-messenger ${isShaking ? 'msn-shake' : ''}`}>
+      {/* Menu Bar */}
       <div className="msn-menubar">
-        <button className="msn-menu-item">Archivo</button>
-        <button className="msn-menu-item">Editar</button>
-        <button className="msn-menu-item">Acciones</button>
-        <button className="msn-menu-item">Herramientas</button>
-        <button className="msn-menu-item">Ayuda</button>
+        <button className="msn-menu-item">File</button>
+        <button className="msn-menu-item">Edit</button>
+        <button className="msn-menu-item">Actions</button>
+        <button className="msn-menu-item">Tools</button>
+        <button className="msn-menu-item">Help</button>
       </div>
 
-      {/* MSN Toolbar */}
+      {/* Toolbar */}
       <div className="msn-toolbar">
-        <div className="msn-toolbar-btn" onClick={sendNudge} title="¡Enviar zumbido!">🫨 Zumbido</div>
-        <div className="msn-toolbar-btn" onClick={() => setShowWinks(!showWinks)} title="Enviar wink">🎭 Winks</div>
-        <div className="msn-toolbar-btn">📁 Archivos</div>
-        <div className="msn-toolbar-btn">📷 Cámara</div>
-        <div className="msn-toolbar-btn">🎮 Juegos</div>
+        <div className="msn-toolbar-btn">
+          <span className="msn-toolbar-icon">👤</span>
+          <span>Invite</span>
+        </div>
+        <div className="msn-toolbar-btn">
+          <span className="msn-toolbar-icon">📁</span>
+          <span>Send Files</span>
+        </div>
+        <div className="msn-toolbar-btn">
+          <span className="msn-toolbar-icon">🎥</span>
+          <span>Video</span>
+        </div>
+        <div className="msn-toolbar-btn">
+          <span className="msn-toolbar-icon">🔊</span>
+          <span>Voice</span>
+        </div>
+        <div className="msn-toolbar-btn">
+          <span className="msn-toolbar-icon">🎲</span>
+          <span>Activities</span>
+        </div>
+        <div className="msn-toolbar-btn">
+          <span className="msn-toolbar-icon">🃏</span>
+          <span>Games</span>
+        </div>
         <div className="msn-msn-logo">
-          <span style={{ color: '#f77b00', fontWeight: 'bold', fontStyle: 'italic', fontSize: '13px' }}>msn</span>
+          <span style={{ color: '#f77b00', fontWeight: 'bold', fontStyle: 'italic', fontSize: '15px', letterSpacing: '-0.5px' }}>msn</span>
+          <span style={{ color: '#f77b00', fontSize: '8px', position: 'relative', top: '-4px' }}>🦋</span>
         </div>
       </div>
 
@@ -238,94 +215,100 @@ export default function MSNMessenger() {
       {showWinks && (
         <div className="msn-winks-picker">
           {MSN_WINKS.map((w, i) => (
-            <button key={i} className="msn-wink-btn" onClick={() => sendWink(w.text)}>
-              {w.label}
-            </button>
+            <button key={i} className="msn-wink-btn" onClick={() => sendWink(w.text)}>{w.label}</button>
           ))}
         </div>
       )}
 
-      {/* Header */}
-      <div className="msn-header">
-        <span className="msn-header-to">Para: &lt; Guestbook &gt;</span>
-      </div>
-
-      {/* Chat Area */}
-      <div className="msn-chat-area" ref={chatRef}>
-        <div className="msn-system-msg">
-          <span className="msn-system-text">💬 ¡Bienvenido al Guestbook! Deja un mensaje para futuros visitantes ✨</span>
-        </div>
-
-        {messages.map((msg) => {
-          const avatar = MSN_AVATARS[msg.nickname.charCodeAt(0) % MSN_AVATARS.length]
-          const msgStatus = MSN_STATUSES.find(s => s.label === msg.status)
-          const nudge = isNudgeMessage(msg.message)
-
-          return (
-            <div key={msg.id} className={`msn-message ${nudge ? 'msn-nudge-msg' : ''}`}>
-              <div className="msn-msg-header">
-                <span className="msn-msg-avatar">{avatar}</span>
-                <span className="msn-msg-nick" style={{ fontWeight: 'bold' }}>
-                  {msg.nickname}
-                </span>
-                {!nudge && msg.status && (
-                  <span className="msn-msg-status" style={{ color: msgStatus?.color || '#666' }}>
-                    {msgStatus?.icon || '🟢'} {msg.status}
-                  </span>
-                )}
-                <span className="msn-msg-time">{timeAgo(msg.created_at)}</span>
-              </div>
-              <div className={`msn-msg-body ${nudge ? 'msn-nudge-body' : ''}`}>
-                {nudge ? (
-                  <span className="msn-nudge-text">
-                    {msg.nickname} te ha enviado un zumbido 🫨📳
-                  </span>
-                ) : (
-                  <>
-                    <span className="msn-msg-dice">{msg.nickname} dice:</span>
-                    <br />
-                    {replaceEmoticons(msg.message)}
-                  </>
-                )}
-              </div>
-            </div>
-          )
-        })}
-
-        {messages.length === 0 && (
-          <div className="msn-system-msg">
-            <span className="msn-system-text">No hay mensajes aún. ¡Sé el primero! 🎉</span>
+      {/* Main area */}
+      <div className="msn-main">
+        <div className="msn-main-left">
+          {/* Header */}
+          <div className="msn-header">
+            <span className="msn-header-to">To: &lt; Guestbook &gt;</span>
           </div>
-        )}
+
+          {/* Chat */}
+          <div className="msn-chat-area" ref={chatRef}>
+            <div className="msn-system-msg">
+              <span className="msn-system-text">💬 Welcome to the Guestbook! Leave a message for future visitors ✨</span>
+            </div>
+
+            {messages.map((msg) => {
+              const avatar = MSN_AVATARS[msg.nickname.charCodeAt(0) % MSN_AVATARS.length]
+              const msgStatus = MSN_STATUSES.find(s => s.label === msg.status)
+              const nudge = isNudgeMessage(msg.message)
+
+              return (
+                <div key={msg.id} className={`msn-message ${nudge ? 'msn-nudge-msg' : ''}`}>
+                  <div className="msn-msg-header">
+                    <span className="msn-msg-avatar">{avatar}</span>
+                    <span className="msn-msg-nick">{msg.nickname}</span>
+                    {!nudge && msg.status && (
+                      <span className="msn-msg-status" style={{ color: msgStatus?.color || '#666' }}>
+                        {msgStatus?.icon || '🟢'} {msg.status}
+                      </span>
+                    )}
+                    <span className="msn-msg-time">{timeAgo(msg.created_at)}</span>
+                  </div>
+                  <div className={`msn-msg-body ${nudge ? 'msn-nudge-body' : ''}`}>
+                    {nudge ? (
+                      <span className="msn-nudge-text">
+                        {msg.nickname} te ha enviado un zumbido 🫨📳
+                      </span>
+                    ) : replaceEmoticons(msg.message)}
+                  </div>
+                </div>
+              )
+            })}
+
+            {messages.length === 0 && (
+              <div className="msn-system-msg">
+                <span className="msn-system-text">No messages yet. Be the first! 🎉</span>
+              </div>
+            )}
+          </div>
+
+          {/* Typing indicator */}
+          {isTyping && nickname.trim() && (
+            <div className="msn-typing-indicator">
+              ✏️ {nickname.trim()} está escribiendo...
+            </div>
+          )}
+        </div>
+
+        {/* Right sidebar with display pictures */}
+        <div className="msn-sidebar">
+          <div className="msn-dp-box">🦋</div>
+          <div className="msn-dp-box msn-dp-box-small">{myAvatar}</div>
+        </div>
       </div>
 
-      {/* Typing indicator */}
-      {isTyping && nickname.trim() && (
-        <div className="msn-typing-indicator">
-          ✏️ {nickname.trim()} está escribiendo...
-        </div>
-      )}
-
-      {/* Input Area */}
-      <div className="msn-input-area">
-        <div className="msn-emoticon-bar">
-          <button className="msn-emo-toggle" onClick={() => { setShowEmoticons(!showEmoticons); setShowWinks(false) }}>
-            😊 Emoticons
-          </button>
-          <button className="msn-emo-toggle msn-nudge-btn" onClick={sendNudge} title="¡Zumbido!">
-            🫨
-          </button>
-          <select
-            className="msn-status-select"
-            value={status}
-            onChange={e => setStatus(e.target.value)}
-          >
-            {MSN_STATUSES.map(s => (
-              <option key={s.label} value={s.label}>{s.icon} {s.label}</option>
-            ))}
-          </select>
+      {/* Input section */}
+      <div className="msn-input-section">
+        {/* Tool bar */}
+        <div className="msn-input-toolbar">
+          <button className="msn-tool-btn msn-font-btn" title="Font">A</button>
+          <button
+            className={`msn-tool-btn ${showEmoticons ? 'active' : ''}`}
+            onClick={() => { setShowEmoticons(!showEmoticons); setShowWinks(false) }}
+            title="Emoticons"
+          >😊</button>
+          <div className="msn-tool-separator" />
+          <button className="msn-tool-btn msn-voice-clip-btn" title="Voice Clip">🔊 Voice Clip</button>
+          <div className="msn-tool-separator" />
+          <button
+            className={`msn-tool-btn ${showWinks ? 'active' : ''}`}
+            onClick={() => { setShowWinks(!showWinks); setShowEmoticons(false) }}
+            title="Winks"
+          >😜</button>
+          <button className="msn-tool-btn" title="Send Image">🖼️</button>
+          <div className="msn-tool-separator" />
+          <button className="msn-tool-btn" title="Gift">🎁</button>
+          <button className="msn-tool-btn" onClick={sendNudge} title="¡Zumbido!">🫨</button>
         </div>
 
+        {/* Emoticon picker */}
         {showEmoticons && (
           <div className="msn-emoticon-picker">
             {Object.entries(MSN_EMOTICONS).slice(0, 20).map(([code, emoji]) => (
@@ -336,45 +319,60 @@ export default function MSNMessenger() {
           </div>
         )}
 
-        <div className="msn-compose">
-          <input
-            className="msn-nick-input"
-            placeholder="Tu nickname..."
-            value={nickname}
-            onChange={e => setNickname(e.target.value)}
-            maxLength={30}
-          />
-          <div className="msn-msg-compose">
+        {/* Compose */}
+        <div className="msn-compose-area">
+          <div className="msn-compose-left">
+            <div className="msn-nick-row">
+              <span className="msn-nick-label">Nick:</span>
+              <input
+                className="msn-nick-input"
+                placeholder="Tu nickname..."
+                value={nickname}
+                onChange={e => setNickname(e.target.value)}
+                maxLength={30}
+              />
+              <select
+                className="msn-status-select"
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+              >
+                {MSN_STATUSES.map(s => (
+                  <option key={s.label} value={s.label}>{s.icon} {s.label}</option>
+                ))}
+              </select>
+            </div>
             <textarea
               className="msn-msg-input"
-              placeholder="Escribe un mensaje... (máx 500)"
+              placeholder="Escribe un mensaje..."
               value={messageText}
               onChange={e => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
               maxLength={500}
               rows={2}
             />
-            <div className="msn-compose-actions">
-              <button
-                className="msn-send-btn"
-                onClick={handlePost}
-                disabled={isPosting}
-              >
-                {isPosting ? '...' : 'Enviar'}
-              </button>
-            </div>
+          </div>
+          <div className="msn-compose-right">
+            <button className="msn-send-btn" onClick={handlePost} disabled={isPosting}>
+              {isPosting ? '...' : 'Send'}
+            </button>
           </div>
         </div>
 
-        {error && <div className="msn-error">{error}</div>}
-        <div className="msn-char-count">{messageText.length}/500</div>
+        {/* Bottom row */}
+        <div className="msn-compose-bottom">
+          {error && <span className="msn-error">{error}</span>}
+          <span className="msn-char-count">{messageText.length}/500</span>
+          <span className="msn-nudge-icon" onClick={sendNudge} title="Zumbido">🫨</span>
+          <span style={{ fontWeight: 'bold', fontSize: '14px', fontFamily: 'serif', color: '#333' }}>A</span>
+        </div>
       </div>
 
-      {/* Status Bar */}
+      {/* Status bar */}
       <div className="msn-statusbar">
         <span>{statusObj.icon} {status}</span>
-        <span style={{ marginLeft: 'auto', fontSize: '10px', opacity: 0.7 }}>
-          {messages.length} mensaje{messages.length !== 1 ? 's' : ''}
+        <span className="msn-statusbar-ad">Click for new Emoticons and Theme Packs</span>
+        <span style={{ fontSize: '9px', opacity: 0.6 }}>
+          {messages.length} msg{messages.length !== 1 ? 's' : ''}
         </span>
       </div>
     </div>
