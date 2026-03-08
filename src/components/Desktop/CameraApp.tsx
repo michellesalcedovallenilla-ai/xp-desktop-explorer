@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Heart, Download, Trash2, X, Glasses, Crown, Beer } from 'lucide-react'
+import { Heart, Download, Trash2, X, Glasses, Crown, Beer, Smile } from 'lucide-react'
 import { useMediaPipeTracking, type FaceLandmarks, type HandPosition } from '@/hooks/useMediaPipeTracking'
 
 interface Photo {
