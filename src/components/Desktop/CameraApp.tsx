@@ -504,7 +504,10 @@ export default function CameraApp() {
           <Smile size={18} color={mustacheOn ? '#ffcc00' : undefined} />
         </button>
         <button className={`camera-btn ${beerOn ? 'active' : ''}`} onClick={() => setBeerOn(!beerOn)} title="Polarcita">
-          <span style={{ fontSize: 16 }}>🇻🇪</span>
+          <span style={{ fontSize: 16 }}>🍺</span>
+        </button>
+        <button className={`camera-btn ${arepaOn ? 'active' : ''}`} onClick={() => setArepaOn(!arepaOn)} title="Arepa">
+          <span style={{ fontSize: 16 }}>🫓</span>
         </button>
       </div>
 
