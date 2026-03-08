@@ -1,27 +1,83 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { useEffect } from 'react'
+import { useSystemStore } from './store/useSystemStore'
+import { useWindowStore } from './store/useWindowStore'
+import { useAudioStore } from './store/useAudioStore'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
+import BootAnimation from './components/Desktop/BootAnimation'
+import LockScreen from './components/Desktop/LockScreen'
+import MenuBar from './components/Desktop/MenuBar'
+import Desktop from './components/Desktop/Desktop'
+import Window from './components/Desktop/Window'
+import WakeEffect from './components/Desktop/WakeEffect'
+import Spotlight from './components/Desktop/Spotlight'
+import CalculatorWidget from './components/Windows/CalculatorWidget'
+import WeatherWidget from './components/Windows/WeatherWidget'
+import ClockWidget from './components/Windows/ClockWidget'
+import CalendarWidget from './components/Windows/CalendarWidget'
+import MusicPlayerWidget from './components/Windows/MusicPlayerWidget'
+import NotesWidget from './components/Windows/NotesWidget'
+import Clippy from './components/Desktop/Clippy'
+import ShutdownDialog from './components/Desktop/ShutdownDialog'
+import './App.css'
 
-const queryClient = new QueryClient();
+const App = () => {
+  const {
+    isBooting,
+    isLocked,
+    isShutdownVisible,
+    setShutdownVisible,
+    setLocked
+  } = useSystemStore()
+  const { windows, closeWindow } = useWindowStore()
+  const { playClick, playStartup } = useAudioStore()
+  useKeyboardShortcuts()
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  useEffect(() => {
+    const handlePointerDown = () => playClick()
+    window.addEventListener('pointerdown', handlePointerDown)
+    return () => window.removeEventListener('pointerdown', handlePointerDown)
+  }, [playClick])
 
-export default App;
+  useEffect(() => {
+    if (!isBooting) {
+      playStartup()
+    }
+  }, [isBooting, playStartup])
+
+  return (
+    <div className="app-root">
+      <div className="xp-desktop-bg" />
+      <BootAnimation />
+      {!isBooting && <LockScreen />}
+      {!isBooting && !isLocked && (
+        <>
+          <Desktop />
+          <CalculatorWidget />
+          <WeatherWidget />
+          <ClockWidget />
+          <CalendarWidget />
+          <MusicPlayerWidget />
+          <NotesWidget />
+          {windows.map((win) => (
+            <Window key={win.id} window={win} />
+          ))}
+          <MenuBar />
+          <Spotlight />
+          <Clippy />
+        </>
+      )}
+      <ShutdownDialog
+        isOpen={isShutdownVisible}
+        onClose={() => setShutdownVisible(false)}
+        onShutdown={() => {
+          setShutdownVisible(false)
+          windows.forEach((w) => closeWindow(w.id))
+          setLocked(true)
+        }}
+      />
+      <WakeEffect />
+    </div>
+  )
+}
+
+export default App
