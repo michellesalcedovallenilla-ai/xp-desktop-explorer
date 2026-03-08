@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Camera, Download, Trash2, X } from 'lucide-react'
+import { Heart, Camera, Download, Trash2, X, Glasses } from 'lucide-react'
 
 interface Photo {
   id: string
@@ -46,6 +46,7 @@ export default function CameraApp() {
   const [hasCamera, setHasCamera] = useState(false)
   const [activeFilter, setActiveFilter] = useState(0)
   const [sampleIndex, setSampleIndex] = useState(0)
+  const [disguiseEnabled, setDisguiseEnabled] = useState(false)
   const heartIdRef = useRef(0)
 
   const startCamera = useCallback(async () => {
@@ -173,7 +174,20 @@ export default function CameraApp() {
           mixBlendMode: 'multiply'
         }} />
 
-        {/* Hearts */}
+        {/* Disguise overlay */}
+        {disguiseEnabled && (
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <img
+              src="/overlays/mustache-glasses.png"
+              alt="Disguise"
+              style={{ width: '55%', opacity: 0.9, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+            />
+          </div>
+        )}
+
         <AnimatePresence>
           {hearts.map((heart) => (
             <motion.div
@@ -240,7 +254,12 @@ export default function CameraApp() {
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
         </button>
-        <div style={{ width: 36 }} />
+        <button
+          className={`camera-btn ${disguiseEnabled ? 'active' : ''}`}
+          onClick={() => setDisguiseEnabled(!disguiseEnabled)}
+        >
+          <Glasses size={18} color={disguiseEnabled ? '#ffcc00' : undefined} />
+        </button>
       </div>
 
       {/* Gallery */}
