@@ -498,8 +498,8 @@ export default function CameraApp() {
       }
     }
 
-    return { mustache, hat, beer, arepa }
-  }, [face, leftHand, rightHand, mustacheOn, hatOn, beerOn, arepaOn])
+    return { mustache, hat, beer, arepa, plumbob, hands: handsOv }
+  }, [face, leftHand, rightHand, mustacheOn, hatOn, beerOn, arepaOn, plumbobOn, handsOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
