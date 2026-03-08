@@ -56,6 +56,7 @@ export default function InternetExplorer({ windowId }: Props) {
   const isGoogleSearch = currentUrl.startsWith(`${GOOGLE_URL}search`)
   const isPortfolio = currentUrl.startsWith('https://readymag.website/u2801101920/5411866')
   const isInstagram = currentUrl.includes('instagram.com/mydigitalcrib')
+  const isMyspace = currentUrl.includes('ifyourereadingthishiremenow.my.canva.site')
 
   // Fetch page content via Jina reader (for Readymag and other non-special URLs)
   const fetchReader = useCallback(async (url: string) => {
