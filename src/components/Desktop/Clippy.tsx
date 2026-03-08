@@ -137,15 +137,6 @@ export default function Clippy() {
           className="xp-clippy-img"
           draggable={false}
         />
-        {/* Eye pupils that track mouse - overlaid on the image */}
-        <div
-          className="clippy-pupil clippy-pupil-left"
-          style={{ transform: pupilTransform }}
-        />
-        <div
-          className="clippy-pupil clippy-pupil-right"
-          style={{ transform: pupilTransform }}
-        />
       </div>
     </div>
   )
