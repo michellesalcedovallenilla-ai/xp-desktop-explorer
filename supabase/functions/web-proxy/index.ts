@@ -3,10 +3,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 }
 
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, options)
+    if (response.status === 429) {
+      const retryAfter = response.headers.get('Retry-After')
+      const delayMs = retryAfter
+        ? parseInt(retryAfter, 10) * 1000
+        : Math.pow(2, attempt) * 1000 + Math.random() * 1000
+      console.log(`Rate limited, waiting ${delayMs}ms before retry ${attempt + 1}`)
+      await new Promise((resolve) => setTimeout(resolve, Math.min(delayMs, 30000)))
+      continue
+    }
+    return response
+  }
+  throw new Error('Rate limited - max retries exceeded')
+}
+
 async function searchWeb(query: string) {
   const encoded = encodeURIComponent(query)
   const url = `https://www.bing.com/search?q=${encoded}&format=rss&count=10`
-  const resp = await fetch(url, {
+  const resp = await fetchWithRetry(url, {
     headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
   })
   const text = await resp.text()
@@ -65,7 +82,7 @@ async function fetchWithFirecrawl(url: string): Promise<string> {
 }
 
 async function fetchSimple(url: string): Promise<string> {
-  const resp = await fetch(url, {
+  const resp = await fetchWithRetry(url, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
