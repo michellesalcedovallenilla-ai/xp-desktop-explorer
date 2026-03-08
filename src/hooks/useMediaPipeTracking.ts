@@ -121,8 +121,17 @@ export function useMediaPipeTracking(
       if (faceResults.faceLandmarks?.length) {
         const lm = faceResults.faceLandmarks[0]
 
-        const leftEye = lm[33]
-        const rightEye = lm[263]
+        // FaceMesh landmarks
+        const leftEyeOuter = lm[33]
+        const leftEyeInner = lm[133]
+        const leftEyeTop = lm[159]
+        const leftEyeBottom = lm[145]
+
+        const rightEyeOuter = lm[263]
+        const rightEyeInner = lm[362]
+        const rightEyeTop = lm[386]
+        const rightEyeBottom = lm[374]
+
         const noseTip = lm[1]
         const upperLip = lm[13]
         const mouthLeft = lm[61]
@@ -132,14 +141,24 @@ export function useMediaPipeTracking(
         const leftTemple = lm[234]
         const rightTemple = lm[454]
 
+        const average = (...pts: { x: number; y: number; z: number }[]) => ({
+          x: pts.reduce((s, p) => s + p.x, 0) / pts.length,
+          y: pts.reduce((s, p) => s + p.y, 0) / pts.length,
+          z: pts.reduce((s, p) => s + p.z, 0) / pts.length,
+        })
+
+        const leftEyeCenter = average(leftEyeOuter, leftEyeInner, leftEyeTop, leftEyeBottom)
+        const rightEyeCenter = average(rightEyeOuter, rightEyeInner, rightEyeTop, rightEyeBottom)
+
+        // Mirror X because preview is mirrored with scaleX(-1)
         const mirrorX = (p: { x: number; y: number; z: number }) => ({
           x: 1 - p.x,
           y: p.y,
           z: p.z,
         })
 
-        const mLeftEye = mirrorX(leftEye)
-        const mRightEye = mirrorX(rightEye)
+        const mLeftEye = mirrorX(leftEyeCenter)
+        const mRightEye = mirrorX(rightEyeCenter)
         const mNoseTip = mirrorX(noseTip)
         const mUpperLip = mirrorX(upperLip)
         const mMouthLeft = mirrorX(mouthLeft)
@@ -159,7 +178,9 @@ export function useMediaPipeTracking(
           mMouthRight.x - mMouthLeft.x,
           mMouthRight.y - mMouthLeft.y
         )
-        const rotation = Math.atan2(mRightEye.y - mLeftEye.y, mRightEye.x - mLeftEye.x)
+
+        // IMPORTANT: mirrored coordinates invert left/right direction, so use left-right vector
+        const rotation = Math.atan2(mLeftEye.y - mRightEye.y, mLeftEye.x - mRightEye.x)
 
         face = {
           leftEye: mLeftEye,
