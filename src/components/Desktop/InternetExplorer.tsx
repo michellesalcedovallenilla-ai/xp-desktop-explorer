@@ -698,60 +698,6 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
           ·.·´¯`·.·★ ★·.·´¯`·.·★ ★·.·´¯`·.·
         </div>
 
-        {/* "About" card */}
-        <div style={{
-          margin: '0 20px 16px',
-          background: 'rgba(0, 0, 100, 0.6)',
-          border: '2px ridge #6666ff',
-          borderRadius: '0',
-          padding: '16px',
-        }}>
-          <h2 style={{ fontSize: '16px', color: '#ffff00', margin: '0 0 8px', textDecoration: 'underline' }}>
-            📁 who dis?
-          </h2>
-          <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#ccc', margin: 0 }}>
-            hey bestie 💻 i'm a creative designer & developer who builds things that live on the internet.
-            from interactive sites to full digital experiences — welcome to my corner of the web ✨
-          </p>
-        </div>
-
-        {/* "Projects" preview with fake thumbnails */}
-        <div style={{
-          margin: '0 20px 16px',
-          background: 'rgba(0, 0, 100, 0.6)',
-          border: '2px ridge #6666ff',
-          padding: '16px',
-        }}>
-          <h2 style={{ fontSize: '16px', color: '#ffff00', margin: '0 0 12px', textDecoration: 'underline' }}>
-            🎨 projects
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-            {[
-              { bg: '#c2533a', label: '🏪 Shop' },
-              { bg: '#4a6a4a', label: '🎄 Holiday' },
-              { bg: '#6a8a5a', label: '🎉 Events' },
-              { bg: '#3a5a7a', label: '🌆 Urban' },
-              { bg: '#8a6a4a', label: '☕ Café' },
-              { bg: '#5a7a9a', label: '🏠 Home' },
-            ].map((p, i) => (
-              <div key={i} style={{
-                aspectRatio: '1',
-                background: p.bg,
-                border: '2px inset #999',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                textAlign: 'center',
-                color: '#fff',
-                textShadow: '0 1px 3px rgba(0,0,0,0.8)',
-              }}>
-                <span>{p.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Guestbook / links section */}
         <div style={{
           margin: '0 20px 16px',
