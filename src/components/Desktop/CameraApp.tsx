@@ -323,10 +323,10 @@ export default function CameraApp() {
         hat = {
           position: 'absolute',
           left: hx - hw / 2,
-          top: hy - hh * 0.85,
+          top: hy - hh * 0.95,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
