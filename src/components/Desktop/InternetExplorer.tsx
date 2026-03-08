@@ -29,7 +29,7 @@ const HARDCODED_RESULTS = [
     displayUrl: 'readymag.website/u2801101920/5411866',
   },
   {
-    title: 'if you\'re reading this, hire me now — MySpace',
+    title: 'MySpace.com',
     url: 'https://ifyourereadingthishiremenow.my.canva.site',
     snippet: 'Creative portfolio & digital playground. Design, development, and everything in between. Welcome to my MySpace — vibes only ✨',
     displayUrl: 'ifyourereadingthishiremenow.my.canva.site',
