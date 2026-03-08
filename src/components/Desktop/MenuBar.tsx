@@ -298,7 +298,7 @@ export default function MenuBar() {
           .map((widget) => (
           <button
             key={widget.id}
-            className={`xp-task-btn ${widget.isVisible ? 'active' : ''}`}
+            className={`xp-task-btn widget-btn ${widget.isVisible ? 'active' : ''}`}
             onClick={() => toggleWidget(widget.id)}
           >
             {widget.type.charAt(0).toUpperCase() + widget.type.slice(1)}
