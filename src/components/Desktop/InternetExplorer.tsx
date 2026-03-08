@@ -28,6 +28,12 @@ const HARDCODED_RESULTS = [
     snippet: "this ain't a regular site. it's touchable, scrollable, clickable, and loud. volume up. have fun. welcome to my side of the internet (aka my resume, just less boring)",
     displayUrl: 'readymag.website/u2801101920/5411866',
   },
+  {
+    title: 'if you\'re reading this, hire me now — MySpace',
+    url: 'https://ifyourereadingthishiremenow.my.canva.site',
+    snippet: 'Creative portfolio & digital playground. Design, development, and everything in between. Welcome to my MySpace — vibes only ✨',
+    displayUrl: 'ifyourereadingthishiremenow.my.canva.site',
+  },
 ]
 
 export default function InternetExplorer({ windowId }: Props) {
