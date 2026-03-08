@@ -268,21 +268,21 @@ export default function CameraApp() {
     let beer: React.CSSProperties | null = null
 
     if (face) {
-      const eyeCenter = {
-        x: (face.leftEye.x + face.rightEye.x) / 2 * cw,
-        y: (face.leftEye.y + face.rightEye.y) / 2 * ch,
-      }
+      const eyeCenterX = ((face.leftEye.x + face.rightEye.x) / 2) * cw
+      const eyeCenterY = ((face.leftEye.y + face.rightEye.y) / 2) * ch
+      const eyeDistancePx = face.eyeDistance * cw
       const faceW = face.faceWidth * cw
       const faceH = face.faceHeight * ch
+      const mouthWidthPx = face.mouthWidth * cw
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
-        const gw = faceW * 1.3
+        const gw = Math.max(eyeDistancePx * 2.25, faceW * 0.78)
         const gh = gw * 0.35
         glasses = {
           position: 'absolute',
-          left: eyeCenter.x - gw / 2,
-          top: eyeCenter.y - gh / 2,
+          left: eyeCenterX - gw / 2,
+          top: (eyeCenterY + faceH * 0.02) - gh / 2,
           width: gw,
           height: gh,
           transform: `rotate(${rotDeg}deg)`,
@@ -293,9 +293,9 @@ export default function CameraApp() {
       }
 
       if (mustacheOn) {
-        const mx = face.upperLip.x * cw
-        const my = face.upperLip.y * ch
-        const mw = faceW * 0.6
+        const mx = ((face.noseTip.x + face.upperLip.x) / 2) * cw
+        const my = (face.upperLip.y * ch) + faceH * 0.03
+        const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
         const mh = mw * 0.35
         mustache = {
           position: 'absolute',
@@ -312,16 +312,16 @@ export default function CameraApp() {
 
       if (hatOn) {
         const hx = face.forehead.x * cw
-        const hy = face.forehead.y * ch
-        const hw = faceW * 1.5
+        const hy = (face.forehead.y * ch) + faceH * 0.08
+        const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
         const hh = hw * 0.75
         hat = {
           position: 'absolute',
           left: hx - hw / 2,
-          top: hy - hh * 0.95,
+          top: hy - hh * 0.72,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
