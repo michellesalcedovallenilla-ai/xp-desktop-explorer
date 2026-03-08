@@ -53,9 +53,9 @@ const defaultDesktopIcons: DesktopIconData[] = [
   // === GROUND ANIMALS (standing on the Bliss hill, feet on grass) ===
   // Hill horizon: ~52-58% from top (higher on right, lower on left)
   { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 5, y: 56, iconWidth: 7 },
-  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 22, y: 40, iconWidth: 10 },
+  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 26, y: 30, iconWidth: 10 },
   { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 42, y: 46, iconWidth: 8 },
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 65, y: 48, iconWidth: 14 },
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 70, y: 32, iconWidth: 14 },
   { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 52, y: 38, iconWidth: 11 },
 ]
 
