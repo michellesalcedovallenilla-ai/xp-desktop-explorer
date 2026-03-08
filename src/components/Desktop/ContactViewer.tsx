@@ -4,9 +4,7 @@ import {
   Phone,
   Globe,
   Send,
-  Github,
-  Linkedin,
-  Twitter
+  Linkedin
 } from 'lucide-react'
 
 export default function ContactViewer() {
@@ -31,7 +29,7 @@ export default function ContactViewer() {
         <p className="xp-contact-subtitle">Feel free to reach out anytime!</p>
         <div className="xp-contact-details">
           <div className="xp-contact-detail">
-            <Mail size={14} /> michelle@portfolio.dev
+            <Mail size={14} /> michellesalcedovallenilla@gmail.com
           </div>
           <div className="xp-contact-detail">
             <Phone size={14} /> (555) 123-4567
@@ -41,14 +39,17 @@ export default function ContactViewer() {
           </div>
         </div>
         <div className="xp-contact-socials">
-          <a href="#" className="xp-social-link" title="GitHub">
-            <Github size={16} />
+          <a href="https://www.instagram.com/mydigitalcrib" target="_blank" rel="noopener noreferrer" className="xp-social-link" title="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           </a>
-          <a href="#" className="xp-social-link" title="LinkedIn">
+          <a href="https://www.linkedin.com/in/marketingwithcats/" target="_blank" rel="noopener noreferrer" className="xp-social-link" title="LinkedIn">
             <Linkedin size={16} />
           </a>
-          <a href="#" className="xp-social-link" title="Twitter">
-            <Twitter size={16} />
+          <a href="https://www.upwork.com/freelancers/~010a7fb03b1054fb6b?mp_source=share" target="_blank" rel="noopener noreferrer" className="xp-social-link" title="Upwork">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z"/></svg>
+          </a>
+          <a href="https://www.fiverr.com/chellesalcedo" target="_blank" rel="noopener noreferrer" className="xp-social-link" title="Fiverr">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.004 15.588a.995.995 0 1 0 .002-1.99.995.995 0 0 0-.002 1.99zm-.996-3.705h-.85c-.546 0-.84.41-.84 1.092V16h-1.722v-3.695h-.85c-.547 0-.84.41-.84 1.092V16h-1.72v-4.91h1.72v.553c.264-.413.596-.663 1.14-.663h1.23v.553c.265-.413.597-.663 1.14-.663h1.592v1.918zm-7.635 1.404c0 1.486-.917 2.615-2.425 2.615-.863 0-1.467-.383-1.803-.957v.845h-1.72V7.836h1.72v3.2c.337-.574.94-.957 1.803-.957 1.508 0 2.425 1.129 2.425 2.615v.593zm-1.72-.017v-.576c0-.784-.454-1.297-1.14-1.297-.685 0-1.14.513-1.14 1.297v.576c0 .784.455 1.297 1.14 1.297.686 0 1.14-.513 1.14-1.297zm-5.308.017c0 1.486-.916 2.615-2.424 2.615-.863 0-1.467-.383-1.803-.957v.845H1.4V7.836h1.72v3.2c.336-.574.94-.957 1.802-.957 1.509 0 2.425 1.129 2.425 2.615v.593zm-1.72-.017v-.576c0-.784-.455-1.297-1.14-1.297-.686 0-1.14.513-1.14 1.297v.576c0 .784.454 1.297 1.14 1.297.685 0 1.14-.513 1.14-1.297z"/></svg>
           </a>
         </div>
       </div>
