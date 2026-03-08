@@ -46,7 +46,8 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       paint: 'paint',
       minesweeper: 'minesweeper',
       solitaire: 'solitaire',
-      ie: 'ie'
+      ie: 'ie',
+      messenger: 'messenger'
     }
     const type = winTypes[icon.action] || 'finder'
     openWindow({
