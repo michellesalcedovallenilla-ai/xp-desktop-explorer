@@ -633,6 +633,12 @@ export default function CameraApp() {
         <button className={`camera-btn ${arepaOn ? 'active' : ''}`} onClick={() => setArepaOn(!arepaOn)} title="Arepa">
           <span style={{ fontSize: 16 }}>🫓</span>
         </button>
+        <button className={`camera-btn ${plumbobOn ? 'active' : ''}`} onClick={() => setPlumbobOn(!plumbobOn)} title="Sims Plumbob">
+          <span style={{ fontSize: 16 }}>💎</span>
+        </button>
+        <button className={`camera-btn ${handsOn ? 'active' : ''}`} onClick={() => setHandsOn(!handsOn)} title="Hands">
+          <span style={{ fontSize: 16 }}>🫳</span>
+        </button>
       </div>
 
       {/* Gallery */}
