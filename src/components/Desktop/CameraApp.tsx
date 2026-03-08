@@ -266,7 +266,6 @@ export default function CameraApp() {
 
     let mustache: React.CSSProperties | null = null
     let hat: React.CSSProperties | null = null
-    let hearts: React.CSSProperties[] = []
     let beer: React.CSSProperties | null = null
 
     if (face) {
