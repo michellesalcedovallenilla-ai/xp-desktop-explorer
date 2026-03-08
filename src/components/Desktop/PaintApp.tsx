@@ -50,15 +50,29 @@ export default function PaintApp() {
   const [snapshot, setSnapshot] = useState<ImageData | null>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
+  // Initialize canvas and handle resize
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    
+    const initCanvas = () => {
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      // Save existing content if any
+      const prevData = canvas.width > 0 && canvas.height > 0
+        ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      if (prevData) ctx.putImageData(prevData, 0, 0)
+    }
+    
+    initCanvas()
+    
+    const observer = new ResizeObserver(() => initCanvas())
+    observer.observe(canvas.parentElement!)
+    return () => observer.disconnect()
   }, [])
 
   const getPos = (e: React.MouseEvent) => {
