@@ -101,7 +101,7 @@ export default function InternetExplorer({ windowId }: Props) {
       lastFetchedUrl.current = currentUrl
       fetchReader(currentUrl)
     }
-  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, isPortfolio, fetchReader])
+  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, isPortfolio, isMyspace, fetchReader])
 
   const navigateTo = (url: string) => {
     let finalUrl = url
