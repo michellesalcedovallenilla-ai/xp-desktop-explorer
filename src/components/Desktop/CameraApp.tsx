@@ -220,6 +220,7 @@ export default function CameraApp() {
           ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.58, ow, oh)
         }
       }
+
       if (hatEnabled) {
         const hat = overlayImages['/overlays/hat.png']
         if (hat?.complete) {
@@ -227,29 +228,29 @@ export default function CameraApp() {
           ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.7, ow, oh)
         }
       }
+
       if (heartsEnabled) {
-        // Draw hearts above head (or top-center fallback)
         ctx.textAlign = 'center'
-        if (rf) {
-          ctx.font = `${Math.round(fh * 0.2)}px serif`
-          const heartPositions = [
-            { dx: 0, dy: -fh * 0.35 },
-            { dx: -fw * 0.25, dy: -fh * 0.45 },
-            { dx: fw * 0.25, dy: -fh * 0.45 },
-          ]
-          for (const hp of heartPositions) {
-            ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
-          }
-        } else {
-          const baseSize = Math.max(28, Math.round(h * 0.08))
-          ctx.font = `${baseSize}px serif`
-          const cx = w / 2
-          const cy = h * 0.2
-          ctx.fillText('❤️', cx, cy)
-          ctx.fillText('❤️', cx - baseSize * 0.9, cy + baseSize * 0.05)
-          ctx.fillText('❤️', cx + baseSize * 0.9, cy + baseSize * 0.05)
+        ctx.font = `${Math.round(fh * 0.2)}px serif`
+        const heartPositions = [
+          { dx: 0, dy: -fh * 0.35 },
+          { dx: -fw * 0.25, dy: -fh * 0.45 },
+          { dx: fw * 0.25, dy: -fh * 0.45 },
+        ]
+        for (const hp of heartPositions) {
+          ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
         }
       }
+    } else if (heartsEnabled) {
+      // fallback when no face is detected
+      const baseSize = Math.max(28, Math.round(h * 0.08))
+      ctx.textAlign = 'center'
+      ctx.font = `${baseSize}px serif`
+      const cx = w / 2
+      const cy = h * 0.2
+      ctx.fillText('❤️', cx, cy)
+      ctx.fillText('❤️', cx - baseSize * 0.9, cy + baseSize * 0.05)
+      ctx.fillText('❤️', cx + baseSize * 0.9, cy + baseSize * 0.05)
     }
 
     const dataUrl = canvas.toDataURL('image/png')
