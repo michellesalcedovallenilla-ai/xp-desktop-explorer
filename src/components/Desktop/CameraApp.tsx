@@ -169,31 +169,31 @@ export default function CameraApp() {
 
     }
 
-    if (hd && beerOn) {
+    if (lh && beerOn) {
       const img = overlayImages.polarcita
       if (img?.complete && img.naturalWidth) {
-        const palm = toPx(hd.palmCenter)
-        const handWidthPx = hd.handWidth * w
+        const palm = toPx(lh.palmCenter)
+        const handWidthPx = lh.handWidth * w
         const bw = Math.max(handWidthPx * 2.0, 75)
         const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(palm.x, palm.y)
-        ctx.rotate(hd.rotation + Math.PI / 2)
+        ctx.rotate(lh.rotation + Math.PI / 2)
         ctx.drawImage(img, -bw / 2, -bh * 0.56, bw, bh)
         ctx.restore()
       }
     }
 
-    if (hd && arepaOn) {
+    if (rh && arepaOn) {
       const img = overlayImages.arepa
       if (img?.complete && img.naturalWidth) {
-        const palm = toPx(hd.palmCenter)
-        const handWidthPx = hd.handWidth * w
+        const palm = toPx(rh.palmCenter)
+        const handWidthPx = rh.handWidth * w
         const aw = Math.max(handWidthPx * 1.8, 70)
         const ah = aw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(palm.x, palm.y)
-        ctx.rotate(hd.rotation)
+        ctx.rotate(rh.rotation)
         ctx.drawImage(img, -aw / 2, -ah / 2, aw, ah)
         ctx.restore()
       }
