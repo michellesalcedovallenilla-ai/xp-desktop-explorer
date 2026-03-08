@@ -239,7 +239,7 @@ export default function CameraApp() {
     setPhotos(prev => [{ id: Date.now().toString(), dataUrl }, ...prev])
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
-  }, [hasCamera, activeFilter, face, hand, drawOverlays])
+  }, [hasCamera, activeFilter, face, leftHand, rightHand, drawOverlays])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
