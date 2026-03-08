@@ -90,7 +90,7 @@ export default function DraggableWidget({
           className="xp-widget-controls"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <button className="xp-wctrl xp-wctrl-min" title="Minimize">
+          <button className="xp-wctrl xp-wctrl-min" title="Minimize" onClick={() => toggleWidget(id)}>
             <svg viewBox="0 0 10 10" width="9" height="9">
               <rect x="1" y="7" width="8" height="2" fill="white" />
             </svg>
