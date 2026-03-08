@@ -121,7 +121,7 @@ export default function Clippy() {
             SPEECH_LINES[Math.floor(Math.random() * SPEECH_LINES.length)]
           setSpeech(line)
           setShowSpeech(true)
-          setTimeout(() => setShowSpeech(false), 6000)
+          setTimeout(() => setShowSpeech(false), 12000)
         }}
       >
         <button
