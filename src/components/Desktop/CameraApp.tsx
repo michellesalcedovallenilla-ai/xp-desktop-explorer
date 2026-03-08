@@ -289,12 +289,12 @@ export default function CameraApp() {
     container: HTMLDivElement | null
   ) => {
     if (!container) return { glasses: null, mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
-    const cw = container.clientWidth
-    const ch = container.clientHeight
-    const vw = videoRef.current?.videoWidth || cw
-    const vh = videoRef.current?.videoHeight || ch
-    const scale = Math.max(cw / vw, ch / vh)
-    const pxScale = vw * scale
+
+    const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
+    const lerp = (a: { x: number; y: number }, b: { x: number; y: number }, t: number) => ({
+      x: a.x + (b.x - a.x) * t,
+      y: a.y + (b.y - a.y) * t,
+    })
 
     let glasses: React.CSSProperties | null = null
     let mustache: React.CSSProperties | null = null
@@ -306,24 +306,29 @@ export default function CameraApp() {
       const leftEye = mapToViewfinder(face.leftEye.x, face.leftEye.y, container)
       const rightEye = mapToViewfinder(face.rightEye.x, face.rightEye.y, container)
       const forehead = mapToViewfinder(face.forehead.x, face.forehead.y, container)
+      const chin = mapToViewfinder(face.chin.x, face.chin.y, container)
+      const leftTemple = mapToViewfinder(face.leftTemple.x, face.leftTemple.y, container)
+      const rightTemple = mapToViewfinder(face.rightTemple.x, face.rightTemple.y, container)
       const upperLip = mapToViewfinder(face.upperLip.x, face.upperLip.y, container)
       const noseTip = mapToViewfinder(face.noseTip.x, face.noseTip.y, container)
+      const mouthLeft = mapToViewfinder(face.mouthLeft.x, face.mouthLeft.y, container)
+      const mouthRight = mapToViewfinder(face.mouthRight.x, face.mouthRight.y, container)
 
-      const eyeCenterX = (leftEye.x + rightEye.x) / 2
-      const eyeCenterY = (leftEye.y + rightEye.y) / 2
-      const eyeDistancePx = face.eyeDistance * pxScale
-      const faceW = face.faceWidth * pxScale
-      const faceH = face.faceHeight * (vh * scale)
-      const mouthWidthPx = face.mouthWidth * pxScale
-      const rotDeg = (face.rotation * 180) / Math.PI
+      const eyeCenter = { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 }
+      const eyeDistancePx = dist(leftEye, rightEye)
+      const faceWidthPx = dist(leftTemple, rightTemple)
+      const faceHeightPx = dist(forehead, chin)
+      const mouthWidthPx = dist(mouthLeft, mouthRight)
+      const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
+      const rotDeg = (rotation * 180) / Math.PI
 
       if (glassesOn) {
-        const gw = Math.max(eyeDistancePx * 2.4, faceW * 0.8)
+        const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
         const gh = gw * 0.35
         glasses = {
           position: 'absolute',
-          left: eyeCenterX - gw / 2,
-          top: (eyeCenterY + faceH * 0.06) - gh / 2,
+          left: eyeCenter.x - gw / 2,
+          top: (eyeCenter.y + faceHeightPx * 0.02) - gh / 2,
           width: gw,
           height: gh,
           transform: `rotate(${rotDeg}deg)`,
@@ -334,14 +339,13 @@ export default function CameraApp() {
       }
 
       if (mustacheOn) {
-        const mx = (noseTip.x + upperLip.x) / 2
-        const my = upperLip.y + faceH * 0.09
-        const mw = Math.max(mouthWidthPx * 1.65, faceW * 0.44)
+        const anchor = lerp(noseTip, upperLip, 0.68)
+        const mw = Math.max(mouthWidthPx * 1.45, faceWidthPx * 0.4)
         const mh = mw * 0.35
         mustache = {
           position: 'absolute',
-          left: mx - mw / 2,
-          top: my - mh / 2,
+          left: anchor.x - mw / 2,
+          top: (anchor.y + faceHeightPx * 0.02) - mh / 2,
           width: mw,
           height: mh,
           transform: `rotate(${rotDeg}deg)`,
@@ -352,17 +356,16 @@ export default function CameraApp() {
       }
 
       if (hatOn) {
-        const hx = forehead.x
-        const hy = forehead.y + faceH * 0.2
-        const hw = Math.max(faceW * 1.32, eyeDistancePx * 3.1)
+        const hw = Math.max(faceWidthPx * 1.35, eyeDistancePx * 3)
         const hh = hw * 0.75
+        const hatAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.18 }
         hat = {
           position: 'absolute',
-          left: hx - hw / 2,
-          top: hy - hh * 0.72,
+          left: hatAnchor.x - hw / 2,
+          top: hatAnchor.y - hh * 0.62,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -371,11 +374,11 @@ export default function CameraApp() {
 
       if (heartsOn) {
         const positions = [
-          { dx: 0, dy: -faceH * 0.15, size: faceW * 0.14 },
-          { dx: -faceW * 0.18, dy: -faceH * 0.25, size: faceW * 0.12 },
-          { dx: faceW * 0.18, dy: -faceH * 0.25, size: faceW * 0.12 },
-          { dx: -faceW * 0.08, dy: -faceH * 0.35, size: faceW * 0.1 },
-          { dx: faceW * 0.08, dy: -faceH * 0.35, size: faceW * 0.1 },
+          { dx: 0, dy: -faceHeightPx * 0.25, size: faceWidthPx * 0.14 },
+          { dx: -faceWidthPx * 0.18, dy: -faceHeightPx * 0.35, size: faceWidthPx * 0.12 },
+          { dx: faceWidthPx * 0.18, dy: -faceHeightPx * 0.35, size: faceWidthPx * 0.12 },
+          { dx: -faceWidthPx * 0.08, dy: -faceHeightPx * 0.45, size: faceWidthPx * 0.1 },
+          { dx: faceWidthPx * 0.08, dy: -faceHeightPx * 0.45, size: faceWidthPx * 0.1 },
         ]
         hearts = positions.map(p => ({
           position: 'absolute' as const,
@@ -391,14 +394,16 @@ export default function CameraApp() {
 
     if (hand && beerOn) {
       const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
-      const handWidthPx = hand.handWidth * pxScale
-      const bw = Math.max(handWidthPx * 1.25, 32)
+      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const handWidthPx = dist(indexMcp, pinkyMcp)
+      const bw = Math.max(handWidthPx * 1.45, 32)
       const bh = bw / 0.35
-      const rotDeg = ((hand.rotation - Math.PI / 2) * 180) / Math.PI
+      const rotDeg = ((hand.rotation + Math.PI / 2) * 180) / Math.PI
       beer = {
         position: 'absolute',
         left: palm.x - bw / 2,
-        top: palm.y - bh * 0.52,
+        top: palm.y - bh * 0.56,
         width: bw,
         height: bh,
         transform: `rotate(${rotDeg}deg)`,
