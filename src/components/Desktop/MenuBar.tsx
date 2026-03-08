@@ -5,6 +5,7 @@ import { useSystemStore } from '../../store/useSystemStore'
 import { useWindowStore } from '../../store/useWindowStore'
 import { useErrorDialogStore } from '../../store/useErrorDialogStore'
 import { useClock } from '../../hooks/useClock'
+import MobileStartMenu from './MobileStartMenu'
 
 export default function MenuBar() {
   const { isSpotlightOpen, setSpotlightOpen, setLocked, setShutdownVisible, widgets, toggleWidget } =
