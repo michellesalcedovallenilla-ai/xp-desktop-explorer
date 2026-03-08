@@ -18,6 +18,8 @@ import MusicPlayerWidget from './components/Windows/MusicPlayerWidget'
 import NotesWidget from './components/Windows/NotesWidget'
 import Clippy from './components/Desktop/Clippy'
 import ShutdownDialog from './components/Desktop/ShutdownDialog'
+import XPErrorDialog from './components/Desktop/XPErrorDialog'
+import { useErrorDialogStore } from './store/useErrorDialogStore'
 import './App.css'
 
 const App = () => {
