@@ -19,6 +19,7 @@ export default function LockScreen() {
       const val = pwd || password
       if (val === PASSWORD) {
         setLocked(false)
+        playStartup()
         setPassword('')
         setShowPasswordField(false)
         setIsAutoTyping(false)
