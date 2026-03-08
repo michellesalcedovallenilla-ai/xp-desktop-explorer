@@ -237,11 +237,11 @@ export default function CameraApp() {
 
       if (heartsEnabled) {
         ctx.textAlign = 'center'
-        ctx.font = `${Math.round(fh * 0.2)}px serif`
+        ctx.font = `${Math.max(24, Math.round(fh * 0.16))}px serif`
         const heartPositions = [
-          { dx: 0, dy: -fh * 0.35 },
-          { dx: -fw * 0.25, dy: -fh * 0.45 },
-          { dx: fw * 0.25, dy: -fh * 0.45 },
+          { dx: 0, dy: -fh * 0.12 },
+          { dx: -fw * 0.2, dy: -fh * 0.2 },
+          { dx: fw * 0.2, dy: -fh * 0.2 },
         ]
         for (const hp of heartPositions) {
           ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
