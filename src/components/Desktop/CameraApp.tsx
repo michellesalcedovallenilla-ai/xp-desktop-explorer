@@ -396,6 +396,61 @@ export default function CameraApp() {
 
     }
 
+    let plumbob: React.CSSProperties | null = null
+    let handsOv: React.CSSProperties | null = null
+
+    if (face) {
+      const forehead = mapToViewfinder(face.forehead.x, face.forehead.y, container)
+      const chin = mapToViewfinder(face.chin.x, face.chin.y, container)
+      const leftTemple = mapToViewfinder(face.leftTemple.x, face.leftTemple.y, container)
+      const rightTemple = mapToViewfinder(face.rightTemple.x, face.rightTemple.y, container)
+      const leftEye = mapToViewfinder(face.leftEye.x, face.leftEye.y, container)
+      const rightEye = mapToViewfinder(face.rightEye.x, face.rightEye.y, container)
+      const eyeDistancePx = Math.hypot(rightEye.x - leftEye.x, rightEye.y - leftEye.y)
+      const faceWidthPx = dist(leftTemple, rightTemple)
+      const faceHeightPx = dist(forehead, chin)
+      const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
+      const rotDeg = (rotation * 180) / Math.PI
+
+      if (plumbobOn) {
+        const pImg = overlayImages.plumbob
+        const pw = Math.max(faceWidthPx * 0.35, eyeDistancePx * 0.8)
+        const phRatio = pImg?.naturalWidth ? (pImg.naturalHeight / pImg.naturalWidth) : 1.5
+        const ph = pw * phRatio
+        const anchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.55 }
+        plumbob = {
+          position: 'absolute',
+          left: anchor.x - pw / 2,
+          top: anchor.y - ph / 2,
+          width: pw,
+          height: ph,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+
+      if (handsOn) {
+        const hImg = overlayImages.hands
+        const hw = Math.max(faceWidthPx * 1.4, eyeDistancePx * 3.2)
+        const hhRatio = hImg?.naturalWidth ? (hImg.naturalHeight / hImg.naturalWidth) : 0.7
+        const hh = hw * hhRatio
+        const anchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.35 }
+        handsOv = {
+          position: 'absolute',
+          left: anchor.x - hw / 2,
+          top: anchor.y - hh * 0.5,
+          width: hw,
+          height: hh,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+    }
+
     if (leftHand && beerOn) {
       const beerImg = overlayImages.polarcita
       const palm = mapToViewfinder(leftHand.palmCenter.x, leftHand.palmCenter.y, container)
