@@ -452,7 +452,6 @@ export default function CameraApp() {
         )}
 
         {/* Live overlays */}
-        {overlays.glasses && <img src={OVERLAY_PATHS.glasses} alt="" style={overlays.glasses} />}
         {overlays.mustache && <img src={OVERLAY_PATHS.mustache} alt="" style={overlays.mustache} />}
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
