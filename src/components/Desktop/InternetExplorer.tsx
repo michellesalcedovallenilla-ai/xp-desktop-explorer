@@ -520,9 +520,6 @@ export default function InternetExplorer({ windowId }: Props) {
                 <p style={{ fontSize: '12px', color: '#555', margin: '2px 0 0' }}>
                   🔗 welcometomywebsites.com &nbsp; ⓘ mydigitalcrib
                 </p>
-                <IgLink style={{ fontSize: '13px', color: '#3b6d8c' }}>
-                  welcometomywebsites.com
-                </IgLink>
               </div>
 
               {/* Tabs: grid | list | photo map */}
