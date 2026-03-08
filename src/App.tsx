@@ -32,6 +32,7 @@ const App = () => {
   } = useSystemStore()
   const { windows, closeWindow } = useWindowStore()
   const { playStartup, playShutdown } = useAudioStore()
+  const { isOpen: errorOpen, title: errorTitle, message: errorMessage, closeError } = useErrorDialogStore()
   useKeyboardShortcuts()
 
   useEffect(() => {
