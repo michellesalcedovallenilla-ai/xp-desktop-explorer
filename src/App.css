@@ -4677,6 +4677,13 @@ textarea {
 @media (min-width: 1025px) and (max-width: 1366px) {
   .xp-start-menu {
     width: 340px;
+    max-height: min(620px, calc(100vh - 38px));
+  }
+
+  .xp-start-left,
+  .xp-start-right {
+    max-height: min(520px, calc(100vh - 130px));
+    overflow-y: auto;
   }
 
   .xp-start-item {
