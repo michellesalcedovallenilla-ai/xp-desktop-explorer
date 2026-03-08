@@ -45,19 +45,15 @@ interface SystemState {
 }
 
 const defaultDesktopIcons: DesktopIconData[] = [
-  // LEFT SIDE — Applications
-  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 40, y: 60, iconWidth: 300 },
-  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 370, y: 50, iconWidth: 100 },
-  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 370, y: 180, iconWidth: 120 },
-  // CENTER — System (flying cat in sky, green cat grounded)
-  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 620, y: 30, iconWidth: 120 },
-  { id: 'hd', label: 'My Computer', icon: 'hd', type: 'app', action: 'finder', x: 580, y: 220, iconWidth: 220 },
-  // RIGHT SIDE — Portfolio (bear grounded, cat grounded, cow grounded)
-  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 900, y: 240, iconWidth: 150 },
-  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 1080, y: 300, iconWidth: 120 },
-  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 1200, y: 380, iconWidth: 220 },
-  // BOTTOM CENTER — Contact (capybara grounded)
-  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 550, y: 420, iconWidth: 110 }
+  { id: 'ie', label: 'Internet Explorer', icon: 'ie', type: 'app', action: 'ie', x: 100, y: 140, iconWidth: 120 },
+  { id: 'music', label: 'Music', icon: 'music', type: 'app', action: 'music', x: 350, y: 250, iconWidth: 100 },
+  { id: 'camera', label: 'Camera', icon: 'camera', type: 'app', action: 'camera', x: 600, y: 130, iconWidth: 120 },
+  { id: 'about', label: 'About Me', icon: 'about', type: 'app', action: 'about', x: 230, y: 350, iconWidth: 150 },
+  { id: 'hd', label: 'My Computer', icon: 'hd', type: 'app', action: 'finder', x: 440, y: 320, iconWidth: 180 },
+  { id: 'resume', label: 'Resume.pdf', icon: 'resume', type: 'file', action: 'resume', x: 670, y: 370, iconWidth: 120 },
+  { id: 'contact', label: 'Contact', icon: 'contact', type: 'app', action: 'contact', x: 80, y: 500, iconWidth: 110 },
+  { id: 'minesweeper', label: 'Games', icon: 'minesweeper', type: 'app', action: 'minesweeper', x: 880, y: 250, iconWidth: 350 },
+  { id: 'projects', label: 'Projects', icon: 'projects', type: 'folder', action: 'finder', x: 1150, y: 480, iconWidth: 250 }
 ]
 
 const defaultDockItems: DockItem[] = [
