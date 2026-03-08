@@ -306,11 +306,11 @@ export default function CameraApp() {
 
   // Hearts above head (display)
   const heartOverlays = heartsEnabled && faceBox ? [
-    { dx: 0, dy: -0.4, size: 0.18 },
-    { dx: -0.2, dy: -0.5, size: 0.15 },
-    { dx: 0.2, dy: -0.5, size: 0.15 },
-    { dx: -0.1, dy: -0.6, size: 0.12 },
-    { dx: 0.1, dy: -0.6, size: 0.12 },
+    { dx: 0, dy: -0.14, size: 0.15 },
+    { dx: -0.2, dy: -0.22, size: 0.12 },
+    { dx: 0.2, dy: -0.22, size: 0.12 },
+    { dx: -0.1, dy: -0.3, size: 0.1 },
+    { dx: 0.1, dy: -0.3, size: 0.1 },
   ] : []
 
   return (
