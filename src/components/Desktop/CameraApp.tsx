@@ -153,7 +153,7 @@ export default function CameraApp() {
       if (hatOn) {
         const img = overlayImages.hat
         if (img?.complete && img.naturalWidth) {
-          const hw = Math.max(faceWidthPx * 1.35, eyeDistancePx * 3)
+          const hw = Math.max(faceWidthPx * 1.05, eyeDistancePx * 2.4)
           const hh = hw * (img.naturalHeight / img.naturalWidth)
           const hatAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.18 }
           ctx.save()
@@ -327,7 +327,7 @@ export default function CameraApp() {
 
       if (hatOn) {
         const hatImg = overlayImages.hat
-        const hw = Math.max(faceWidthPx * 1.35, eyeDistancePx * 3)
+        const hw = Math.max(faceWidthPx * 1.05, eyeDistancePx * 2.4)
         const hhRatio = hatImg?.naturalWidth ? (hatImg.naturalHeight / hatImg.naturalWidth) : 0.75
         const hh = hw * hhRatio
         const hatAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.18 }
