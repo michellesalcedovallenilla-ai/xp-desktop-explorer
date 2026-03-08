@@ -591,78 +591,224 @@ export default function InternetExplorer({ windowId }: Props) {
   )
 }
 
-// Portfolio site component
+// Portfolio site component — early-2000s nostalgic mockup
 function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: string) => void }) {
-  const [showWarning, setShowWarning] = useState(page === 'home')
-  const PORTFOLIO_BASE = 'https://readymag.website/u2801101920/5411866/'
+  const PORTFOLIO_URL = 'https://readymag.website/u2801101920/5411866/'
+  const [stars, setStars] = useState<{x: number; y: number; size: number; delay: number}[]>([])
 
-  const navLinks = [
-    { label: 'portfolio', url: `${PORTFOLIO_BASE}portfolio/` },
-    { label: 'about me', url: `${PORTFOLIO_BASE}aboutme/` },
-    { label: 'socials', url: `${PORTFOLIO_BASE}socials/` },
-    { label: 'Must-Know Info', url: `${PORTFOLIO_BASE}faq/` },
-    { label: 'my keywords', url: `${PORTFOLIO_BASE}keywords/` },
-  ]
-
-  const pageContent: Record<string, { title: string; body: string }> = {
-    portfolio: { title: 'Portfolio', body: 'A collection of projects, designs, and interactive experiences crafted with passion and creativity.' },
-    aboutme: { title: 'About Me', body: 'Creative designer and developer. I build things that live on the internet — from interactive sites to digital experiences.' },
-    socials: { title: 'Socials', body: 'Find me on Instagram @mydigitaldrafts and across the web.' },
-    faq: { title: 'Must-Know Info', body: 'Everything you need to know about working with me, my process, and what I bring to the table.' },
-    keywords: { title: 'My Keywords', body: 'Design • Development • Creativity • Interactive • Digital • Experience • Innovation' },
-    welcome: { title: 'Welcome', body: 'Welcome to my side of the internet. Explore around!' },
-    home: { title: '', body: '' },
-  }
-
-  const content = pageContent[page]
+  useEffect(() => {
+    setStars(Array.from({ length: 40 }, () => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+      delay: Math.random() * 3,
+    })))
+  }, [])
 
   return (
-    <div style={{ height: '100%', background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)', color: '#fff', fontFamily: "'Arial', sans-serif", overflow: 'auto', position: 'relative' }}>
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/image-379fff01-5b6b-4681-8b43-70fd84c97339.png?w=300&e=webp&nll=true)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)' }} />
-      {showWarning && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, background: 'rgba(0,0,0,0.5)' }}>
-          <div style={{ background: '#FFD700', color: '#000', borderRadius: '16px', padding: '30px 40px', maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
-            <button onClick={() => setShowWarning(false)} style={{ position: 'absolute', top: '10px', right: '14px', background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#000' }}>✕</button>
-            <h2 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px' }}>WARNING</h2>
-            <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 16px' }}>this ain't a regular site.<br />it's touchable, scrollable, clickable, and loud.<br />volume up. have fun.</p>
-            <p style={{ fontSize: '13px', margin: 0, fontStyle: 'italic' }}>welcome to my side of the internet<br />(aka my resume, just less boring)</p>
+    <div style={{
+      height: '100%',
+      background: 'linear-gradient(180deg, #000033 0%, #000066 40%, #330066 100%)',
+      color: '#fff',
+      fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
+      overflow: 'auto',
+      position: 'relative',
+    }}>
+      {/* Animated stars */}
+      {stars.map((star, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          left: `${star.x}%`,
+          top: `${star.y}%`,
+          width: `${star.size}px`,
+          height: `${star.size}px`,
+          background: '#fff',
+          borderRadius: '50%',
+          animation: `twinkle 2s ease-in-out ${star.delay}s infinite alternate`,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }} />
+      ))}
+
+      <style>{`
+        @keyframes twinkle { from { opacity: 0.2; } to { opacity: 1; } }
+        @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        @keyframes rainbow { 0% { color: #ff0000; } 16% { color: #ff8800; } 33% { color: #ffff00; } 50% { color: #00ff00; } 66% { color: #0088ff; } 83% { color: #8800ff; } 100% { color: #ff0000; } }
+        @keyframes glow { 0% { text-shadow: 0 0 5px #ff0, 0 0 10px #ff0; } 50% { text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; } 100% { text-shadow: 0 0 5px #ff0, 0 0 10px #ff0; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
+
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* Top banner — animated rainbow marquee */}
+        <div style={{
+          background: 'linear-gradient(to right, #ff00ff, #00ffff, #ffff00)',
+          padding: '3px 0',
+          overflow: 'hidden',
+          borderBottom: '2px solid #ff00ff',
+        }}>
+          <div style={{
+            animation: 'marquee 12s linear infinite',
+            whiteSpace: 'nowrap',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            color: '#000',
+            fontFamily: '"Courier New", monospace',
+          }}>
+            ★ ★ ★ WELCOME TO MY DIGITAL CRIB ★ ★ ★ YOU ARE VISITOR #004,827 ★ ★ ★ BEST VIEWED IN INTERNET EXPLORER 6.0 ★ ★ ★ UNDER CONSTRUCTION ★ ★ ★
           </div>
         </div>
-      )}
-      <div style={{ position: 'relative', zIndex: 5, padding: '40px 30px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigate(PORTFOLIO_BASE) }} style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>My Digital Drafts</a>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            {navLinks.map((link) => (
-              <a key={link.label} href="#" onClick={(e) => { e.preventDefault(); onNavigate(link.url) }}
-                style={{ color: '#ccc', textDecoration: 'none', fontSize: '13px' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#FFD700')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#ccc')}
-              >{link.label}</a>
-            ))}
-          </div>
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', padding: '24px 20px 16px' }}>
+          <h1 style={{
+            fontSize: '32px',
+            animation: 'rainbow 4s linear infinite, glow 3s ease-in-out infinite',
+            margin: '0 0 4px',
+            letterSpacing: '3px',
+          }}>
+            ✦ My Digital Crib ✦
+          </h1>
+          <p style={{ fontSize: '11px', color: '#aaa', fontFamily: '"Courier New", monospace', margin: 0 }}>
+            — est. 2024 — creative portfolio & digital playground —
+          </p>
         </div>
-        {content && content.title && (
-          <div style={{ maxWidth: '600px', margin: '80px auto', textAlign: 'center' }}>
-            <h1 style={{ fontSize: '42px', fontWeight: '900', marginBottom: '20px', letterSpacing: '-1px' }}>{content.title}</h1>
-            <p style={{ fontSize: '16px', lineHeight: '1.8', color: '#ccc' }}>{content.body}</p>
-          </div>
-        )}
-        {(page === 'home' || page === 'portfolio') && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '40px' }}>
-            {['image-952ad33b-466e-47fd-90fa-7d253f913fde','image-8c416ae5-c92a-43ff-af12-ce43ddd0ae32','image-b9f14574-36fe-4a4f-b21f-e5c9a8df10b3','image-35fa2936-1eba-48a4-9326-f7eeda1bd0fa','image-0865149c-34db-408d-ae22-f372a4588229','image-10f721cf-d2af-4446-81f3-740bc1c624c1'].map((id) => (
-              <div key={id} style={{ borderRadius: '8px', overflow: 'hidden', aspectRatio: '1', background: '#222' }}>
-                <img src={`https://i-p.rmcdn.net/67e9f32d05137a26916f90a5/5411866/${id}.png?w=300&e=webp&nll=true`} alt="Project" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+
+        {/* Animated separator */}
+        <div style={{ textAlign: 'center', fontSize: '10px', color: '#ff00ff', letterSpacing: '4px', margin: '4px 0 16px' }}>
+          ·.·´¯`·.·★ ★·.·´¯`·.·★ ★·.·´¯`·.·
+        </div>
+
+        {/* "About" card */}
+        <div style={{
+          margin: '0 20px 16px',
+          background: 'rgba(0, 0, 100, 0.6)',
+          border: '2px ridge #6666ff',
+          borderRadius: '0',
+          padding: '16px',
+        }}>
+          <h2 style={{ fontSize: '16px', color: '#ffff00', margin: '0 0 8px', textDecoration: 'underline' }}>
+            📁 who dis?
+          </h2>
+          <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#ccc', margin: 0 }}>
+            hey bestie 💻 i'm a creative designer & developer who builds things that live on the internet.
+            from interactive sites to full digital experiences — welcome to my corner of the web ✨
+          </p>
+        </div>
+
+        {/* "Projects" preview with fake thumbnails */}
+        <div style={{
+          margin: '0 20px 16px',
+          background: 'rgba(0, 0, 100, 0.6)',
+          border: '2px ridge #6666ff',
+          padding: '16px',
+        }}>
+          <h2 style={{ fontSize: '16px', color: '#ffff00', margin: '0 0 12px', textDecoration: 'underline' }}>
+            🎨 projects
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+            {[
+              { bg: '#c2533a', label: '🏪 Shop' },
+              { bg: '#4a6a4a', label: '🎄 Holiday' },
+              { bg: '#6a8a5a', label: '🎉 Events' },
+              { bg: '#3a5a7a', label: '🌆 Urban' },
+              { bg: '#8a6a4a', label: '☕ Café' },
+              { bg: '#5a7a9a', label: '🏠 Home' },
+            ].map((p, i) => (
+              <div key={i} style={{
+                aspectRatio: '1',
+                background: p.bg,
+                border: '2px inset #999',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '11px',
+                textAlign: 'center',
+                color: '#fff',
+                textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+              }}>
+                <span>{p.label}</span>
               </div>
             ))}
           </div>
-        )}
-        {page === 'socials' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: '40px' }}>
-            <a href="https://www.instagram.com/mydigitaldrafts/" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 32px', background: '#FFD700', color: '#000', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>📸 Instagram — @mydigitaldrafts</a>
-            <a href="https://ifyourereadingthishiremenow.my.canva.site/" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 32px', background: '#333', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>🌐 MySpace</a>
-          </div>
-        )}
+        </div>
+
+        {/* Guestbook / links section */}
+        <div style={{
+          margin: '0 20px 16px',
+          background: 'rgba(0, 0, 100, 0.6)',
+          border: '2px ridge #6666ff',
+          padding: '16px',
+        }}>
+          <h2 style={{ fontSize: '16px', color: '#ffff00', margin: '0 0 8px', textDecoration: 'underline' }}>
+            🔗 cool links
+          </h2>
+          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', lineHeight: '2' }}>
+            <li><span style={{ color: '#00ffff' }}>📸 Instagram — @mydigitalcrib</span></li>
+            <li><span style={{ color: '#00ffff' }}>🎵 MySpace — vibes only</span></li>
+            <li><span style={{ color: '#00ffff' }}>✉️ Contact — dm me!</span></li>
+          </ul>
+        </div>
+
+        {/* ===== VISIT PORTFOLIO BUTTON ===== */}
+        <div style={{ textAlign: 'center', margin: '24px 20px' }}>
+          <a
+            href={PORTFOLIO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              padding: '14px 40px',
+              background: 'linear-gradient(180deg, #FFD700 0%, #FFA500 100%)',
+              color: '#000',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              fontFamily: '"Comic Sans MS", cursive',
+              border: '3px outset #FFD700',
+              borderRadius: '0',
+              textDecoration: 'none',
+              textShadow: '1px 1px 0 rgba(255,255,255,0.5)',
+              boxShadow: '0 4px 15px rgba(255, 215, 0, 0.4)',
+              letterSpacing: '1px',
+              cursor: 'pointer',
+            }}
+          >
+            🌐 Visit My Real Portfolio ↗
+          </a>
+          <p style={{ fontSize: '10px', color: '#888', marginTop: '8px', fontFamily: '"Courier New", monospace' }}>
+            (opens in a new tab)
+          </p>
+        </div>
+
+        {/* Under construction banner */}
+        <div style={{
+          textAlign: 'center',
+          padding: '12px',
+          margin: '0 20px 20px',
+          border: '2px dashed #ff0',
+          background: 'rgba(255, 255, 0, 0.08)',
+        }}>
+          <span style={{ fontSize: '20px' }}>🚧</span>
+          <span style={{ fontSize: '12px', color: '#ff0', marginLeft: '8px', fontFamily: '"Courier New", monospace' }}>
+            UNDER CONSTRUCTION — MORE VIBES COMING SOON
+          </span>
+          <span style={{ fontSize: '20px' }}> 🚧</span>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          padding: '16px',
+          borderTop: '1px solid #333',
+          fontSize: '10px',
+          color: '#666',
+          fontFamily: '"Courier New", monospace',
+        }}>
+          <p style={{ margin: '0 0 4px' }}>© 2024 mydigitalcrib · all rights reserved</p>
+          <p style={{ margin: '0 0 4px' }}>made with ♥ and way too much caffeine</p>
+          <p style={{ margin: 0, letterSpacing: '6px' }}>·.·´¯`·.·★·.·´¯`·.·</p>
+        </div>
       </div>
     </div>
   )
