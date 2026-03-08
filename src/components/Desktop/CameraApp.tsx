@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Camera, Download, Trash2, X, Glasses } from 'lucide-react'
+import { Heart, Camera, Download, Trash2, X, Glasses, Crown } from 'lucide-react'
 
 interface Photo {
   id: string
