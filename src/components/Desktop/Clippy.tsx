@@ -3,16 +3,31 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useWindowStore } from '../../store/useWindowStore'
 
 const SPEECH_LINES = [
-  "It looks like you're trying to use Windows XP! Need help?",
-  "It looks like you're organizing your desktop!",
-  'You can drag animals around the field.',
-  'Double-click animals to open files.',
-  "Need help? I'm always here! 📎",
-  'Try the Calculator! It does real math.',
-  'Play Minesweeper from the Start Menu!',
-  'Solitaire is a great way to relax ♠️',
-  'Did you know? This runs in your browser!',
-  'Check out the Projects folder!'
+  "It looks like you're trying to hire Michelle! Great choice 👏",
+  "Fun fact: this entire portfolio runs on vibes and caffeine ☕",
+  "You've been staring at this screen for 3 minutes. Hire her already!",
+  "It looks like you're procrastinating! Me too 📎",
+  "Did you know Michelle made this whole thing? Yeah, I'm impressed too.",
+  "I'm Clippy and I approve this portfolio ✅",
+  "Stop scrolling LinkedIn and hire Michelle instead.",
+  "This portfolio has more personality than most people I know.",
+  "Try double-clicking the animals. Trust me.",
+  "If you don't hire Michelle, I'll haunt your desktop forever 👻",
+  "It looks like you're writing a rejection email... DON'T. 🚫",
+  "I've been stuck in this computer since 2001. Send help. Or a job offer.",
+  "Plot twist: the real portfolio was the friends we made along the way.",
+  "Loading personality... ████████████ 100% ✨",
+  "Michelle can design, code, AND tolerate me. That's talent.",
+  "You can drag the animals around! I can't though. I'm stuck here. Forever.",
+  "The cow has boots. That's it. That's the tip. 🐄👢",
+  "PSA: No animals were harmed in the making of this portfolio.",
+  "If this portfolio were a song, it'd be a banger 🎵",
+  "You look like someone who appreciates good design. Am I right? 😏",
+  "Pro tip: Click the sun! It's not just decoration ☀️",
+  "I've seen your browsing history. Just kidding. Or am I? 👀",
+  "Error 404: Reasons not to hire Michelle not found.",
+  "This is giving ✨main character energy✨",
+  "I'm legally required to tell you this portfolio slaps.",
 ]
 
 export default function Clippy() {
