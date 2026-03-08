@@ -738,7 +738,7 @@ function PortfolioSite({ page, onNavigate }: { page: string; onNavigate: (url: s
               cursor: 'pointer',
             }}
           >
-            🌐 Visit My Real Portfolio ↗
+            🌐 Visit My Main Portfolio ↗
           </a>
           <p style={{ fontSize: '10px', color: '#888', marginTop: '8px', fontFamily: '"Courier New", monospace' }}>
             (opens in a new tab)
