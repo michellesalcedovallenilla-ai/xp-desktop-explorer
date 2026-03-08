@@ -182,7 +182,22 @@ export default function CameraApp() {
         ctx.restore()
       }
     }
-  }, [mustacheOn, hatOn, beerOn])
+
+    if (hd && arepaOn) {
+      const img = overlayImages.arepa
+      if (img?.complete && img.naturalWidth) {
+        const palm = toPx(hd.palmCenter)
+        const handWidthPx = hd.handWidth * w
+        const aw = Math.max(handWidthPx * 1.8, 70)
+        const ah = aw * (img.naturalHeight / img.naturalWidth)
+        ctx.save()
+        ctx.translate(palm.x, palm.y)
+        ctx.rotate(hd.rotation)
+        ctx.drawImage(img, -aw / 2, -ah / 2, aw, ah)
+        ctx.restore()
+      }
+    }
+  }, [mustacheOn, hatOn, beerOn, arepaOn])
 
   // Take photo
   const takePhoto = useCallback(() => {
