@@ -16,6 +16,13 @@ export default function MenuBar() {
   const [startOpen, setStartOpen] = useState(false)
   const startRef = useRef<HTMLDivElement>(null)
   const time = useClock()
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 480)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     const handleClick = (e: MouseEvent | TouchEvent) => {
