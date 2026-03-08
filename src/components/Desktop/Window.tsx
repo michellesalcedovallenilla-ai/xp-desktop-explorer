@@ -40,7 +40,8 @@ const typeIcons: Record<string, string> = {
   minesweeper: '💣',
   solitaire: '🃏',
   ie: '🌐',
-  project: '📁'
+  project: '📁',
+  messenger: '💬'
 }
 
 interface Props {
