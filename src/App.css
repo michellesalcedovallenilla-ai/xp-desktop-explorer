@@ -4301,6 +4301,118 @@ textarea {
 }
 
 /* ============================================
+   MOBILE START MENU
+   ============================================ */
+
+.xp-mobile-start-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.xp-mobile-start-menu {
+  position: fixed;
+  bottom: 44px;
+  left: 0;
+  width: 85vw;
+  max-width: 340px;
+  max-height: calc(100vh - 52px);
+  max-height: calc(100dvh - 52px);
+  z-index: 999;
+  background: white;
+  border: 2px solid #3169C6;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 4px -2px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Tahoma', 'Segoe UI', sans-serif;
+}
+
+.xp-mobile-start-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.xp-mobile-start-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 170px);
+  max-height: calc(100dvh - 170px);
+  overscroll-behavior: contain;
+}
+
+.xp-mobile-start-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  min-height: 48px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.xp-mobile-start-item:active {
+  background: #3169C6;
+  color: white;
+}
+
+.xp-mobile-start-item.xp-start-item-bold {
+  font-weight: 700;
+}
+
+.xp-mobile-start-item-icon {
+  font-size: 22px;
+  width: 30px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.xp-mobile-start-item-label {
+  flex: 1;
+}
+
+.xp-mobile-start-folder {
+  position: relative;
+}
+
+.xp-mobile-start-chevron {
+  color: #888;
+  flex-shrink: 0;
+}
+
+.xp-mobile-start-back {
+  background: #D3E5FA;
+  font-weight: 700;
+  color: #1A4FB8;
+  gap: 8px;
+}
+
+.xp-mobile-start-back:active {
+  background: #3169C6;
+  color: white;
+}
+
+.xp-mobile-start-footer {
+  border-top: 2px solid #1A4FB8;
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .xp-mobile-start-menu {
+    bottom: calc(44px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================
    RESPONSIVE BREAKPOINTS
    ============================================ */
 
