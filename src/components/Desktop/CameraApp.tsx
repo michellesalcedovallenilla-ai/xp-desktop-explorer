@@ -345,16 +345,16 @@ export default function CameraApp() {
 
     }
 
-    if (hand && beerOn) {
+    if (leftHand && beerOn) {
       const beerImg = overlayImages.polarcita
-      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
-      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
-      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const palm = mapToViewfinder(leftHand.palmCenter.x, leftHand.palmCenter.y, container)
+      const indexMcp = mapToViewfinder(leftHand.palmCenter.x - leftHand.handWidth / 2, leftHand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(leftHand.palmCenter.x + leftHand.handWidth / 2, leftHand.palmCenter.y, container)
       const handWidthPx = dist(indexMcp, pinkyMcp)
       const bw = Math.max(handWidthPx * 2.0, 50)
       const bhRatio = beerImg?.naturalWidth ? (beerImg.naturalHeight / beerImg.naturalWidth) : (1 / 0.35)
       const bh = bw * bhRatio
-      const rotDeg = ((hand.rotation + Math.PI / 2) * 180) / Math.PI
+      const rotDeg = ((leftHand.rotation + Math.PI / 2) * 180) / Math.PI
       beer = {
         position: 'absolute',
         left: palm.x - bw / 2,
@@ -369,16 +369,16 @@ export default function CameraApp() {
     }
 
     let arepa: React.CSSProperties | null = null
-    if (hand && arepaOn) {
+    if (rightHand && arepaOn) {
       const arepaImg = overlayImages.arepa
-      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
-      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
-      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const palm = mapToViewfinder(rightHand.palmCenter.x, rightHand.palmCenter.y, container)
+      const indexMcp = mapToViewfinder(rightHand.palmCenter.x - rightHand.handWidth / 2, rightHand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(rightHand.palmCenter.x + rightHand.handWidth / 2, rightHand.palmCenter.y, container)
       const handWidthPx = dist(indexMcp, pinkyMcp)
       const aw = Math.max(handWidthPx * 1.8, 45)
       const ahRatio = arepaImg?.naturalWidth ? (arepaImg.naturalHeight / arepaImg.naturalWidth) : 1
       const ah = aw * ahRatio
-      const rotDeg = ((hand.rotation) * 180) / Math.PI
+      const rotDeg = ((rightHand.rotation) * 180) / Math.PI
       arepa = {
         position: 'absolute',
         left: palm.x - aw / 2,
@@ -393,7 +393,7 @@ export default function CameraApp() {
     }
 
     return { mustache, hat, beer, arepa }
-  }, [face, hand, mustacheOn, hatOn, beerOn, arepaOn])
+  }, [face, leftHand, rightHand, mustacheOn, hatOn, beerOn, arepaOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 
