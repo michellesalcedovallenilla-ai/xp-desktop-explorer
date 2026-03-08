@@ -2494,43 +2494,7 @@
   gap: 8px;
 }
 
-/* === WMP FULL WINDOW === */
-.xp-wmp-full {
-  background: #232428;
-  color: white;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.xp-wmp-visual-full {
-  height: 140px;
-  background: #000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 0 16px;
-}
-
-.xp-wmp-now-playing {
-  padding: 10px 16px 4px;
-}
-
-.xp-wmp-now-playing h3 {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.xp-wmp-now-playing p {
-  font-size: 12px;
-  opacity: 0.5;
-}
-
-.xp-wmp-playlist-full {
-  flex: 1;
-  overflow-y: auto;
-  border-top: 1px solid #444;
-}
+/* WMP full window styles removed - now using .wmp-xp-container */
 
 /* =======================================
    CUSTOM CURSOR
