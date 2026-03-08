@@ -38,12 +38,14 @@ const SAMPLE_IMAGES = [
 export default function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
   const [photos, setPhotos] = useState<Photo[]>([])
   const [heartsEnabled, setHeartsEnabled] = useState(false)
   const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([])
   const [flash, setFlash] = useState(false)
   const [viewPhoto, setViewPhoto] = useState<string | null>(null)
   const [hasCamera, setHasCamera] = useState(false)
+  const [cameraError, setCameraError] = useState<string | null>(null)
   const [activeFilter, setActiveFilter] = useState(0)
   const [sampleIndex, setSampleIndex] = useState(0)
   const [disguiseEnabled, setDisguiseEnabled] = useState(false)
@@ -52,23 +54,36 @@ export default function CameraApp() {
 
   const startCamera = useCallback(async () => {
     try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error('Camera API not supported in this browser')
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+      streamRef.current?.getTracks().forEach((t) => t.stop())
+      streamRef.current = stream
+      setHasCamera(true)
+      setCameraError(null)
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream
-        setHasCamera(true)
       }
-    } catch {
+    } catch (err) {
       setHasCamera(false)
+      const message = err instanceof Error ? err.message : 'Could not access camera'
+      setCameraError(message)
     }
   }, [])
 
   useEffect(() => {
+    if (hasCamera && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current
+    }
+  }, [hasCamera])
+
+  useEffect(() => {
     return () => {
-      if (videoRef.current?.srcObject) {
-        ;(videoRef.current.srcObject as MediaStream)
-          .getTracks()
-          .forEach((t) => t.stop())
-      }
+      streamRef.current?.getTracks().forEach((t) => t.stop())
+      streamRef.current = null
     }
   }, [])
 
@@ -154,8 +169,13 @@ export default function CameraApp() {
                 borderRadius: 4, cursor: 'pointer', zIndex: 2
               }}
             >
-              📷 Start Camera
+              📷 {cameraError ? 'Retry Camera' : 'Start Camera'}
             </button>
+            {cameraError && (
+              <div style={{ color: '#ff8a8a', fontSize: 10, fontFamily: 'Tahoma, sans-serif', textAlign: 'center', maxWidth: 280 }}>
+                {cameraError}
+              </div>
+            )}
             <div style={{ color: '#666', fontSize: 11, fontFamily: 'Tahoma, sans-serif' }}>
               Or browse sample photos:
             </div>
