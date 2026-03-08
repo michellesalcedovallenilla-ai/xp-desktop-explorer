@@ -78,9 +78,10 @@ export default function InternetExplorer({ windowId }: Props) {
   const lastFetchedUrl = useRef('')
   useEffect(() => {
     if (currentUrl === lastFetchedUrl.current) return
-    if (isGoogleHome || isGoogleSearch || isInstagram) {
+    if (isGoogleHome || isGoogleSearch || isInstagram || isPortfolio) {
       setReaderContent(null)
       setReaderError(null)
+      setReaderLoading(false)
       lastFetchedUrl.current = currentUrl
       if (isGoogleSearch) {
         const urlObj = new URL(currentUrl)
@@ -88,12 +89,12 @@ export default function InternetExplorer({ windowId }: Props) {
       }
       return
     }
-    // For Readymag and other URLs → use Jina reader
+    // For non-special URLs → use reader
     if (currentUrl && currentUrl !== 'about:blank') {
       lastFetchedUrl.current = currentUrl
       fetchReader(currentUrl)
     }
-  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, fetchReader])
+  }, [currentUrl, isGoogleHome, isGoogleSearch, isInstagram, isPortfolio, fetchReader])
 
   const navigateTo = (url: string) => {
     let finalUrl = url
@@ -237,6 +238,23 @@ export default function InternetExplorer({ windowId }: Props) {
           </div>
         </div>
       )
+    }
+
+    // Nostalgic portfolio mock
+    if (isPortfolio) {
+      const page = currentUrl.includes('/aboutme')
+        ? 'aboutme'
+        : currentUrl.includes('/socials')
+          ? 'socials'
+          : currentUrl.includes('/faq')
+            ? 'faq'
+            : currentUrl.includes('/keywords')
+              ? 'keywords'
+              : currentUrl.includes('/portfolio')
+                ? 'portfolio'
+                : 'home'
+
+      return <PortfolioSite page={page} onNavigate={navigateTo} />
     }
 
     // Instagram — exact 2012 iOS app replica
