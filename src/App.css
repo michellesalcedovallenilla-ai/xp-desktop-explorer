@@ -4615,14 +4615,8 @@ textarea {
 
 /* === SMALL LAPTOP (769-1024px) === */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .xp-landscape-animal {
-    max-width: 100px !important;
-  }
-  .xp-landscape-label {
-    font-size: 11px;
-  }
+  /* No icon size/position changes — keep desktop layout intact */
 
-  /* Slightly smaller windows */
   .xp-window {
     min-width: 300px;
   }
