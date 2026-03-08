@@ -158,6 +158,7 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(hatAnchor.x, hatAnchor.y)
           ctx.rotate(rotation)
+          ctx.scale(-1, -1)
           ctx.drawImage(img, -hw / 2, -hh * 0.62, hw, hh)
           ctx.restore()
         }
@@ -335,7 +336,7 @@ export default function CameraApp() {
           top: hatAnchor.y - hh * 0.62,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg)`,
+          transform: `rotate(${rotDeg}deg) scale(-1, -1)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
