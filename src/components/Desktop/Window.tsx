@@ -13,6 +13,7 @@ import MinesweeperApp from './MinesweeperApp'
 import SolitaireApp from './SolitaireApp'
 import InternetExplorer from './InternetExplorer'
 import MSNMessenger from './MSNMessenger'
+import VideoPlayer from './VideoPlayer'
 
 const contentComponents: Record<string, React.ComponentType<any>> = {
   finder: Finder,
