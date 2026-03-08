@@ -228,16 +228,26 @@ export default function CameraApp() {
         }
       }
       if (heartsEnabled) {
-        // Draw hearts above head
-        ctx.font = `${Math.round(fh * 0.2)}px serif`
+        // Draw hearts above head (or top-center fallback)
         ctx.textAlign = 'center'
-        const heartPositions = [
-          { dx: 0, dy: -fh * 0.35 },
-          { dx: -fw * 0.25, dy: -fh * 0.45 },
-          { dx: fw * 0.25, dy: -fh * 0.45 },
-        ]
-        for (const hp of heartPositions) {
-          ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
+        if (rf) {
+          ctx.font = `${Math.round(fh * 0.2)}px serif`
+          const heartPositions = [
+            { dx: 0, dy: -fh * 0.35 },
+            { dx: -fw * 0.25, dy: -fh * 0.45 },
+            { dx: fw * 0.25, dy: -fh * 0.45 },
+          ]
+          for (const hp of heartPositions) {
+            ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
+          }
+        } else {
+          const baseSize = Math.max(28, Math.round(h * 0.08))
+          ctx.font = `${baseSize}px serif`
+          const cx = w / 2
+          const cy = h * 0.2
+          ctx.fillText('❤️', cx, cy)
+          ctx.fillText('❤️', cx - baseSize * 0.9, cy + baseSize * 0.05)
+          ctx.fillText('❤️', cx + baseSize * 0.9, cy + baseSize * 0.05)
         }
       }
     }
