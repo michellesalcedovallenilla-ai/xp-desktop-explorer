@@ -1,38 +1,26 @@
-import { MapPin, Briefcase, GraduationCap, Code } from 'lucide-react'
+import { MapPin, Briefcase, Code, Sparkles } from 'lucide-react'
 
 const skills = [
-  'React',
-  'TypeScript',
-  'Next.js',
-  'Node.js',
-  'Python',
-  'PostgreSQL',
-  'Tailwind CSS',
-  'Framer Motion',
-  'GraphQL',
-  'Docker',
-  'AWS',
-  'Figma'
+  'Influencer Marketing',
+  'Campaign Management',
+  'Creator Sourcing & Outreach',
+  'Negotiations',
+  'Performance Tracking',
+  'Notion',
+  'Zapier',
+  'Make',
+  'AI Tools',
+  'Operations',
+  'Account Management',
+  'Cross-functional Collaboration'
 ]
 
 const experience = [
   {
-    role: 'Senior Frontend Developer',
-    company: 'TechCorp Inc.',
-    period: '2022 - Present',
-    desc: 'Led development of customer-facing web applications using React and TypeScript.'
-  },
-  {
-    role: 'Frontend Developer',
-    company: 'StartupHub',
-    period: '2020 - 2022',
-    desc: 'Built responsive web apps and component libraries for early-stage startups.'
-  },
-  {
-    role: 'Junior Developer',
-    company: 'AgencyOne',
-    period: '2018 - 2020',
-    desc: 'Developed interactive websites and landing pages for various clients.'
+    role: 'Influencer Marketing Specialist',
+    company: 'Brainlabs',
+    period: 'Present',
+    desc: 'Managing creator sourcing, outreach, negotiations, campaign execution, and performance tracking for global campaigns. Collaborating with strategy, creative, and paid media teams to connect storytelling with measurable growth.'
   }
 ]
 
@@ -43,9 +31,9 @@ export default function AboutViewer() {
         <div className="xp-about-avatar">🐱</div>
         <div>
           <h1 className="xp-about-name">Michelle Salcedo</h1>
-          <p className="xp-about-title">Full Stack Developer & Designer</p>
+          <p className="xp-about-title">Marketing & Operations Professional</p>
           <p className="xp-about-location">
-            <MapPin size={12} /> San Francisco, CA
+            <MapPin size={12} /> Buenos Aires, Argentina
           </p>
         </div>
       </div>
@@ -55,26 +43,11 @@ export default function AboutViewer() {
           <Briefcase size={14} /> About
         </h2>
         <p className="xp-about-bio">
-          Passionate developer with 5+ years of experience building beautiful,
-          performant web applications. I love creating intuitive user
-          experiences and bringing creative designs to life through code. When
-          I'm not coding, you can find me exploring new technologies,
-          contributing to open source, or experimenting with nostalgic UI
-          designs.
+          I'm a bilingual marketing and operations professional based in Buenos Aires, working at the intersection of creativity, systems, and AI.
         </p>
-      </div>
-
-      <div className="xp-about-section">
-        <h2>
-          <Code size={14} /> Skills
-        </h2>
-        <div className="xp-about-skills">
-          {skills.map((s) => (
-            <span key={s} className="xp-skill-tag">
-              {s}
-            </span>
-          ))}
-        </div>
+        <p className="xp-about-bio" style={{ marginTop: 8 }}>
+          Over the past few years, I've built my career supporting fast-moving digital teams — from influencer marketing campaigns to executive operations and account management. I enjoy turning complex workflows into organized systems, coordinating teams across different time zones, and making sure ideas actually turn into results.
+        </p>
       </div>
 
       <div className="xp-about-section">
@@ -95,15 +68,27 @@ export default function AboutViewer() {
 
       <div className="xp-about-section">
         <h2>
-          <GraduationCap size={14} /> Education
+          <Code size={14} /> Skills & Tools
         </h2>
-        <div className="xp-exp-item">
-          <strong>BS Computer Science</strong>
-          <div className="xp-exp-company">
-            University of California, Berkeley
-          </div>
-          <span className="xp-exp-period">2014 - 2018</span>
+        <div className="xp-about-skills">
+          {skills.map((s) => (
+            <span key={s} className="xp-skill-tag">
+              {s}
+            </span>
+          ))}
         </div>
+      </div>
+
+      <div className="xp-about-section">
+        <h2>
+          <Sparkles size={14} /> What Drives Me
+        </h2>
+        <p className="xp-about-bio">
+          I'm naturally systems-oriented and constantly exploring new tools — especially AI and automation — to improve how teams work. Whether it's building workflows in Notion, automating processes with Zapier or Make, or experimenting with new AI tools, I love finding smarter ways to work.
+        </p>
+        <p className="xp-about-bio" style={{ marginTop: 8 }}>
+          Outside of my day-to-day work, I enjoy building creative digital projects, designing interactive portfolio experiences, and experimenting with nostalgic UI concepts.
+        </p>
       </div>
     </div>
   )
