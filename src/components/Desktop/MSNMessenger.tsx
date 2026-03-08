@@ -36,6 +36,7 @@ const MSN_WINKS = [
   { label: '🎉 Fiesta', text: '~*~🎉🥳 ¡¡FIESTA!! 🥳🎉~*~' },
   { label: '😘 Besito', text: '~*~😘💋 ¡Besito! 💋😘~*~' },
   { label: '🔥 En llamas', text: '~*~🔥🔥🔥 ¡EN LLAMAS! 🔥🔥🔥~*~' },
+  { label: '🌈 Arcoíris', text: '~*~🌈✨ ¡ARCOÍRIS! ✨🌈~*~' },
 ]
 
 function replaceEmoticons(text: string): string {
@@ -75,6 +76,7 @@ export default function MSNMessenger() {
   const [isShaking, setIsShaking] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
+  const msgInputRef = useRef<HTMLTextAreaElement>(null)
   const { playError } = useAudioStore()
 
   useEffect(() => {
@@ -116,7 +118,9 @@ export default function MSNMessenger() {
     setTimeout(() => setIsShaking(false), 600)
   }, [playError])
 
-  const sendNudge = useCallback(async () => {
+  const sendNudge = useCallback(async (e?: React.MouseEvent) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     const trimNick = nickname.trim()
     if (!trimNick) { setError('¡Escribe tu nickname primero!'); return }
     if (Date.now() - lastNudgeTime < 8000) {
@@ -128,7 +132,7 @@ export default function MSNMessenger() {
       .from('guestbook_messages')
       .insert({ nickname: trimNick, status, message: '🫨 ¡¡ZUMBIDO!! 🫨' })
     if (insertError) setError('Error al enviar zumbido')
-    else lastNudgeTime = Date.now()
+    else { lastNudgeTime = Date.now(); setError('') }
   }, [nickname, status, triggerNudgeEffect])
 
   const handlePost = useCallback(async () => {
@@ -154,14 +158,30 @@ export default function MSNMessenger() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handlePost() }
   }
 
+  const toggleEmoticons = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowEmoticons(prev => !prev)
+    setShowWinks(false)
+  }
+
+  const toggleWinks = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowWinks(prev => !prev)
+    setShowEmoticons(false)
+  }
+
   const insertEmoticon = (code: string) => {
     setMessageText(prev => prev + code)
     setShowEmoticons(false)
+    msgInputRef.current?.focus()
   }
 
   const sendWink = (winkText: string) => {
     setMessageText(winkText)
     setShowWinks(false)
+    msgInputRef.current?.focus()
   }
 
   const statusObj = MSN_STATUSES.find(s => s.label === status) || MSN_STATUSES[0]
@@ -172,11 +192,11 @@ export default function MSNMessenger() {
     <div className={`msn-messenger ${isShaking ? 'msn-shake' : ''}`}>
       {/* Menu Bar */}
       <div className="msn-menubar">
-        <button className="msn-menu-item">File</button>
-        <button className="msn-menu-item">Edit</button>
-        <button className="msn-menu-item">Actions</button>
-        <button className="msn-menu-item">Tools</button>
-        <button className="msn-menu-item">Help</button>
+        <button className="msn-menu-item" type="button">File</button>
+        <button className="msn-menu-item" type="button">Edit</button>
+        <button className="msn-menu-item" type="button">Actions</button>
+        <button className="msn-menu-item" type="button">Tools</button>
+        <button className="msn-menu-item" type="button">Help</button>
       </div>
 
       {/* Toolbar */}
@@ -210,15 +230,6 @@ export default function MSNMessenger() {
           <span style={{ color: '#f77b00', fontSize: '8px', position: 'relative', top: '-4px' }}>🦋</span>
         </div>
       </div>
-
-      {/* Winks dropdown */}
-      {showWinks && (
-        <div className="msn-winks-picker">
-          {MSN_WINKS.map((w, i) => (
-            <button key={i} className="msn-wink-btn" onClick={() => sendWink(w.text)}>{w.label}</button>
-          ))}
-        </div>
-      )}
 
       {/* Main area */}
       <div className="msn-main">
@@ -286,35 +297,61 @@ export default function MSNMessenger() {
 
       {/* Input section */}
       <div className="msn-input-section">
-        {/* Tool bar */}
+        {/* Tool bar - matching exact MSN reference */}
         <div className="msn-input-toolbar">
-          <button className="msn-tool-btn msn-font-btn" title="Font">A</button>
+          <button type="button" className="msn-tool-btn msn-font-btn" title="Font">A</button>
           <button
-            className={`msn-tool-btn ${showEmoticons ? 'active' : ''}`}
-            onClick={() => { setShowEmoticons(!showEmoticons); setShowWinks(false) }}
+            type="button"
+            className={`msn-tool-btn ${showEmoticons ? 'msn-tool-active' : ''}`}
+            onClick={toggleEmoticons}
             title="Emoticons"
           >😊</button>
+          <span className="msn-tool-dropdown">▾</span>
           <div className="msn-tool-separator" />
-          <button className="msn-tool-btn msn-voice-clip-btn" title="Voice Clip">🔊 Voice Clip</button>
+          <button type="button" className="msn-tool-btn msn-voice-clip-btn" title="Voice Clip">
+            <span>🔊</span> <span>Voice Clip</span>
+          </button>
           <div className="msn-tool-separator" />
           <button
-            className={`msn-tool-btn ${showWinks ? 'active' : ''}`}
-            onClick={() => { setShowWinks(!showWinks); setShowEmoticons(false) }}
+            type="button"
+            className={`msn-tool-btn ${showWinks ? 'msn-tool-active' : ''}`}
+            onClick={toggleWinks}
             title="Winks"
           >😜</button>
-          <button className="msn-tool-btn" title="Send Image">🖼️</button>
+          <button type="button" className="msn-tool-btn" title="Background">🖼️</button>
+          <span className="msn-tool-dropdown">▾</span>
           <div className="msn-tool-separator" />
-          <button className="msn-tool-btn" title="Gift">🎁</button>
-          <button className="msn-tool-btn" onClick={sendNudge} title="¡Zumbido!">🫨</button>
+          <button type="button" className="msn-tool-btn" title="Gift">🎁</button>
+          <button
+            type="button"
+            className="msn-tool-btn msn-nudge-tool"
+            onClick={sendNudge}
+            title="¡Enviar zumbido!"
+          >🫨</button>
         </div>
 
-        {/* Emoticon picker */}
+        {/* Emoticon picker - positioned absolutely */}
         {showEmoticons && (
           <div className="msn-emoticon-picker">
-            {Object.entries(MSN_EMOTICONS).slice(0, 20).map(([code, emoji]) => (
-              <button key={code} className="msn-emo-btn" onClick={() => insertEmoticon(code)} title={code}>
+            {Object.entries(MSN_EMOTICONS).map(([code, emoji]) => (
+              <button
+                type="button"
+                key={code}
+                className="msn-emo-btn"
+                onClick={() => insertEmoticon(code)}
+                title={code}
+              >
                 {emoji}
               </button>
+            ))}
+          </div>
+        )}
+
+        {/* Winks picker */}
+        {showWinks && (
+          <div className="msn-winks-picker">
+            {MSN_WINKS.map((w, i) => (
+              <button type="button" key={i} className="msn-wink-btn" onClick={() => sendWink(w.text)}>{w.label}</button>
             ))}
           </div>
         )}
@@ -342,6 +379,7 @@ export default function MSNMessenger() {
               </select>
             </div>
             <textarea
+              ref={msgInputRef}
               className="msn-msg-input"
               placeholder="Escribe un mensaje..."
               value={messageText}
@@ -352,7 +390,7 @@ export default function MSNMessenger() {
             />
           </div>
           <div className="msn-compose-right">
-            <button className="msn-send-btn" onClick={handlePost} disabled={isPosting}>
+            <button type="button" className="msn-send-btn" onClick={handlePost} disabled={isPosting}>
               {isPosting ? '...' : 'Send'}
             </button>
           </div>
@@ -362,8 +400,8 @@ export default function MSNMessenger() {
         <div className="msn-compose-bottom">
           {error && <span className="msn-error">{error}</span>}
           <span className="msn-char-count">{messageText.length}/500</span>
-          <span className="msn-nudge-icon" onClick={sendNudge} title="Zumbido">🫨</span>
-          <span style={{ fontWeight: 'bold', fontSize: '14px', fontFamily: 'serif', color: '#333' }}>A</span>
+          <span className="msn-nudge-icon" onClick={sendNudge} title="Zumbido" role="button">🫨</span>
+          <span className="msn-font-icon">A</span>
         </div>
       </div>
 
@@ -372,7 +410,7 @@ export default function MSNMessenger() {
         <span>{statusObj.icon} {status}</span>
         <span className="msn-statusbar-ad">Click for new Emoticons and Theme Packs</span>
         <span style={{ fontSize: '9px', opacity: 0.6 }}>
-          {messages.length} msg{messages.length !== 1 ? 's' : ''}
+          {messages.length} msgs
         </span>
       </div>
     </div>
