@@ -145,7 +145,6 @@ export default function CameraApp() {
           ctx.save()
           ctx.translate(mx, my)
           ctx.rotate(rot)
-          ctx.scale(-1, 1)
           ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
           ctx.restore()
         }
