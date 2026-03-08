@@ -1,3 +1,4 @@
+// Web proxy v2 - handles blocked sites gracefully
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -120,7 +121,16 @@ Deno.serve(async (req) => {
       })
     }
 
-    const html = await fetchPage(url)
+    let html: string
+    try {
+      html = await fetchPage(url)
+    } catch (pageErr) {
+      const msg = (pageErr as Error).message || 'Failed to load'
+      // Return 200 with error so client handles gracefully
+      return new Response(JSON.stringify({ error: msg }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     // Strip CSP meta tags that block iframe rendering
     const cleanHtml = html.replace(/<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi, '')
@@ -129,9 +139,11 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (err) {
-    console.error('Proxy error:', err)
-    return new Response(JSON.stringify({ error: (err as Error).message || 'Proxy failed' }), {
-      status: 500,
+    const msg = (err as Error).message || 'Proxy failed'
+    console.error('Proxy error:', msg)
+    // Return 200 with error field so the client handles it gracefully
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
