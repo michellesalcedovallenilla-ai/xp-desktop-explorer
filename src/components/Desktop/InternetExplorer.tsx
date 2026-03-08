@@ -161,8 +161,7 @@ export default function InternetExplorer({ windowId }: Props) {
     currentUrl === 'https://google.com' ||
     currentUrl === 'http://www.google.com'
   const isGoogleSearch = currentUrl.startsWith(`${GOOGLE_URL}search`)
-  const isPortfolioPage = !!PORTFOLIO_PAGES[currentUrl]
-  const isSimulated = isGoogleHome || isGoogleSearch || isPortfolioPage
+  const isSimulated = isGoogleHome || isGoogleSearch
 
   const fetchProxy = useCallback(async (url: string) => {
     setProxyLoading(true)
@@ -174,7 +173,12 @@ export default function InternetExplorer({ windowId }: Props) {
       })
       if (error) throw error
       if (data?.error) throw new Error(data.error)
-      setProxyHtml(data.html)
+      if (!data?.html || data.html.trim().length < 100) {
+        // Empty or near-empty response — site requires auth or blocked
+        setProxyError('This website requires authentication or blocked the request.')
+      } else {
+        setProxyHtml(data.html)
+      }
     } catch (err: any) {
       setProxyError(err.message || 'Failed to load page')
     } finally {
@@ -182,12 +186,15 @@ export default function InternetExplorer({ windowId }: Props) {
     }
   }, [])
 
+  const lastFetchedUrl = useRef('')
   useEffect(() => {
-    if (!isSimulated && currentUrl && currentUrl !== 'about:blank') {
+    if (!isSimulated && currentUrl && currentUrl !== 'about:blank' && currentUrl !== lastFetchedUrl.current) {
+      lastFetchedUrl.current = currentUrl
       fetchProxy(currentUrl)
-    } else {
+    } else if (isSimulated) {
       setProxyHtml(null)
       setProxyError(null)
+      lastFetchedUrl.current = ''
     }
   }, [currentUrl, isSimulated, fetchProxy])
 
@@ -297,10 +304,7 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    const portfolioPage = PORTFOLIO_PAGES[currentUrl]
-    if (portfolioPage) {
-      return <PortfolioSite page={portfolioPage} onNavigate={navigateTo} />
-    }
+    // Portfolio and other external sites are loaded via proxy below
 
     // Proxy-loaded content
     if (proxyLoading) {
