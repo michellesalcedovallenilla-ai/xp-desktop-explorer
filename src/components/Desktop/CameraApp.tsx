@@ -249,7 +249,7 @@ export default function CameraApp() {
   }
 
   const cycleSample = () => setSampleIndex(prev => (prev + 1) % SAMPLE_IMAGES.length)
-  const liveFilterStyle = hasCamera && anyOverlay ? 'none' : FILTERS[activeFilter].css
+  const liveFilterStyle = FILTERS[activeFilter].css
   const filterStyle = FILTERS[activeFilter].css
 
   // Convert normalized landmark coordinates to displayed (object-fit: cover) viewport coordinates
