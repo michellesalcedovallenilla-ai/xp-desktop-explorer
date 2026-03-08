@@ -4547,6 +4547,191 @@ textarea {
   .msn-sidebar { display: none; }
 }
 
+/* Chat wrapper for guiño overlay */
+.msn-chat-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ============================================
+   GUIÑO (WINK) OVERLAY - Full screen animation
+   ============================================ */
+.msn-guino-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(255,255,255,0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+.msn-guino-animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.msn-guino-emoji {
+  font-size: 120px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+}
+.msn-guino-label {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #003c74;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Guiño animations */
+@keyframes guinoKiss {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  30% { transform: scale(1.4) rotate(10deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(-5deg); }
+  70% { transform: scale(1.3) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.guino-kiss .msn-guino-emoji {
+  animation: guinoKiss 1s ease-out forwards;
+}
+
+@keyframes guinoHeart {
+  0% { transform: scale(0); opacity: 0; }
+  25% { transform: scale(1.5); opacity: 1; }
+  50% { transform: scale(1); }
+  65% { transform: scale(1.3); }
+  80% { transform: scale(1); }
+  90% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.guino-heart .msn-guino-emoji {
+  animation: guinoHeart 1.2s ease-out forwards;
+}
+
+@keyframes guinoPunch {
+  0% { transform: translateX(200px) scale(0.3); opacity: 0; }
+  20% { transform: translateX(0) scale(1.5); opacity: 1; }
+  30% { transform: translateX(-10px) scale(1.6); }
+  40% { transform: translateX(5px) scale(1.3); }
+  100% { transform: translateX(0) scale(1); }
+}
+.guino-punch .msn-guino-emoji {
+  animation: guinoPunch 0.8s ease-out forwards;
+}
+
+@keyframes guinoSilly {
+  0% { transform: rotate(0deg) scale(0); opacity: 0; }
+  20% { transform: rotate(360deg) scale(1.3); opacity: 1; }
+  40% { transform: rotate(720deg) scale(0.8); }
+  60% { transform: rotate(900deg) scale(1.2); }
+  80% { transform: rotate(1000deg) scale(1); }
+  100% { transform: rotate(1080deg) scale(1); }
+}
+.guino-silly .msn-guino-emoji {
+  animation: guinoSilly 1.5s ease-out forwards;
+}
+
+@keyframes guinoFire {
+  0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+  30% { transform: translateY(-20px) scale(1.4); opacity: 1; }
+  50% { transform: translateY(0) scale(1.1); }
+  70% { transform: translateY(-10px) scale(1.2); }
+  100% { transform: translateY(0) scale(1); }
+}
+.guino-fire .msn-guino-emoji {
+  animation: guinoFire 1s ease-out forwards;
+}
+
+@keyframes guinoParty {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  30% { transform: scale(1.5) rotate(30deg); opacity: 1; }
+  50% { transform: scale(1) rotate(-15deg); }
+  70% { transform: scale(1.2) rotate(10deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.guino-party .msn-guino-emoji {
+  animation: guinoParty 1.2s ease-out forwards;
+}
+
+@keyframes guinoStar {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; filter: brightness(3); }
+  40% { transform: scale(1.6) rotate(180deg); opacity: 1; filter: brightness(1.5); }
+  70% { transform: scale(0.9) rotate(300deg); filter: brightness(1); }
+  100% { transform: scale(1) rotate(360deg); filter: brightness(1); }
+}
+.guino-star .msn-guino-emoji {
+  animation: guinoStar 1.3s ease-out forwards;
+}
+
+/* Guiños picker */
+.msn-guinos-picker {
+  background: #fff;
+  border: 1px solid #a0b0c8;
+  margin: 4px 8px;
+  border-radius: 3px;
+  padding: 6px;
+}
+.msn-guinos-title {
+  font-size: 10px;
+  font-weight: bold;
+  color: #003c74;
+  padding: 2px 4px 6px;
+  border-bottom: 1px solid #d0d8e8;
+  margin-bottom: 6px;
+}
+.msn-guinos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.msn-guino-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.1s;
+}
+.msn-guino-btn:hover {
+  background: #d6dff7;
+  border-color: #7da2ce;
+}
+.msn-guino-btn-emoji {
+  font-size: 24px;
+}
+.msn-guino-btn-label {
+  font-size: 8px;
+  color: #333;
+}
+
+/* Wink message in chat */
+.msn-wink-msg {
+  background: #f0f0ff;
+  border-left: 3px solid #6666cc;
+  padding: 4px 8px;
+  margin: 2px 0;
+}
+.msn-wink-msg-body {
+  font-style: italic;
+  color: #4444aa;
+}
+.msn-wink-inline {
+  font-size: 18px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
 /* ============================================
    MOBILE START MENU
    ============================================ */
