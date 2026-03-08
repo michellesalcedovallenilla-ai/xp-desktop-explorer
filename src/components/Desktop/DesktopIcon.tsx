@@ -76,6 +76,7 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (icon.locked) return
     const startX = e.clientX
     const startY = e.clientY
     const origX = icon.x
