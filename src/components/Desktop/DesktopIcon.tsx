@@ -13,7 +13,8 @@ const ICON_IMAGES: Record<string, { src: string; alt: string }> = {
   about: { src: '/animals/oso.png', alt: 'Bear - About Me' },
   contact: { src: '/animals/chiguire.png', alt: 'Capybara - Contact' },
   ie: { src: '/animals/cat-flying.png', alt: 'Cat - Internet Explorer' },
-  resume: { src: '/animals/cat.png', alt: 'Cat - Resume' }
+  resume: { src: '/animals/cat.png', alt: 'Cat - Resume' },
+  msn: { src: '/animals/michelle.png', alt: 'Michelle - MSN Messenger' }
 }
 
 interface Props {
@@ -45,7 +46,8 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       paint: 'paint',
       minesweeper: 'minesweeper',
       solitaire: 'solitaire',
-      ie: 'ie'
+      ie: 'ie',
+      messenger: 'messenger'
     }
     const type = winTypes[icon.action] || 'finder'
     openWindow({
