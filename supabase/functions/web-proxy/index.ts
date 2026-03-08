@@ -1,4 +1,3 @@
-// Web proxy v2 - handles blocked sites gracefully
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -51,6 +50,31 @@ async function searchWeb(query: string) {
   return results
 }
 
+async function readPage(url: string): Promise<{ title: string; content: string; siteName: string }> {
+  // Use Jina.ai reader API - free, no key needed
+  const jinaUrl = `https://r.jina.ai/${url}`
+  console.log('Reading with Jina:', jinaUrl)
+
+  const response = await fetch(jinaUrl, {
+    headers: {
+      'Accept': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    console.error('Jina reader error:', response.status)
+    throw new Error(`Failed to read page: ${response.status}`)
+  }
+
+  const data = await response.json()
+  
+  return {
+    title: data?.data?.title || '',
+    content: data?.data?.content || data?.data?.text || '',
+    siteName: (() => { try { return new URL(url).hostname } catch { return url } })(),
+  }
+}
+
 async function fetchPage(url: string): Promise<string> {
   const apiKey = getFirecrawlKey()
 
@@ -74,7 +98,6 @@ async function fetchPage(url: string): Promise<string> {
   if (!response.ok) {
     console.error('Firecrawl scrape error:', data)
     const errMsg = data?.error || `Scrape failed: ${response.status}`
-    // Check if site is blocked by Firecrawl
     if (errMsg.includes('do not support this site') || errMsg.includes('blocked')) {
       throw new Error('BLOCKED:' + errMsg)
     }
@@ -112,7 +135,29 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Proxy mode
+    // Reader mode - returns clean markdown/text content via Jina.ai
+    if (body.mode === 'read') {
+      const url = body.url?.trim()
+      if (!url) {
+        return new Response(JSON.stringify({ error: 'URL required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      try {
+        const result = await readPage(url)
+        return new Response(JSON.stringify(result), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      } catch (err) {
+        const msg = (err as Error).message || 'Failed to read'
+        return new Response(JSON.stringify({ error: msg }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+    }
+
+    // Proxy mode (HTML)
     const url = body.url?.trim()
     if (!url) {
       return new Response(JSON.stringify({ error: 'URL required' }), {
@@ -126,13 +171,11 @@ Deno.serve(async (req) => {
       html = await fetchPage(url)
     } catch (pageErr) {
       const msg = (pageErr as Error).message || 'Failed to load'
-      // Return 200 with error so client handles gracefully
       return new Response(JSON.stringify({ error: msg }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Strip CSP meta tags that block iframe rendering
     const cleanHtml = html.replace(/<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi, '')
 
     return new Response(JSON.stringify({ html: cleanHtml }), {
@@ -141,7 +184,6 @@ Deno.serve(async (req) => {
   } catch (err) {
     const msg = (err as Error).message || 'Proxy failed'
     console.error('Proxy error:', msg)
-    // Return 200 with error field so the client handles it gracefully
     return new Response(JSON.stringify({ error: msg }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
