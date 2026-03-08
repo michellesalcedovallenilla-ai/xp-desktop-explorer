@@ -125,11 +125,13 @@ export default function CameraApp() {
       if (glassesOn) {
         const img = overlayImages.glasses
         if (img?.complete && img.naturalWidth) {
-          const gw = faceW * 1.15
+          const gw = faceW * 1.3
           const gh = gw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(eyeCenter.x, eyeCenter.y)
           ctx.rotate(rot)
+          // Flip horizontally to match mirrored video
+          ctx.scale(-1, 1)
           ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
           ctx.restore()
         }
