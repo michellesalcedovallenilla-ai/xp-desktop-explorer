@@ -196,6 +196,24 @@ export default function InternetExplorer({ windowId }: Props) {
     }
   }, [])
 
+  const fetchLiveSearch = useCallback(async (query: string) => {
+    setLiveSearchLoading(true)
+    setLiveSearchError(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('web-proxy', {
+        body: { mode: 'search', query },
+      })
+      if (error) throw error
+      if (data?.error) throw new Error(data.error)
+      setLiveSearchResults(Array.isArray(data?.results) ? data.results : [])
+    } catch (err: any) {
+      setLiveSearchResults([])
+      setLiveSearchError(err.message || 'Search failed')
+    } finally {
+      setLiveSearchLoading(false)
+    }
+  }, [])
+
   const lastFetchedUrl = useRef('')
   useEffect(() => {
     if (!isSimulated && currentUrl && currentUrl !== 'about:blank' && currentUrl !== lastFetchedUrl.current) {
@@ -207,6 +225,24 @@ export default function InternetExplorer({ windowId }: Props) {
       lastFetchedUrl.current = ''
     }
   }, [currentUrl, isSimulated, fetchProxy])
+
+  useEffect(() => {
+    if (!isGoogleSearch) {
+      setLiveSearchResults([])
+      setLiveSearchError(null)
+      return
+    }
+
+    const query = new URL(currentUrl).searchParams.get('q')?.trim() ?? ''
+    if (!query) {
+      setLiveSearchResults([])
+      setLiveSearchError(null)
+      return
+    }
+
+    setSearchQuery(query)
+    fetchLiveSearch(query)
+  }, [currentUrl, isGoogleSearch, fetchLiveSearch])
 
   const navigateTo = (url: string) => {
     let finalUrl = url
