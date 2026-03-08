@@ -17,20 +17,26 @@ const Desktop = () => {
       const vh = window.innerHeight
       const isMobile = vw <= 480
       const isTablet = vw > 480 && vw <= 768
+      const isSmallLaptop = vw > 768 && vw <= 1024
+
+      const w = (mobile: number, tablet: number, smallLaptop: number, desktop: number) =>
+        isMobile ? mobile : isTablet ? tablet : isSmallLaptop ? smallLaptop : desktop
+      const h = (mobile: number, tablet: number, smallLaptop: number, desktop: number) =>
+        isMobile ? mobile : isTablet ? tablet : isSmallLaptop ? smallLaptop : desktop
 
       const windowConfig: Record<
         string,
         { type: string; title: string; width: number; height: number }
       > = {
-        finder: { type: 'finder', title: 'My Computer', width: isMobile ? vw : isTablet ? 500 : 750, height: isMobile ? vh - 50 : isTablet ? 400 : 450 },
-        about: { type: 'about', title: 'About Me', width: isMobile ? vw : isTablet ? 500 : 700, height: isMobile ? vh - 50 : isTablet ? 420 : 500 },
-        contact: { type: 'contact', title: 'Contact', width: isMobile ? vw : isTablet ? 480 : 600, height: isMobile ? vh - 50 : isTablet ? 420 : 500 },
-        resume: { type: 'resume', title: 'Resume.pdf', width: isMobile ? vw : isTablet ? 500 : 650, height: isMobile ? vh - 50 : isTablet ? 450 : 550 },
-        camera: { type: 'camera', title: 'Camera', width: isMobile ? vw : isTablet ? 480 : 640, height: isMobile ? vh - 50 : isTablet ? 420 : 520 },
-        music: { type: 'music', title: 'Music', width: isMobile ? vw : isTablet ? 480 : 700, height: isMobile ? vh - 50 : isTablet ? 420 : 500 },
-        minesweeper: { type: 'minesweeper', title: 'Games', width: isMobile ? vw : 320, height: isMobile ? vh - 50 : 420 },
-        ie: { type: 'ie', title: 'Internet Explorer', width: isMobile ? vw : isTablet ? 600 : 850, height: isMobile ? vh - 50 : isTablet ? 450 : 600 },
-        messenger: { type: 'messenger', title: 'MSN Messenger - Guestbook', width: isMobile ? vw : isTablet ? 420 : 500, height: isMobile ? vh - 50 : isTablet ? 450 : 550 }
+        finder: { type: 'finder', title: 'My Computer', width: w(vw, 500, 550, 750), height: h(vh - 50, 400, 380, 450) },
+        about: { type: 'about', title: 'About Me', width: w(vw, 500, 520, 700), height: h(vh - 50, 420, 400, 500) },
+        contact: { type: 'contact', title: 'Contact', width: w(vw, 480, 450, 600), height: h(vh - 50, 420, 380, 500) },
+        resume: { type: 'resume', title: 'Resume.pdf', width: w(vw, 500, 500, 650), height: h(vh - 50, 450, 420, 550) },
+        camera: { type: 'camera', title: 'Camera', width: w(vw, 480, 480, 640), height: h(vh - 50, 420, 380, 520) },
+        music: { type: 'music', title: 'Music', width: w(vw, 480, 500, 700), height: h(vh - 50, 420, 400, 500) },
+        minesweeper: { type: 'minesweeper', title: 'Games', width: w(vw, 320, 300, 320), height: h(vh - 50, 420, 380, 420) },
+        ie: { type: 'ie', title: 'Internet Explorer', width: w(vw, 600, 650, 850), height: h(vh - 50, 450, 420, 600) },
+        messenger: { type: 'messenger', title: 'MSN Messenger - Guestbook', width: w(vw, 420, 400, 500), height: h(vh - 50, 450, 420, 550) }
       }
       const config = windowConfig[action]
       if (config) {
