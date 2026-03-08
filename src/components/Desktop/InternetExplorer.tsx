@@ -510,11 +510,15 @@ export default function InternetExplorer({ windowId }: Props) {
 
               {/* Bio section */}
               <div style={{ padding: '10px 12px', borderBottom: '1px solid #efefef' }}>
-                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#262626', margin: '0 0 3px' }}>mydigitalcrib</p>
+                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#262626', margin: '0 0 1px' }}>mydigitalcrib</p>
+                <p style={{ fontSize: '12px', color: '#777', margin: '0 0 3px' }}>Marketing Agency</p>
                 <p style={{ fontSize: '13px', color: '#555', margin: '0 0 2px', lineHeight: '1.45' }}>
                   hey bestie 💻<br />
                   we're vibes, your gen z marketing crew.<br />
                   taking your brand to the next level is our thing! 🫶
+                </p>
+                <p style={{ fontSize: '12px', color: '#555', margin: '2px 0 0' }}>
+                  🔗 welcometomywebsites.com &nbsp; ⓘ mydigitalcrib
                 </p>
                 <IgLink style={{ fontSize: '13px', color: '#3b6d8c' }}>
                   welcometomywebsites.com
