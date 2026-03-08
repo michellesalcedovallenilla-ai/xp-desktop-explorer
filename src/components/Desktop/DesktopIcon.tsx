@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useWindowStore } from '../../store/useWindowStore'
 import { useSystemStore } from '../../store/useSystemStore'
 import type { DesktopIconData } from '../../types'
@@ -31,59 +31,16 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
   const { moveDesktopIcon } = useSystemStore()
   const [imgError, setImgError] = useState(false)
   const animal = ICON_IMAGES[icon.icon] || ICON_IMAGES[icon.id] || ICON_IMAGES[icon.action]
-  // iconWidth is now in vw units
   const iconWidthVw = icon.iconWidth || 8
+
+  const lastTapRef = useRef(0)
+  const touchDragRef = useRef({ startX: 0, startY: 0, origX: 0, origY: 0, moved: false })
 
   useEffect(() => {
     setImgError(false)
   }, [animal?.src])
 
-  const handleOpen = () => {
-    const winTypes: Record<string, string> = {
-      finder: 'finder',
-      about: 'about',
-      contact: 'contact',
-      resume: 'resume',
-      camera: 'camera',
-      music: 'music',
-      paint: 'paint',
-      minesweeper: 'minesweeper',
-      solitaire: 'solitaire',
-      ie: 'ie',
-      messenger: 'messenger'
-    }
-    const type = winTypes[icon.action] || 'finder'
-    openWindow({
-      id: `window-${icon.action}-${icon.id}`,
-      title: icon.label,
-      type: type as any,
-      x: 150 + Math.random() * 200,
-      y: 50 + Math.random() * 100,
-      width:
-        type === 'ie'
-          ? 850
-          : type === 'paint'
-            ? 750
-            : type === 'solitaire'
-              ? 700
-              : type === 'minesweeper'
-                ? 320
-                : 650,
-      height:
-        type === 'ie'
-          ? 600
-          : type === 'paint'
-            ? 550
-            : type === 'solitaire'
-              ? 550
-              : type === 'minesweeper'
-                ? 420
-                : 480,
-      isMinimized: false,
-      isMaximized: false
-    })
-  }
-
+  // Mouse drag (desktop)
   const handleMouseDown = (e: React.MouseEvent) => {
     if (icon.locked) return
     const startX = e.clientX
@@ -97,7 +54,6 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
       const dy = ev.clientY - startY
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true
       if (moved) {
-        // Convert pixel delta to viewport percentage delta
         const dxVw = (dx / window.innerWidth) * 100
         const dyVh = (dy / window.innerHeight) * 100
         const nx = Math.max(0, Math.min(95, origX + dxVw))
@@ -114,6 +70,59 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
+
+  // Touch: double-tap detection + drag
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    onSelect()
+    if (icon.locked) return
+    
+    const touch = e.touches[0]
+    touchDragRef.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      origX: icon.x,
+      origY: icon.y,
+      moved: false
+    }
+  }, [icon.locked, icon.x, icon.y, onSelect])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (icon.locked) return
+    const touch = e.touches[0]
+    const ref = touchDragRef.current
+    const dx = touch.clientX - ref.startX
+    const dy = touch.clientY - ref.startY
+    
+    // Only start dragging after 10px threshold to prevent accidental drags
+    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+      ref.moved = true
+      e.preventDefault() // prevent scroll while dragging
+      const dxVw = (dx / window.innerWidth) * 100
+      const dyVh = (dy / window.innerHeight) * 100
+      const nx = Math.max(0, Math.min(95, ref.origX + dxVw))
+      const ny = Math.max(0, Math.min(90, ref.origY + dyVh))
+      moveDesktopIcon(icon.id, nx, ny)
+    }
+  }, [icon.locked, icon.id, moveDesktopIcon])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchDragRef.current.moved) return // was a drag, not a tap
+    
+    const now = Date.now()
+    if (now - lastTapRef.current < 350) {
+      // Double-tap
+      if (icon.action === 'portfolio-link') {
+        window.open('https://readymag.website/u2801101920/5411866/', '_blank')
+      } else if (icon.action === 'myspace-link') {
+        window.open('https://ifyourereadingthishiremenow.my.canva.site', '_blank')
+      } else {
+        onDoubleClick()
+      }
+      lastTapRef.current = 0
+    } else {
+      lastTapRef.current = now
+    }
+  }, [icon.action, onDoubleClick])
 
   return (
     <div
@@ -136,6 +145,9 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
           onDoubleClick()
         }
       }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {animal && !imgError ? (
         <img
@@ -154,4 +166,4 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
   )
 }
 
-export default DesktopIcon;
+export default DesktopIcon

@@ -4304,37 +4304,43 @@ textarea {
    RESPONSIVE BREAKPOINTS
    ============================================ */
 
-/* === MOBILE (320-480px) === */
+/* === MOBILE (≤480px) === */
 @media (max-width: 480px) {
   .app-root {
     font-size: 12px;
+    touch-action: manipulation; /* prevent 300ms tap delay */
   }
 
-  /* Desktop icons: compact grid */
+  /* Desktop icons: keep landscape positioning but scale down */
   .xp-landscape-icon {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    width: auto !important;
+    /* Keep absolute positioning — preserve XP feel */
+    touch-action: none; /* allow custom touch handling */
   }
   .desktop {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-    padding: 10px 6px;
-    align-content: flex-start;
-    justify-items: center;
-    overflow-y: auto;
-    bottom: 36px;
+    bottom: 40px;
+    -webkit-overflow-scrolling: touch;
   }
   .xp-landscape-animal {
-    max-width: 55px !important;
-    width: 55px !important;
+    /* Scale all animals proportionally via vw units — no override needed */
   }
   .xp-landscape-label {
+    font-size: 8px;
+    max-width: 60px;
+    margin-top: 1px;
+    padding: 1px 3px;
+  }
+
+  /* Hide decorative non-essential icons on very small screens */
+  .xp-landscape-icon[data-decorative="true"] {
+    display: none;
+  }
+
+  /* Sun - MSN shortcut */
+  .xp-sun-img {
+    width: 14vw;
+  }
+  .xp-sun-label {
     font-size: 9px;
-    max-width: 65px;
-    margin-top: 2px;
   }
 
   /* Windows: forced fullscreen */
@@ -4345,29 +4351,41 @@ textarea {
   }
   .xp-titlebar {
     border-radius: 0;
-    height: 32px;
+    height: 36px;
     padding: 0 6px;
   }
   .xp-titlebar-text {
-    font-size: 11px;
+    font-size: 12px;
   }
   .xp-win-btn {
-    width: 28px;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+  .xp-win-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+  .xp-window-menubar {
     height: 28px;
-    min-width: 28px;
+  }
+  .xp-wmenu-item {
+    padding: 4px 8px;
+    font-size: 12px;
   }
 
   /* Taskbar */
   .xp-taskbar {
-    height: 36px;
+    height: 40px;
   }
   .xp-start-btn {
-    height: 34px;
+    height: 38px;
     padding: 2px 8px 2px 4px;
-    font-size: 11px;
+    font-size: 12px;
   }
-  .xp-start-btn span {
-    display: none;
+  .xp-start-btn img {
+    width: 24px !important;
+    height: 24px !important;
   }
   .xp-quick-launch {
     display: none;
@@ -4376,27 +4394,31 @@ textarea {
     display: none;
   }
   .xp-running-apps {
-    gap: 1px;
+    gap: 2px;
   }
-  /* Hide widget buttons on mobile - only show open windows */
+  /* Hide widget buttons on mobile */
   .xp-running-apps .xp-task-btn.widget-btn {
     display: none;
   }
   .xp-task-btn {
     max-width: 80px;
-    padding: 2px 4px;
-    font-size: 9px;
-    height: 26px;
+    padding: 2px 6px;
+    font-size: 10px;
+    height: 28px;
   }
   .xp-system-tray {
-    padding: 0 6px;
-    gap: 4px;
+    padding: 0 8px;
+    gap: 6px;
   }
   .xp-tray-clock {
-    font-size: 10px;
+    font-size: 11px;
   }
   .xp-tray-icons {
-    gap: 2px;
+    gap: 4px;
+  }
+  .xp-tray-icons svg {
+    width: 16px;
+    height: 16px;
   }
 
   /* Start Menu */
@@ -4416,8 +4438,25 @@ textarea {
   }
   .xp-start-right {
     border-top: 1px solid #ACA899;
+    border-right: none;
     max-height: 120px;
     overflow-y: auto;
+  }
+  .xp-start-item {
+    padding: 8px 10px;
+    font-size: 13px;
+    gap: 10px;
+  }
+  .xp-start-item-icon {
+    font-size: 18px;
+    width: 26px;
+  }
+  .xp-start-footer {
+    padding: 6px 10px;
+  }
+  .xp-start-footer-btn {
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
   /* Login */
@@ -4432,24 +4471,33 @@ textarea {
   .xp-user-card {
     min-width: unset;
     width: 100%;
+    padding: 14px 16px;
+  }
+  .xp-user-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+  }
+  .xp-user-name {
+    font-size: 15px;
   }
 
   /* Camera */
   .camera-controls {
     flex-wrap: wrap;
-    gap: 6px;
-    padding: 6px;
+    gap: 8px;
+    padding: 8px;
   }
   .camera-btn {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
   .camera-shutter {
-    width: 48px;
-    height: 36px;
+    width: 52px;
+    height: 40px;
   }
 
-  /* Clippy - hide on mobile to avoid clutter */
+  /* Clippy - hide on mobile */
   .xp-clippy-container {
     display: none;
   }
@@ -4460,7 +4508,7 @@ textarea {
   }
   .xp-explorer-sidebar {
     width: 100%;
-    max-height: 100px;
+    max-height: 80px;
     overflow-y: auto;
     border-right: none;
     border-bottom: 1px solid #ACA899;
@@ -4470,12 +4518,12 @@ textarea {
   .xp-contact-viewer {
     flex-direction: column;
     gap: 12px;
-    padding: 10px;
+    padding: 12px;
   }
 
   /* About */
   .xp-about-viewer {
-    padding: 10px;
+    padding: 12px;
   }
   .xp-about-header {
     flex-direction: column;
@@ -4484,10 +4532,10 @@ textarea {
 
   /* Resume */
   .xp-resume-viewer {
-    padding: 6px;
+    padding: 8px;
   }
   .xp-resume-page {
-    padding: 10px;
+    padding: 12px;
   }
   .xp-resume-header {
     flex-direction: column;
@@ -4498,25 +4546,30 @@ textarea {
     height: 80px;
   }
   .wmp-xp-play-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
   }
   .wmp-xp-vol-slider {
-    width: 50px;
+    width: 60px;
+  }
+  .wmp-xp-controls {
+    padding: 4px 8px;
   }
 
   /* MSN Messenger */
   .msn-toolbar {
     flex-wrap: wrap;
-    gap: 1px;
+    gap: 2px;
     padding: 2px 4px;
   }
   .msn-toolbar-btn {
-    font-size: 9px;
-    padding: 2px 4px;
+    font-size: 10px;
+    padding: 4px 6px;
   }
   .msn-nick-input {
     width: 100%;
+    font-size: 14px;
+    padding: 6px 8px;
   }
   .msn-msg-compose {
     flex-direction: column;
@@ -4525,12 +4578,16 @@ textarea {
     flex-direction: row;
     justify-content: flex-end;
   }
+  .msn-msg-input {
+    font-size: 14px;
+    min-height: 44px;
+  }
 
   /* Minesweeper */
   .xp-mine-cell {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
   }
 
   /* Paint */
@@ -4538,19 +4595,19 @@ textarea {
     width: 44px;
   }
   .xp-paint-tool-btn {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
   }
 
   /* Solitaire */
   .xp-sol-card {
-    width: 40px;
-    height: 56px;
+    width: 42px;
+    height: 58px;
     font-size: 14px;
   }
   .xp-sol-column {
-    width: 40px;
+    width: 42px;
   }
   .xp-sol-top {
     padding: 4px 6px;
@@ -4579,45 +4636,76 @@ textarea {
   .xp-google-search-form {
     max-width: 100%;
   }
+
+  /* Error dialog */
+  .xp-error-dialog {
+    width: calc(100vw - 32px) !important;
+    max-width: 320px;
+  }
+
+  /* Widgets - hide on mobile */
+  .xp-widget {
+    display: none;
+  }
 }
 
 /* === TABLET (481-768px) === */
 @media (min-width: 481px) and (max-width: 768px) {
-  /* Desktop icons: reflow into a grid */
-  .xp-landscape-icon {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
+  .app-root {
+    touch-action: manipulation;
   }
-  .desktop {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 16px;
-    align-content: flex-start;
-    justify-content: center;
-    overflow-y: auto;
+
+  /* Keep landscape icon positions but scale down slightly */
+  .xp-landscape-icon {
+    touch-action: none;
   }
   .xp-landscape-animal {
-    max-width: 90px !important;
-    width: 90px !important;
+    /* Let vw-based sizing handle it, just cap large ones */
+  }
+  .xp-landscape-label {
+    font-size: 10px;
+  }
+
+  /* Sun */
+  .xp-sun-img {
+    width: 10vw;
   }
 
   /* Windows */
   .xp-window {
     min-width: 280px;
   }
+  .xp-titlebar {
+    height: 32px;
+  }
+  .xp-win-btn {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+  }
 
   /* Taskbar */
   .xp-taskbar {
-    height: 34px;
+    height: 36px;
   }
   .xp-start-btn {
-    height: 32px;
+    height: 34px;
+    font-size: 12px;
   }
   .xp-task-btn {
     max-width: 120px;
     font-size: 10px;
+    height: 26px;
+  }
+  .xp-running-apps .xp-task-btn.widget-btn {
+    display: none;
+  }
+  .xp-quick-launch {
+    gap: 4px;
+  }
+  .xp-ql-btn {
+    width: 26px;
+    height: 26px;
   }
 
   /* Login */
@@ -4638,24 +4726,37 @@ textarea {
     padding: 12px;
   }
 
-  /* Clippy */
+  /* Clippy - smaller */
   .xp-clippy-img-wrapper {
-    width: 120px;
+    width: 100px;
   }
   .clippy-body {
-    transform: scale(1.5);
+    transform: scale(1.3);
   }
 
   /* Start menu */
   .xp-start-menu {
     width: 340px;
+    max-height: calc(100vh - 44px);
+    overflow-y: auto;
+  }
+  .xp-start-item {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .xp-start-footer-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  /* Widgets - constrain to viewport */
+  .xp-widget {
+    max-width: calc(100vw - 16px);
   }
 }
 
 /* === SMALL LAPTOP (769-1024px) === */
 @media (min-width: 769px) and (max-width: 1024px) {
-  /* No icon size/position changes — keep desktop layout intact */
-
   .xp-window {
     min-width: 300px;
   }
@@ -4767,57 +4868,16 @@ textarea {
   }
 }
 
-/* === TOUCH DEVICE ENHANCEMENTS (only on small touch screens) === */
-@media (pointer: coarse) and (max-width: 768px) {
+/* === TOUCH DEVICE ENHANCEMENTS (coarse pointer, any size) === */
+@media (pointer: coarse) {
+  /* Larger tap targets for all touch devices */
+  .xp-landscape-icon {
+    /* Add invisible padding for easier tapping */
+    padding: 4px;
+  }
   .xp-win-btn {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-  }
-  .xp-start-item {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-  .xp-start-footer-btn {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-  .xp-ql-btn {
-    width: 28px;
-    height: 28px;
-  }
-  .xp-task-btn {
-    height: 28px;
-    padding: 2px 8px;
-  }
-  .camera-btn {
-    width: 36px;
-    height: 36px;
-  }
-  .camera-shutter {
-    width: 48px;
-    height: 36px;
-  }
-  .msn-emo-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-  .msn-send-btn {
-    padding: 8px 16px;
-    font-size: 12px;
-  }
-  .msn-msg-input {
-    font-size: 14px;
-    min-height: 44px;
-  }
-  .msn-nick-input {
-    font-size: 14px;
-    padding: 6px 8px;
-  }
-  .xp-mine-cell {
-    width: 28px;
-    height: 28px;
+    min-width: 26px;
+    min-height: 26px;
   }
   .xp-wctrl {
     width: 22px;
@@ -4826,24 +4886,107 @@ textarea {
   .thumb-actions {
     opacity: 1 !important;
   }
+  .camera-btn {
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+
+/* Touch on small screens — extra sizing */
+@media (pointer: coarse) and (max-width: 768px) {
+  .xp-win-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+  .xp-start-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .xp-start-footer-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .xp-ql-btn {
+    width: 30px;
+    height: 30px;
+  }
+  .xp-task-btn {
+    height: 30px;
+    padding: 2px 8px;
+  }
+  .msn-emo-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+  .msn-send-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+  .xp-mine-cell {
+    width: 32px;
+    height: 32px;
+  }
 }
 
 /* === LANDSCAPE MOBILE === */
 @media (max-height: 480px) and (orientation: landscape) {
   .xp-taskbar {
-    height: 28px;
+    height: 30px;
   }
   .xp-start-btn {
-    height: 26px;
+    height: 28px;
+  }
+  .desktop {
+    bottom: 30px;
   }
   .camera-controls {
     padding: 4px;
     gap: 4px;
   }
   .wmp-xp-visualization {
-    height: 60px;
+    height: 50px;
   }
   .msn-toolbar {
     display: none;
+  }
+  /* In landscape mobile, make windows use full width but shorter */
+  .xp-titlebar {
+    height: 28px;
+  }
+  .xp-win-btn {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+  }
+  .xp-sun-wrapper {
+    display: none;
+  }
+}
+
+/* === PORTRAIT TABLET SPECIFIC === */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+  .desktop {
+    bottom: 36px;
+  }
+  /* In portrait, position icons more towards top half */
+  .xp-sun-img {
+    width: 12vw;
+  }
+}
+
+/* === SAFE AREA INSETS (notch/home indicator) === */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .xp-taskbar {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  @media (max-width: 768px) {
+    .xp-taskbar {
+      height: calc(40px + env(safe-area-inset-bottom));
+    }
+    .desktop {
+      bottom: calc(40px + env(safe-area-inset-bottom));
+    }
   }
 }
