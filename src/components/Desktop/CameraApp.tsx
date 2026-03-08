@@ -66,13 +66,12 @@ export default function CameraApp() {
   const [sampleIndex, setSampleIndex] = useState(0)
 
   // Overlay toggles
-  const [glassesOn, setGlassesOn] = useState(false)
   const [mustacheOn, setMustacheOn] = useState(false)
   const [hatOn, setHatOn] = useState(false)
   const [heartsOn, setHeartsOn] = useState(false)
   const [beerOn, setBeerOn] = useState(false)
 
-  const anyOverlay = glassesOn || mustacheOn || hatOn || heartsOn || beerOn
+  const anyOverlay = mustacheOn || hatOn || heartsOn || beerOn
 
   // MediaPipe tracking
   const { face, hand, ready: trackingReady } = useMediaPipeTracking(
