@@ -42,13 +42,15 @@ export default function MenuBar() {
       finder: { w: isMobile ? vw : isTablet ? 500 : 750, h: isMobile ? window.innerHeight - 50 : 450 },
       messenger: { w: isMobile ? vw : isTablet ? 420 : 500, h: isMobile ? window.innerHeight - 50 : 550 },
     }
-    const s = sizes[type] || { w: 700, h: 500 }
+    const s = sizes[type] || { w: isMobile ? vw : 700, h: isMobile ? window.innerHeight - 50 : 500 }
+    const x = isMobile ? 0 : isTablet ? Math.random() * 40 : 100 + Math.random() * 150
+    const y = isMobile ? 0 : isTablet ? Math.random() * 30 : 50 + Math.random() * 80
     ow({
       id: `window-${type}`,
       title,
       type: type as any,
-      x: 100 + Math.random() * 150,
-      y: 50 + Math.random() * 80,
+      x,
+      y,
       width: s.w,
       height: s.h,
       isMinimized: false,
