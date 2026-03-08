@@ -4364,10 +4364,16 @@ textarea {
   .xp-start-menu {
     width: calc(100vw - 8px);
     max-width: 360px;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
   }
   .xp-start-body {
     flex-direction: column;
     min-height: auto;
+  }
+  .xp-start-left {
+    max-height: 50vh;
+    overflow-y: auto;
   }
   .xp-start-right {
     border-top: 1px solid #ACA899;
