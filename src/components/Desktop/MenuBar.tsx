@@ -327,7 +327,7 @@ export default function MenuBar() {
           Music
         </button>
         {/* Window taskbar buttons */}
-        {windows.map((win) => (
+        {windows.filter(win => win.id !== 'window-music').map((win) => (
           <button
             key={win.id}
             className={`xp-task-btn ${!win.isMinimized ? 'active' : ''}`}
