@@ -4622,7 +4622,47 @@ textarea {
   }
 
   .xp-start-menu {
-    width: 360px;
+    width: 320px;
+    max-height: min(560px, calc(100vh - 40px));
+  }
+
+  .xp-start-body {
+    min-height: 0;
+  }
+
+  .xp-start-left,
+  .xp-start-right {
+    max-height: min(460px, calc(100vh - 130px));
+    overflow-y: auto;
+  }
+
+  .xp-start-header {
+    padding: 6px 8px;
+  }
+
+  .xp-start-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+
+  .xp-start-username {
+    font-size: 12px;
+  }
+
+  .xp-start-item {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .xp-start-item-icon {
+    width: 20px;
+    font-size: 14px;
+  }
+
+  .xp-start-footer-btn {
+    font-size: 10px;
+    padding: 3px 6px;
   }
 
   .xp-clippy-img-wrapper {
@@ -4630,6 +4670,30 @@ textarea {
   }
   .clippy-body {
     transform: scale(1.6);
+  }
+}
+
+/* === LAPTOP DESKTOP (1025-1366px) === */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .xp-start-menu {
+    width: 340px;
+    max-height: min(620px, calc(100vh - 38px));
+  }
+
+  .xp-start-left,
+  .xp-start-right {
+    max-height: min(520px, calc(100vh - 130px));
+    overflow-y: auto;
+  }
+
+  .xp-start-item {
+    padding: 4px 9px;
+    font-size: 10.5px;
+  }
+
+  .xp-start-footer-btn {
+    font-size: 10.5px;
+    padding: 3px 7px;
   }
 }
 
