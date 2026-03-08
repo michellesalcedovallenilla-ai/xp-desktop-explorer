@@ -254,6 +254,24 @@ export default function CameraApp() {
   const liveFilterStyle = hasCamera && anyOverlay ? 'none' : FILTERS[activeFilter].css
   const filterStyle = FILTERS[activeFilter].css
 
+  // Convert normalized landmark coordinates to displayed (object-fit: cover) viewport coordinates
+  const mapToViewfinder = useCallback((x: number, y: number, container: HTMLDivElement | null) => {
+    if (!container || !videoRef.current) return { x: 0, y: 0 }
+    const cw = container.clientWidth
+    const ch = container.clientHeight
+    const vw = videoRef.current.videoWidth || cw
+    const vh = videoRef.current.videoHeight || ch
+    const scale = Math.max(cw / vw, ch / vh)
+    const dw = vw * scale
+    const dh = vh * scale
+    const offsetX = (cw - dw) / 2
+    const offsetY = (ch - dh) / 2
+    return {
+      x: x * dw + offsetX,
+      y: y * dh + offsetY,
+    }
+  }, [])
+
   // Convert face/hand landmarks to CSS overlay positions for live preview
   const getOverlayCSS = useCallback((
     container: HTMLDivElement | null
@@ -261,6 +279,10 @@ export default function CameraApp() {
     if (!container) return { glasses: null, mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
     const cw = container.clientWidth
     const ch = container.clientHeight
+    const vw = videoRef.current?.videoWidth || cw
+    const vh = videoRef.current?.videoHeight || ch
+    const scale = Math.max(cw / vw, ch / vh)
+    const pxScale = vw * scale
 
     let glasses: React.CSSProperties | null = null
     let mustache: React.CSSProperties | null = null
