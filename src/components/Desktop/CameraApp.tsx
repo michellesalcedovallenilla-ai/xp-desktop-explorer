@@ -254,7 +254,12 @@ export default function CameraApp() {
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
         </button>
-        <div style={{ width: 36 }} />
+        <button
+          className={`camera-btn ${disguiseEnabled ? 'active' : ''}`}
+          onClick={() => setDisguiseEnabled(!disguiseEnabled)}
+        >
+          <Glasses size={18} color={disguiseEnabled ? '#ffcc00' : undefined} />
+        </button>
       </div>
 
       {/* Gallery */}
