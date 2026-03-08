@@ -64,8 +64,10 @@ export default function DraggableWidget({
   }
 
   // Clamp position to viewport
-  const clampedX = Math.min(widget.x, window.innerWidth - 200)
-  const clampedY = Math.min(widget.y, window.innerHeight - 200)
+  const maxX = Math.max(0, window.innerWidth - (id === 'notes' ? 340 : id === 'music' ? 320 : 200))
+  const maxY = Math.max(30, window.innerHeight - (id === 'notes' ? 290 : id === 'music' ? 280 : 200))
+  const clampedX = Math.min(widget.x, maxX)
+  const clampedY = Math.min(widget.y, maxY)
 
   return (
     <motion.div
