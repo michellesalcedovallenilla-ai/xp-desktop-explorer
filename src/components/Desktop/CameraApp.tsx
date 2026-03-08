@@ -390,8 +390,8 @@ export default function CameraApp() {
             position: 'absolute', inset: 0, pointerEvents: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4
           }}>
-            <img src="/overlays/glasses.png" alt="" style={{ width: '40%', opacity: 0.9 }} />
-            <img src="/overlays/mustache.png" alt="" style={{ width: '30%', opacity: 0.9 }} />
+            <img src={OVERLAY_SRC.glasses} alt="" style={{ width: '40%', opacity: 0.9 }} />
+            <img src={OVERLAY_SRC.mustache} alt="" style={{ width: '30%', opacity: 0.9 }} />
           </div>
         )}
         {showCenteredHat && (
