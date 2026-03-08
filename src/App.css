@@ -5134,32 +5134,246 @@ textarea {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  color: #ccc;
+  background: #000;
+  color: #000;
   font-family: 'Tahoma', sans-serif;
   font-size: 11px;
 }
 
+/* Cream/beige menu bar like real WMP */
+.wmp-video-menubar {
+  display: flex;
+  gap: 0;
+  background: linear-gradient(to bottom, #ECE9D8, #D6D2C2);
+  border-bottom: 1px solid #ACA899;
+  padding: 1px 2px;
+}
+.wmp-video-menubar button {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 11px;
+  font-family: 'Tahoma', sans-serif;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+.wmp-video-menubar button:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+/* Toolbar strip */
+.wmp-video-toolbar {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to bottom, #F0EDE4, #DCD8CC);
+  border-bottom: 1px solid #ACA899;
+  padding: 2px 4px;
+  gap: 2px;
+  min-height: 24px;
+}
+.wmp-video-toolbar-progress {
+  flex: 1;
+  height: 10px;
+  background: #FFF;
+  border: 1px inset #999;
+  margin: 0 4px;
+}
+.wmp-video-toolbar-icons {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+.wmp-video-toolbar-icons button {
+  background: none;
+  border: 1px solid transparent;
+  padding: 1px 3px;
+  cursor: pointer;
+  color: #555;
+  font-size: 12px;
+}
+.wmp-video-toolbar-icons button:hover {
+  border-color: #999;
+  background: rgba(255,255,255,0.5);
+}
+
+/* Video area */
 .wmp-video-area {
   flex: 1;
   background: #000;
-  min-height: 200px;
+  min-height: 180px;
   position: relative;
   overflow: hidden;
 }
-
-.wmp-video-area iframe {
-  position: absolute;
+.wmp-video-area iframe,
+.wmp-video-area > div {
+  position: absolute !important;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   border: none;
 }
 
+/* Status bar - like the "Ready" bar in ref */
 .wmp-video-statusbar {
-  background: linear-gradient(180deg, #2a2a4a, #1a1a2e);
-  padding: 2px 8px;
-  border-top: 1px solid #333;
-  color: #aaa;
+  background: linear-gradient(to bottom, #ECE9D8, #D6D2C2);
+  padding: 1px 6px;
+  border-top: 1px solid #FFF;
+  border-bottom: 1px solid #ACA899;
+  color: #666;
+  font-size: 10px;
+  min-height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* Bottom control bar - dark blue like real WMP */
+.wmp-video-controlbar {
+  background: linear-gradient(to bottom, #3A5A8C, #1E3A5C, #162C4A);
+  padding: 6px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Progress row in controls */
+.wmp-video-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 4px;
+}
+.wmp-video-time {
+  font-size: 10px;
+  color: #AAC;
+  width: 32px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.wmp-video-progress-track {
+  flex: 1;
+  height: 8px;
+  background: linear-gradient(to bottom, #1A2A3A, #2A3A4A);
+  border: 1px solid #0A1A2A;
+  position: relative;
+  cursor: pointer;
+  border-radius: 1px;
+}
+.wmp-video-progress-fill {
+  height: 100%;
+  background: linear-gradient(to bottom, #5588CC, #3366AA);
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 1px;
+}
+.wmp-video-progress-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 16px;
+  background: linear-gradient(to bottom, #EEE, #AAA);
+  border: 1px solid #666;
+  border-radius: 2px;
+  z-index: 1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Controls row */
+.wmp-video-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+/* Large glossy round play button */
+.wmp-video-play-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6699CC, #2255AA, #1A3A7A);
+  border: 2px solid #4477BB;
+  color: #FFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.3);
+}
+.wmp-video-play-btn:hover {
+  background: linear-gradient(135deg, #7AAADE, #3366BB, #2244AA);
+  box-shadow: 0 2px 8px rgba(50,100,200,0.5), inset 0 1px 2px rgba(255,255,255,0.4);
+}
+
+/* Small round control buttons */
+.wmp-video-ctrl-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5580AA, #2A4A6A);
+  border: 1px solid #3A5A8A;
+  color: #CDE;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15);
+}
+.wmp-video-ctrl-btn:hover {
+  background: linear-gradient(135deg, #6690BB, #3A5A8A);
+  color: #FFF;
+}
+
+/* Stop button (smaller) */
+.wmp-video-stop-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5580AA, #2A4A6A);
+  border: 1px solid #3A5A8A;
+  color: #CDE;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Volume in bottom bar */
+.wmp-video-volume {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.wmp-video-vol-icon {
+  background: none;
+  border: none;
+  color: #AAC;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+.wmp-video-vol-icon:hover {
+  color: #DDF;
+}
+.wmp-video-vol-slider {
+  width: 65px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, #3366AA, #5588CC);
+  outline: none;
+  border-radius: 2px;
+}
+.wmp-video-vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 14px;
+  background: linear-gradient(to bottom, #DDD, #999);
+  border: 1px solid #555;
+  border-radius: 2px;
+  cursor: pointer;
 }
