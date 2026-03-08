@@ -23,7 +23,7 @@ const HARDCODED_RESULTS = [
     displayUrl: 'www.instagram.com/mydigitalcrib',
   },
   {
-    title: 'hire me :) — Digital Portfolio & Creative Showcase',
+    title: 'My Main Portfolio - 100% Interactive and responsive made with Readymag',
     url: 'https://readymag.website/u2801101920/5411866/',
     snippet: "this ain't a regular site. it's touchable, scrollable, clickable, and loud. volume up. have fun. welcome to my side of the internet (aka my resume, just less boring)",
     displayUrl: 'readymag.website/u2801101920/5411866',
