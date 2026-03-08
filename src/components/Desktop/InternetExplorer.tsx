@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { supabase } from '@/integrations/supabase/client'
 
 const PORTFOLIO_URL = 'https://readymag.website/u2801101920/5411866/'
 const PORTFOLIO_PAGES: Record<string, string> = {
