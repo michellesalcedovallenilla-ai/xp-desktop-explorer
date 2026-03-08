@@ -142,11 +142,12 @@ export default function CameraApp() {
         if (img?.complete && img.naturalWidth) {
           const mx = f.upperLip.x * w
           const my = f.upperLip.y * h
-          const mw = faceW * 0.55
+          const mw = faceW * 0.6
           const mh = mw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
           ctx.translate(mx, my)
           ctx.rotate(rot)
+          ctx.scale(-1, 1)
           ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
           ctx.restore()
         }
