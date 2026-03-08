@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { WindowState } from '../types'
+import { useAudioStore } from './useAudioStore'
 
 interface WindowStore {
   windows: WindowState[]
@@ -26,6 +27,7 @@ export const useWindowStore = create<WindowStore>((set) => ({
           nextZIndex: s.nextZIndex + 1
         }
       }
+      useAudioStore.getState().playDing()
       return {
         windows: [...s.windows, { ...win, zIndex: s.nextZIndex }],
         nextZIndex: s.nextZIndex + 1

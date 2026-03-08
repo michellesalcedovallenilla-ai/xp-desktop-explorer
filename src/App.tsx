@@ -29,14 +29,8 @@ const App = () => {
     setLocked
   } = useSystemStore()
   const { windows, closeWindow } = useWindowStore()
-  const { playClick, playStartup } = useAudioStore()
+  const { playStartup, playShutdown } = useAudioStore()
   useKeyboardShortcuts()
-
-  useEffect(() => {
-    const handlePointerDown = () => playClick()
-    window.addEventListener('pointerdown', handlePointerDown)
-    return () => window.removeEventListener('pointerdown', handlePointerDown)
-  }, [playClick])
 
   useEffect(() => {
     if (!isBooting) {
@@ -70,6 +64,7 @@ const App = () => {
         isOpen={isShutdownVisible}
         onClose={() => setShutdownVisible(false)}
         onShutdown={() => {
+          playShutdown()
           setShutdownVisible(false)
           windows.forEach((w) => closeWindow(w.id))
           setLocked(true)
