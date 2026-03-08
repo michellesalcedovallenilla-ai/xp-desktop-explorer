@@ -12,6 +12,7 @@ interface AudioState {
   playError: () => void
   playDing: () => void
   playShutdown: () => void
+  playShutter: () => void
 }
 
 export const useAudioStore = create<AudioState>(() => ({
@@ -20,4 +21,5 @@ export const useAudioStore = create<AudioState>(() => ({
   playError: () => playSound('/sounds/xp-error.mp3', 0.4),
   playDing: () => playSound('/sounds/xp-ding.mp3', 0.3),
   playShutdown: () => playSound('/sounds/xp-shutdown.mp3', 0.5),
+  playShutter: () => playSound('/sounds/shutter.mp3', 0.6),
 }))
