@@ -71,12 +71,12 @@ const defaultDockItems: DockItem[] = [
 ]
 
 const defaultWidgets: WidgetState[] = [
-  { id: 'calculator', type: 'calculator', x: 900, y: 60, isVisible: false, zIndex: 1 },
-  { id: 'weather', type: 'weather', x: 580, y: 60, isVisible: false, zIndex: 2 },
-  { id: 'clock', type: 'clock', x: 370, y: 60, isVisible: false, zIndex: 3 },
-  { id: 'calendar', type: 'calendar', x: 580, y: 370, isVisible: false, zIndex: 4 },
-  { id: 'music', type: 'music', x: 900, y: 310, isVisible: false, zIndex: 5 },
-  { id: 'notes', type: 'notes', x: 370, y: 370, isVisible: false, zIndex: 6 }
+  { id: 'calculator', type: 'calculator', x: 900, y: 60, isVisible: false, zIndex: 100 },
+  { id: 'weather', type: 'weather', x: 580, y: 60, isVisible: false, zIndex: 101 },
+  { id: 'clock', type: 'clock', x: 370, y: 60, isVisible: false, zIndex: 102 },
+  { id: 'calendar', type: 'calendar', x: 580, y: 370, isVisible: false, zIndex: 103 },
+  { id: 'music', type: 'music', x: 900, y: 310, isVisible: false, zIndex: 104 },
+  { id: 'notes', type: 'notes', x: 370, y: 370, isVisible: false, zIndex: 105 }
 ]
 
 export const useSystemStore = create<SystemState>((set) => ({
