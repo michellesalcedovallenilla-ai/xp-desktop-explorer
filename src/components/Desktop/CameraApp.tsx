@@ -569,6 +569,23 @@ export default function CameraApp() {
         {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
         {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
         {overlays.arepa && <img src={OVERLAY_PATHS.arepa} alt="" style={overlays.arepa} />}
+        {overlays.plumbob && <img src={OVERLAY_PATHS.plumbob} alt="" style={overlays.plumbob} />}
+        {overlays.hands && <img src={OVERLAY_PATHS.hands} alt="" style={overlays.hands} />}
+
+        {/* Countdown */}
+        {countdown !== null && countdown > 0 && (
+          <div style={{
+            position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            pointerEvents: 'none', zIndex: 30,
+          }}>
+            <span style={{
+              fontSize: 80, fontWeight: 'bold', color: 'white', textShadow: '0 0 20px rgba(0,0,0,0.8)',
+              fontFamily: 'Tahoma, sans-serif', animation: 'countdownPulse 1s ease-in-out',
+            }} key={countdown}>
+              {countdown}
+            </span>
+          </div>
+        )}
 
         {/* Flash */}
         {flash && (
