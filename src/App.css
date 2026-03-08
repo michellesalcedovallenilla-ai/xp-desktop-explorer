@@ -4260,3 +4260,480 @@ textarea {
   color: #333;
   min-height: 18px;
 }
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* === MOBILE (320-480px) === */
+@media (max-width: 480px) {
+  .app-root {
+    font-size: 12px;
+  }
+
+  /* Desktop icons: smaller, grid-like */
+  .xp-landscape-icon {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+  }
+  .desktop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    align-content: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+  }
+  .xp-landscape-animal {
+    max-width: 70px !important;
+    width: 70px !important;
+  }
+  .xp-landscape-label {
+    font-size: 10px;
+    max-width: 70px;
+  }
+
+  /* Windows: forced fullscreen */
+  .xp-window {
+    min-width: unset;
+    min-height: unset;
+    border-radius: 0;
+  }
+  .xp-titlebar {
+    border-radius: 0;
+    height: 32px;
+    padding: 0 6px;
+  }
+  .xp-titlebar-text {
+    font-size: 11px;
+  }
+  .xp-win-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+  }
+
+  /* Taskbar */
+  .xp-taskbar {
+    height: 36px;
+  }
+  .xp-start-btn {
+    height: 34px;
+    padding: 2px 8px 2px 4px;
+    font-size: 11px;
+  }
+  .xp-start-btn span {
+    display: none;
+  }
+  .xp-quick-launch {
+    display: none;
+  }
+  .xp-taskbar-divider {
+    display: none;
+  }
+  .xp-running-apps {
+    gap: 1px;
+  }
+  .xp-task-btn {
+    max-width: 80px;
+    padding: 2px 4px;
+    font-size: 9px;
+    height: 26px;
+  }
+  .xp-system-tray {
+    padding: 0 6px;
+    gap: 4px;
+  }
+  .xp-tray-clock {
+    font-size: 10px;
+  }
+  .xp-tray-icons {
+    gap: 2px;
+  }
+
+  /* Start Menu */
+  .xp-start-menu {
+    width: calc(100vw - 8px);
+    max-width: 360px;
+  }
+  .xp-start-body {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .xp-start-right {
+    border-top: 1px solid #ACA899;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+
+  /* Login */
+  .xp-login-center {
+    flex-direction: column;
+    gap: 24px;
+    padding: 20px;
+  }
+  .xp-login-winxp {
+    font-size: 24px;
+  }
+  .xp-user-card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  /* Camera */
+  .camera-controls {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px;
+  }
+  .camera-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .camera-shutter {
+    width: 48px;
+    height: 36px;
+  }
+
+  /* Clippy */
+  .xp-clippy-container {
+    bottom: 44px;
+    right: 8px;
+  }
+  .xp-clippy-img-wrapper {
+    width: 80px;
+  }
+  .xp-clippy-bubble {
+    max-width: 180px;
+    font-size: 10px;
+    margin-right: 10px;
+  }
+  .clippy-container {
+    right: 8px;
+    bottom: 44px;
+  }
+  .clippy-body {
+    transform: scale(1.2);
+  }
+  .clippy-speech {
+    max-width: 160px;
+    font-size: 10px;
+  }
+
+  /* Explorer */
+  .xp-explorer {
+    flex-direction: column;
+  }
+  .xp-explorer-sidebar {
+    width: 100%;
+    max-height: 100px;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid #ACA899;
+  }
+
+  /* Contact */
+  .xp-contact-viewer {
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  /* About */
+  .xp-about-viewer {
+    padding: 10px;
+  }
+  .xp-about-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Resume */
+  .xp-resume-viewer {
+    padding: 6px;
+  }
+  .xp-resume-page {
+    padding: 10px;
+  }
+  .xp-resume-header {
+    flex-direction: column;
+  }
+
+  /* WMP */
+  .wmp-xp-visualization {
+    height: 80px;
+  }
+  .wmp-xp-play-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .wmp-xp-vol-slider {
+    width: 50px;
+  }
+
+  /* MSN Messenger */
+  .msn-toolbar {
+    flex-wrap: wrap;
+    gap: 1px;
+    padding: 2px 4px;
+  }
+  .msn-toolbar-btn {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+  .msn-nick-input {
+    width: 100%;
+  }
+  .msn-msg-compose {
+    flex-direction: column;
+  }
+  .msn-compose-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  /* Minesweeper */
+  .xp-mine-cell {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  /* Paint */
+  .xp-paint-sidebar {
+    width: 44px;
+  }
+  .xp-paint-tool-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  /* Solitaire */
+  .xp-sol-card {
+    width: 40px;
+    height: 56px;
+    font-size: 14px;
+  }
+  .xp-sol-column {
+    width: 40px;
+  }
+  .xp-sol-top {
+    padding: 4px 6px;
+  }
+  .xp-sol-tableau {
+    gap: 3px;
+    padding: 4px 6px;
+  }
+
+  /* Shutdown */
+  .xp-shutdown-dialog {
+    width: calc(100vw - 32px) !important;
+    max-width: 340px;
+  }
+
+  /* Run/Search dialog */
+  .xp-run-dialog {
+    width: calc(100vw - 16px);
+    max-width: 360px;
+  }
+
+  /* Google IE page */
+  .xp-google-home {
+    padding: 20px;
+  }
+  .xp-google-search-form {
+    max-width: 100%;
+  }
+}
+
+/* === TABLET (481-768px) === */
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Desktop icons: reflow into a grid */
+  .xp-landscape-icon {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+  }
+  .desktop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+    align-content: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+  }
+  .xp-landscape-animal {
+    max-width: 90px !important;
+    width: 90px !important;
+  }
+
+  /* Windows */
+  .xp-window {
+    min-width: 280px;
+  }
+
+  /* Taskbar */
+  .xp-taskbar {
+    height: 34px;
+  }
+  .xp-start-btn {
+    height: 32px;
+  }
+  .xp-task-btn {
+    max-width: 120px;
+    font-size: 10px;
+  }
+
+  /* Login */
+  .xp-login-center {
+    gap: 40px;
+    padding: 24px;
+  }
+
+  /* Explorer sidebar */
+  .xp-explorer-sidebar {
+    width: 140px;
+  }
+
+  /* Contact */
+  .xp-contact-viewer {
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px;
+  }
+
+  /* Clippy */
+  .xp-clippy-img-wrapper {
+    width: 120px;
+  }
+  .clippy-body {
+    transform: scale(1.5);
+  }
+
+  /* Start menu */
+  .xp-start-menu {
+    width: 340px;
+  }
+}
+
+/* === SMALL LAPTOP (769-1024px) === */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .xp-landscape-animal {
+    max-width: 100px !important;
+  }
+  .xp-landscape-label {
+    font-size: 11px;
+  }
+
+  /* Slightly smaller windows */
+  .xp-window {
+    min-width: 300px;
+  }
+
+  .xp-start-menu {
+    width: 360px;
+  }
+
+  .xp-clippy-img-wrapper {
+    width: 130px;
+  }
+  .clippy-body {
+    transform: scale(1.6);
+  }
+}
+
+/* === LARGE DESKTOP (1441px+) === */
+@media (min-width: 1441px) {
+  .xp-taskbar {
+    height: 32px;
+  }
+  .xp-landscape-label {
+    font-size: 13px;
+  }
+}
+
+/* === TOUCH DEVICE ENHANCEMENTS === */
+@media (pointer: coarse) {
+  .xp-win-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+  }
+  .xp-start-item {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .xp-start-footer-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .xp-ql-btn {
+    width: 28px;
+    height: 28px;
+  }
+  .xp-task-btn {
+    height: 28px;
+    padding: 2px 8px;
+  }
+  .camera-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .camera-shutter {
+    width: 48px;
+    height: 36px;
+  }
+  .msn-emo-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+  .msn-send-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  .msn-msg-input {
+    font-size: 14px;
+    min-height: 44px;
+  }
+  .msn-nick-input {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+  .xp-mine-cell {
+    width: 28px;
+    height: 28px;
+  }
+  .xp-wctrl {
+    width: 22px;
+    height: 22px;
+  }
+  /* Thumb actions always visible on touch */
+  .thumb-actions {
+    opacity: 1 !important;
+  }
+}
+
+/* === LANDSCAPE MOBILE === */
+@media (max-height: 480px) and (orientation: landscape) {
+  .xp-taskbar {
+    height: 28px;
+  }
+  .xp-start-btn {
+    height: 26px;
+  }
+  .camera-controls {
+    padding: 4px;
+    gap: 4px;
+  }
+  .wmp-xp-visualization {
+    height: 60px;
+  }
+  .msn-toolbar {
+    display: none;
+  }
+}
