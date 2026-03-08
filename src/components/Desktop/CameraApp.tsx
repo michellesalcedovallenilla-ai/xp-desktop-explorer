@@ -1,16 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Heart, Download, Trash2, X, Glasses, Crown } from 'lucide-react'
+import { Heart, Download, Trash2, X, Glasses, Crown, Beer } from 'lucide-react'
+import { useMediaPipeTracking, type FaceLandmarks, type HandPosition } from '@/hooks/useMediaPipeTracking'
 
 interface Photo {
   id: string
   dataUrl: string
-}
-
-interface FaceBox {
-  x: number
-  y: number
-  width: number
-  height: number
 }
 
 const FILTERS = [
@@ -41,121 +35,58 @@ const SAMPLE_IMAGES = [
   '/animals/pig-flying.png',
 ]
 
-const OVERLAY_SRC = {
-  glasses: '/overlays/glasses.png?v=4',
-  mustache: '/overlays/mustache.png?v=4',
-  hat: '/overlays/hat-original.png?v=2',
+const OVERLAY_PATHS = {
+  glasses: '/overlays/glasses.png',
+  mustache: '/overlays/mustache.png',
+  hat: '/overlays/hat.png',
+  polarcita: '/overlays/polarcita.png',
 }
 
-// Preload overlay images so they're available for canvas drawing
+// Preload overlay images for canvas drawing
 const overlayImages: Record<string, HTMLImageElement> = {}
-function preloadOverlay(src: string) {
-  if (!overlayImages[src]) {
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.src = src
-    overlayImages[src] = img
-  }
-  return overlayImages[src]
+function preloadOverlay(key: string, src: string) {
+  const img = new Image()
+  img.crossOrigin = 'anonymous'
+  img.src = src
+  overlayImages[key] = img
 }
-
-// Preload all overlays on module load
-preloadOverlay(OVERLAY_SRC.glasses)
-preloadOverlay(OVERLAY_SRC.mustache)
-preloadOverlay(OVERLAY_SRC.hat)
+Object.entries(OVERLAY_PATHS).forEach(([key, src]) => preloadOverlay(key, src))
 
 export default function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const viewfinderRef = useRef<HTMLDivElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
-  const faceDetectorRef = useRef<any>(null)
-  const faceLoopRef = useRef<number>(0)
 
   const [photos, setPhotos] = useState<Photo[]>([])
-  const [heartsEnabled, setHeartsEnabled] = useState(false)
   const [flash, setFlash] = useState(false)
   const [viewPhoto, setViewPhoto] = useState<string | null>(null)
   const [hasCamera, setHasCamera] = useState(false)
   const [cameraError, setCameraError] = useState<string | null>(null)
   const [activeFilter, setActiveFilter] = useState(0)
   const [sampleIndex, setSampleIndex] = useState(0)
-  const [disguiseEnabled, setDisguiseEnabled] = useState(false)
-  const [hatEnabled, setHatEnabled] = useState(false)
-  const [faceBox, setFaceBox] = useState<FaceBox | null>(null)
 
-  // Track raw face box in video coords for photo capture
-  const rawFaceRef = useRef<{ x: number; y: number; w: number; h: number } | null>(null)
+  // Overlay toggles
+  const [glassesOn, setGlassesOn] = useState(false)
+  const [mustacheOn, setMustacheOn] = useState(false)
+  const [hatOn, setHatOn] = useState(false)
+  const [heartsOn, setHeartsOn] = useState(false)
+  const [beerOn, setBeerOn] = useState(false)
 
-  const anyOverlay = disguiseEnabled || hatEnabled || heartsEnabled
+  const anyOverlay = glassesOn || mustacheOn || hatOn || heartsOn || beerOn
 
-  // Initialize FaceDetector
-  useEffect(() => {
-    if ('FaceDetector' in window) {
-      try {
-        faceDetectorRef.current = new (window as any).FaceDetector({ fastMode: true, maxDetectedFaces: 1 })
-      } catch { faceDetectorRef.current = null }
-    }
-    return () => cancelAnimationFrame(faceLoopRef.current)
-  }, [])
-
-  // Face detection loop — runs when any overlay is active
-  const runFaceDetection = useCallback(async () => {
-    if (!faceDetectorRef.current || !videoRef.current || !hasCamera) return
-    const video = videoRef.current
-    if (video.readyState < 2) {
-      faceLoopRef.current = requestAnimationFrame(runFaceDetection)
-      return
-    }
-
-    try {
-      const faces = await faceDetectorRef.current.detect(video)
-      if (faces.length > 0) {
-        const bb = faces[0].boundingBox
-        const vw = video.videoWidth
-        const vh = video.videoHeight
-        const container = viewfinderRef.current
-        if (container && vw && vh) {
-          const cw = container.clientWidth
-          const ch = container.clientHeight
-          const scale = Math.min(cw / vw, ch / vh)
-          const offsetX = (cw - vw * scale) / 2
-          const offsetY = (ch - vh * scale) / 2
-          const mirroredX = vw - bb.x - bb.width
-
-          rawFaceRef.current = { x: mirroredX, y: bb.y, w: bb.width, h: bb.height }
-          setFaceBox({
-            x: mirroredX * scale + offsetX,
-            y: bb.y * scale + offsetY,
-            width: bb.width * scale,
-            height: bb.height * scale,
-          })
-        }
-      } else {
-        rawFaceRef.current = null
-        setFaceBox(null)
-      }
-    } catch { /* ignore */ }
-
-    faceLoopRef.current = requestAnimationFrame(runFaceDetection)
-  }, [hasCamera])
-
-  useEffect(() => {
-    if (hasCamera && anyOverlay) {
-      faceLoopRef.current = requestAnimationFrame(runFaceDetection)
-    } else {
-      cancelAnimationFrame(faceLoopRef.current)
-      if (!anyOverlay) { setFaceBox(null); rawFaceRef.current = null }
-    }
-    return () => cancelAnimationFrame(faceLoopRef.current)
-  }, [hasCamera, anyOverlay, runFaceDetection])
+  // MediaPipe tracking
+  const { face, hand, ready: trackingReady } = useMediaPipeTracking(
+    videoRef,
+    hasCamera && anyOverlay
+  )
 
   // Camera start
   const startCamera = useCallback(async () => {
     try {
       if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera API not supported')
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      streamRef.current?.getTracks().forEach((t) => t.stop())
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } })
+      streamRef.current?.getTracks().forEach(t => t.stop())
       streamRef.current = stream
       setHasCamera(true)
       setCameraError(null)
@@ -171,10 +102,107 @@ export default function CameraApp() {
   }, [hasCamera])
 
   useEffect(() => {
-    return () => { streamRef.current?.getTracks().forEach((t) => t.stop()); streamRef.current = null }
+    return () => { streamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current = null }
   }, [])
 
-  // Take photo — draws video + filter + overlays onto canvas
+  // Draw overlays on a canvas context given face/hand landmarks (in pixel coords)
+  const drawOverlays = useCallback((
+    ctx: CanvasRenderingContext2D,
+    w: number, h: number,
+    f: FaceLandmarks | null,
+    hd: HandPosition | null
+  ) => {
+    if (f) {
+      // Convert normalized coords to pixels
+      const eyeCenter = {
+        x: (f.leftEye.x + f.rightEye.x) / 2 * w,
+        y: (f.leftEye.y + f.rightEye.y) / 2 * h,
+      }
+      const faceW = f.faceWidth * w
+      const faceH = f.faceHeight * h
+      const rot = f.rotation
+
+      if (glassesOn) {
+        const img = overlayImages.glasses
+        if (img?.complete && img.naturalWidth) {
+          const gw = faceW * 1.15
+          const gh = gw * (img.naturalHeight / img.naturalWidth)
+          ctx.save()
+          ctx.translate(eyeCenter.x, eyeCenter.y)
+          ctx.rotate(rot)
+          ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
+          ctx.restore()
+        }
+      }
+
+      if (mustacheOn) {
+        const img = overlayImages.mustache
+        if (img?.complete && img.naturalWidth) {
+          const mx = f.upperLip.x * w
+          const my = f.upperLip.y * h
+          const mw = faceW * 0.55
+          const mh = mw * (img.naturalHeight / img.naturalWidth)
+          ctx.save()
+          ctx.translate(mx, my)
+          ctx.rotate(rot)
+          ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
+          ctx.restore()
+        }
+      }
+
+      if (hatOn) {
+        const img = overlayImages.hat
+        if (img?.complete && img.naturalWidth) {
+          const hx = f.forehead.x * w
+          const hy = f.forehead.y * h
+          const hw = faceW * 1.4
+          const hh = hw * (img.naturalHeight / img.naturalWidth)
+          ctx.save()
+          ctx.translate(hx, hy)
+          ctx.rotate(rot)
+          ctx.drawImage(img, -hw / 2, -hh * 0.85, hw, hh)
+          ctx.restore()
+        }
+      }
+
+      if (heartsOn) {
+        const foreheadX = f.forehead.x * w
+        const foreheadY = f.forehead.y * h
+        const heartSize = Math.max(16, faceW * 0.14)
+        ctx.save()
+        ctx.textAlign = 'center'
+        ctx.font = `${heartSize}px serif`
+        const positions = [
+          { dx: 0, dy: -faceH * 0.15 },
+          { dx: -faceW * 0.18, dy: -faceH * 0.25 },
+          { dx: faceW * 0.18, dy: -faceH * 0.25 },
+          { dx: -faceW * 0.08, dy: -faceH * 0.35 },
+          { dx: faceW * 0.08, dy: -faceH * 0.35 },
+        ]
+        for (const p of positions) {
+          ctx.fillText('❤️', foreheadX + p.dx, foreheadY + p.dy)
+        }
+        ctx.restore()
+      }
+    }
+
+    if (hd && beerOn) {
+      const img = overlayImages.polarcita
+      if (img?.complete && img.naturalWidth) {
+        const px = hd.palmCenter.x * w
+        const py = hd.palmCenter.y * h
+        const bh = hd.handSize * h * 2.5
+        const bw = bh * (img.naturalWidth / img.naturalHeight)
+        ctx.save()
+        ctx.translate(px, py)
+        ctx.rotate(hd.rotation - Math.PI / 2)
+        ctx.drawImage(img, -bw / 2, -bh * 0.7, bw, bh)
+        ctx.restore()
+      }
+    }
+  }, [glassesOn, mustacheOn, hatOn, heartsOn, beerOn])
+
+  // Take photo
   const takePhoto = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -188,8 +216,7 @@ export default function CameraApp() {
       h = video.videoHeight || 480
       canvas.width = w
       canvas.height = h
-
-      // Mirror the canvas to match the mirrored video display
+      // Mirror
       ctx.save()
       ctx.translate(w, 0)
       ctx.scale(-1, 1)
@@ -208,62 +235,13 @@ export default function CameraApp() {
     }
 
     ctx.filter = 'none'
-
-    // Draw overlays using raw face coords (already mirrored in rawFaceRef)
-    const rf = rawFaceRef.current
-    if (rf) {
-      const fx = rf.x, fy = rf.y, fw = rf.w, fh = rf.h
-
-      if (disguiseEnabled) {
-        const glasses = overlayImages[OVERLAY_SRC.glasses]
-        if (glasses?.complete) {
-          const ow = fw * 1.08, oh = fh * 0.24
-          ctx.drawImage(glasses, fx + (fw - ow) / 2, fy + fh * 0.28, ow, oh)
-        }
-        const mustache = overlayImages[OVERLAY_SRC.mustache]
-        if (mustache?.complete) {
-          const ow = fw * 0.72, oh = fh * 0.18
-          ctx.drawImage(mustache, fx + (fw - ow) / 2, fy + fh * 0.62, ow, oh)
-        }
-      }
-
-      if (hatEnabled) {
-        const hat = overlayImages[OVERLAY_SRC.hat]
-        if (hat?.complete) {
-          const ow = fw * 1.15, oh = fh * 0.5
-          ctx.drawImage(hat, fx + (fw - ow) / 2, fy - oh * 0.62, ow, oh)
-        }
-      }
-
-      if (heartsEnabled) {
-        ctx.textAlign = 'center'
-        ctx.font = `${Math.max(24, Math.round(fh * 0.16))}px serif`
-        const heartPositions = [
-          { dx: 0, dy: -fh * 0.12 },
-          { dx: -fw * 0.2, dy: -fh * 0.2 },
-          { dx: fw * 0.2, dy: -fh * 0.2 },
-        ]
-        for (const hp of heartPositions) {
-          ctx.fillText('❤️', fx + fw / 2 + hp.dx, fy + hp.dy)
-        }
-      }
-    } else if (heartsEnabled) {
-      // fallback when no face is detected
-      const baseSize = Math.max(28, Math.round(h * 0.08))
-      ctx.textAlign = 'center'
-      ctx.font = `${baseSize}px serif`
-      const cx = w / 2
-      const cy = h * 0.2
-      ctx.fillText('❤️', cx, cy)
-      ctx.fillText('❤️', cx - baseSize * 0.9, cy + baseSize * 0.05)
-      ctx.fillText('❤️', cx + baseSize * 0.9, cy + baseSize * 0.05)
-    }
+    drawOverlays(ctx, w, h, face, hand)
 
     const dataUrl = canvas.toDataURL('image/png')
-    setPhotos((prev) => [{ id: Date.now().toString(), dataUrl }, ...prev])
+    setPhotos(prev => [{ id: Date.now().toString(), dataUrl }, ...prev])
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
-  }, [hasCamera, activeFilter, disguiseEnabled, hatEnabled, heartsEnabled])
+  }, [hasCamera, activeFilter, face, hand, drawOverlays])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
@@ -272,46 +250,129 @@ export default function CameraApp() {
     a.click()
   }
 
-  const cycleSample = () => setSampleIndex((prev) => (prev + 1) % SAMPLE_IMAGES.length)
-
+  const cycleSample = () => setSampleIndex(prev => (prev + 1) % SAMPLE_IMAGES.length)
   const filterStyle = FILTERS[activeFilter].css
-  const hasFaceApi = 'FaceDetector' in window
 
-  // Build overlay styles from faceBox (display coordinates)
-  const makeOverlayStyle = (
-    xOffset: number, yOffset: number,
-    wMul: number, hMul: number
-  ): React.CSSProperties | null => {
-    if (!faceBox) return null
-    return {
-      position: 'absolute',
-      left: faceBox.x + faceBox.width * xOffset,
-      top: faceBox.y + faceBox.height * yOffset,
-      width: faceBox.width * wMul,
-      height: faceBox.height * hMul,
-      pointerEvents: 'none',
-      zIndex: 10,
-      objectFit: 'contain',
-      transition: 'all 0.06s linear',
+  // Convert face/hand landmarks to CSS overlay positions for live preview
+  const getOverlayCSS = useCallback((
+    container: HTMLDivElement | null
+  ) => {
+    if (!container) return { glasses: null, mustache: null, hat: null, hearts: [] as React.CSSProperties[], beer: null }
+    const cw = container.clientWidth
+    const ch = container.clientHeight
+
+    let glasses: React.CSSProperties | null = null
+    let mustache: React.CSSProperties | null = null
+    let hat: React.CSSProperties | null = null
+    let hearts: React.CSSProperties[] = []
+    let beer: React.CSSProperties | null = null
+
+    if (face) {
+      const eyeCenter = {
+        x: (face.leftEye.x + face.rightEye.x) / 2 * cw,
+        y: (face.leftEye.y + face.rightEye.y) / 2 * ch,
+      }
+      const faceW = face.faceWidth * cw
+      const faceH = face.faceHeight * ch
+      const rotDeg = (face.rotation * 180) / Math.PI
+
+      if (glassesOn) {
+        const gw = faceW * 1.15
+        const gh = gw * 0.35
+        glasses = {
+          position: 'absolute',
+          left: eyeCenter.x - gw / 2,
+          top: eyeCenter.y - gh / 2,
+          width: gw,
+          height: gh,
+          transform: `rotate(${rotDeg}deg)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+
+      if (mustacheOn) {
+        const mx = face.upperLip.x * cw
+        const my = face.upperLip.y * ch
+        const mw = faceW * 0.55
+        const mh = mw * 0.35
+        mustache = {
+          position: 'absolute',
+          left: mx - mw / 2,
+          top: my - mh / 2,
+          width: mw,
+          height: mh,
+          transform: `rotate(${rotDeg}deg)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+
+      if (hatOn) {
+        const hx = face.forehead.x * cw
+        const hy = face.forehead.y * ch
+        const hw = faceW * 1.4
+        const hh = hw * 0.75
+        hat = {
+          position: 'absolute',
+          left: hx - hw / 2,
+          top: hy - hh * 0.85,
+          width: hw,
+          height: hh,
+          transform: `rotate(${rotDeg}deg)`,
+          pointerEvents: 'none',
+          zIndex: 10,
+          objectFit: 'contain',
+        }
+      }
+
+      if (heartsOn) {
+        const foreheadX = face.forehead.x * cw
+        const foreheadY = face.forehead.y * ch
+        const positions = [
+          { dx: 0, dy: -faceH * 0.15, size: faceW * 0.14 },
+          { dx: -faceW * 0.18, dy: -faceH * 0.25, size: faceW * 0.12 },
+          { dx: faceW * 0.18, dy: -faceH * 0.25, size: faceW * 0.12 },
+          { dx: -faceW * 0.08, dy: -faceH * 0.35, size: faceW * 0.1 },
+          { dx: faceW * 0.08, dy: -faceH * 0.35, size: faceW * 0.1 },
+        ]
+        hearts = positions.map(p => ({
+          position: 'absolute' as const,
+          left: foreheadX + p.dx - p.size / 2,
+          top: foreheadY + p.dy - p.size / 2,
+          fontSize: p.size,
+          pointerEvents: 'none' as const,
+          zIndex: 10,
+          filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))',
+        }))
+      }
     }
-  }
 
-  const glassesStyle = disguiseEnabled ? makeOverlayStyle(-0.04, 0.28, 1.08, 0.24) : null
-  const mustacheStyle = disguiseEnabled ? makeOverlayStyle(0.14, 0.62, 0.72, 0.18) : null
-  const hatStyle = hatEnabled ? makeOverlayStyle(-0.08, -0.62, 1.15, 0.5) : null
+    if (hand && beerOn) {
+      const px = hand.palmCenter.x * cw
+      const py = hand.palmCenter.y * ch
+      const bh = hand.handSize * ch * 2.5
+      const bw = bh * 0.35
+      const rotDeg = ((hand.rotation - Math.PI / 2) * 180) / Math.PI
+      beer = {
+        position: 'absolute',
+        left: px - bw / 2,
+        top: py - bh * 0.7,
+        width: bw,
+        height: bh,
+        transform: `rotate(${rotDeg}deg)`,
+        pointerEvents: 'none',
+        zIndex: 10,
+        objectFit: 'contain',
+      }
+    }
 
-  const showCenteredDisguise = disguiseEnabled && (!hasFaceApi || !faceBox) && hasCamera
-  const showCenteredHat = hatEnabled && (!hasFaceApi || !faceBox) && hasCamera
-  const showCenteredHearts = heartsEnabled && (!faceBox || !hasFaceApi) && hasCamera
+    return { glasses, mustache, hat, hearts, beer }
+  }, [face, hand, glassesOn, mustacheOn, hatOn, heartsOn, beerOn])
 
-  // Hearts above head (display)
-  const heartOverlays = heartsEnabled && faceBox ? [
-    { dx: 0, dy: -0.14, size: 0.15 },
-    { dx: -0.2, dy: -0.22, size: 0.12 },
-    { dx: 0.2, dy: -0.22, size: 0.12 },
-    { dx: -0.1, dy: -0.3, size: 0.1 },
-    { dx: 0.1, dy: -0.3, size: 0.1 },
-  ] : []
+  const overlays = getOverlayCSS(viewfinderRef.current)
 
   return (
     <div className="camera-app">
@@ -363,52 +424,41 @@ export default function CameraApp() {
           mixBlendMode: 'multiply'
         }} />
 
-        {/* Face-tracked overlays */}
-        {glassesStyle && <img src={OVERLAY_SRC.glasses} alt="" style={glassesStyle} />}
-        {mustacheStyle && <img src={OVERLAY_SRC.mustache} alt="" style={mustacheStyle} />}
-        {hatStyle && <img src={OVERLAY_SRC.hat} alt="" style={hatStyle} />}
-
-        {/* Face-tracked hearts above head */}
-        {faceBox && heartOverlays.map((h, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            left: faceBox.x + faceBox.width * (0.5 + h.dx) - faceBox.width * h.size / 2,
-            top: faceBox.y + faceBox.height * h.dy,
-            fontSize: faceBox.width * h.size,
-            pointerEvents: 'none',
-            zIndex: 10,
-            transition: 'all 0.06s linear',
-            filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))',
+        {/* Loading indicator */}
+        {hasCamera && anyOverlay && !trackingReady && (
+          <div style={{
+            position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+            background: 'rgba(0,0,0,0.7)', color: '#8cf', padding: '4px 12px',
+            borderRadius: 4, fontSize: 10, fontFamily: 'Tahoma, sans-serif', zIndex: 20,
           }}>
-            ❤️
+            Loading face tracking...
           </div>
+        )}
+
+        {/* Live overlays */}
+        {overlays.glasses && <img src={OVERLAY_PATHS.glasses} alt="" style={overlays.glasses} />}
+        {overlays.mustache && <img src={OVERLAY_PATHS.mustache} alt="" style={overlays.mustache} />}
+        {overlays.hat && <img src={OVERLAY_PATHS.hat} alt="" style={overlays.hat} />}
+        {overlays.beer && <img src={OVERLAY_PATHS.polarcita} alt="" style={overlays.beer} />}
+
+        {overlays.hearts.map((style, i) => (
+          <div key={i} style={style}>❤️</div>
         ))}
 
-        {/* Centered fallbacks */}
-        {showCenteredDisguise && (
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4
-          }}>
-            <img src={OVERLAY_SRC.glasses} alt="" style={{ width: '40%', opacity: 0.9 }} />
-            <img src={OVERLAY_SRC.mustache} alt="" style={{ width: '30%', opacity: 0.9 }} />
+        {/* Centered fallbacks when no face detected */}
+        {hasCamera && glassesOn && !face && trackingReady && (
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}>
+            <img src={OVERLAY_PATHS.glasses} alt="" style={{ width: '40%' }} />
           </div>
         )}
-        {showCenteredHat && (
-          <div style={{ position: 'absolute', top: '5%', left: 0, right: 0, pointerEvents: 'none', display: 'flex', justifyContent: 'center' }}>
-            <img src={OVERLAY_SRC.hat} alt="" style={{ width: '45%', opacity: 0.95 }} />
-          </div>
-        )}
-
-        {/* Centered heart fallback */}
-        {showCenteredHearts && (
+        {hasCamera && heartsOn && !face && trackingReady && (
           <div style={{
             position: 'absolute', top: '10%', left: 0, right: 0,
-            pointerEvents: 'none', display: 'flex', justifyContent: 'center', gap: 14, zIndex: 10
+            pointerEvents: 'none', display: 'flex', justifyContent: 'center', gap: 14, zIndex: 10, opacity: 0.5
           }}>
-            <span style={{ fontSize: 34, filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
-            <span style={{ fontSize: 28, transform: 'translateY(8px)', filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
-            <span style={{ fontSize: 34, filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))' }}>❤️</span>
+            <span style={{ fontSize: 34 }}>❤️</span>
+            <span style={{ fontSize: 28, transform: 'translateY(8px)' }}>❤️</span>
+            <span style={{ fontSize: 34 }}>❤️</span>
           </div>
         )}
 
@@ -443,29 +493,32 @@ export default function CameraApp() {
 
       {/* Controls */}
       <div className="camera-controls">
-        <button className={`camera-btn ${heartsEnabled ? 'active' : ''}`} onClick={() => setHeartsEnabled(!heartsEnabled)}>
-          <Heart size={18} fill={heartsEnabled ? '#ff4466' : 'none'} />
+        <button className={`camera-btn ${heartsOn ? 'active' : ''}`} onClick={() => setHeartsOn(!heartsOn)}>
+          <Heart size={18} fill={heartsOn ? '#ff4466' : 'none'} />
         </button>
-        <button className={`camera-btn ${hatEnabled ? 'active' : ''}`} onClick={() => setHatEnabled(!hatEnabled)} title="Hat">
-          <Crown size={18} color={hatEnabled ? '#ff4466' : undefined} />
+        <button className={`camera-btn ${hatOn ? 'active' : ''}`} onClick={() => setHatOn(!hatOn)} title="Hat">
+          <Crown size={18} color={hatOn ? '#ff4466' : undefined} />
         </button>
         <button className="camera-btn camera-shutter" onClick={takePhoto}>
           <div className="shutter-circle" />
         </button>
-        <button className={`camera-btn ${disguiseEnabled ? 'active' : ''}`} onClick={() => setDisguiseEnabled(!disguiseEnabled)}>
-          <Glasses size={18} color={disguiseEnabled ? '#ffcc00' : undefined} />
+        <button className={`camera-btn ${glassesOn ? 'active' : ''}`} onClick={() => setGlassesOn(!glassesOn)} title="Glasses">
+          <Glasses size={18} color={glassesOn ? '#ffcc00' : undefined} />
+        </button>
+        <button className={`camera-btn ${beerOn ? 'active' : ''}`} onClick={() => setBeerOn(!beerOn)} title="Polarcita">
+          <Beer size={18} color={beerOn ? '#f0a030' : undefined} />
         </button>
       </div>
 
       {/* Gallery */}
       {photos.length > 0 && (
         <div className="camera-gallery">
-          {photos.map((photo) => (
+          {photos.map(photo => (
             <div key={photo.id} className="camera-thumb" onClick={() => setViewPhoto(photo.dataUrl)}>
               <img src={photo.dataUrl} alt="Captured" />
               <div className="thumb-actions">
-                <button onClick={(e) => { e.stopPropagation(); downloadPhoto(photo.dataUrl) }}><Download size={10} /></button>
-                <button onClick={(e) => { e.stopPropagation(); setPhotos((p) => p.filter((pp) => pp.id !== photo.id)) }}><Trash2 size={10} /></button>
+                <button onClick={e => { e.stopPropagation(); downloadPhoto(photo.dataUrl) }}><Download size={10} /></button>
+                <button onClick={e => { e.stopPropagation(); setPhotos(p => p.filter(pp => pp.id !== photo.id)) }}><Trash2 size={10} /></button>
               </div>
             </div>
           ))}
