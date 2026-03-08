@@ -7,6 +7,7 @@ import DesktopIcon from './DesktopIcon'
 const Desktop = () => {
   const { desktopIcons, selectedIconId, setSelectedIconId } = useSystemStore()
   const { openWindow } = useWindowStore()
+  const { showError } = useErrorDialogStore()
 
   const handleDesktopClick = useCallback(() => {
     setSelectedIconId(null)
