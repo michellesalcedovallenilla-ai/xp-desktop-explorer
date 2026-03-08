@@ -127,7 +127,11 @@ const DesktopIcon = ({ icon, isSelected, onSelect, onDoubleClick }: Props) => {
         handleMouseDown(e)
       }}
       onDoubleClick={() => {
-        onDoubleClick()
+        if (icon.action === 'portfolio-link') {
+          window.open('https://readymag.website/u2801101920/5411866/', '_blank')
+        } else {
+          onDoubleClick()
+        }
       }}
     >
       {animal && !imgError ? (
