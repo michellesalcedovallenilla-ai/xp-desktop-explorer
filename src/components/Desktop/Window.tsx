@@ -60,7 +60,7 @@ export default function Window({ window: win }: Props) {
   const isFocused = win.zIndex === nextZIndex - 1
   const ContentComponent = contentComponents[win.type] || Finder
   const icon = typeIcons[win.type] || '📁'
-  const hasOwnMenu = ['paint', 'minesweeper', 'solitaire', 'ie', 'music'].includes(
+  const hasOwnMenu = ['paint', 'minesweeper', 'solitaire', 'ie', 'music', 'messenger'].includes(
     win.type
   )
 
