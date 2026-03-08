@@ -285,7 +285,7 @@ export default function CameraApp() {
           top: eyeCenter.y - gh / 2,
           width: gw,
           height: gh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
