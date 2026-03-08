@@ -75,7 +75,7 @@ export default function CameraApp() {
   const anyOverlay = mustacheOn || hatOn || beerOn || arepaOn
 
   // MediaPipe tracking
-  const { face, hand, ready: trackingReady } = useMediaPipeTracking(
+  const { face, leftHand, rightHand, ready: trackingReady } = useMediaPipeTracking(
     videoRef,
     hasCamera && anyOverlay
   )
@@ -109,7 +109,8 @@ export default function CameraApp() {
     ctx: CanvasRenderingContext2D,
     w: number, h: number,
     f: FaceLandmarks | null,
-    hd: HandPosition | null
+    lh: HandPosition | null,
+    rh: HandPosition | null
   ) => {
     const toPx = (p: { x: number; y: number }) => ({ x: p.x * w, y: p.y * h })
     const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
@@ -168,31 +169,31 @@ export default function CameraApp() {
 
     }
 
-    if (hd && beerOn) {
+    if (lh && beerOn) {
       const img = overlayImages.polarcita
       if (img?.complete && img.naturalWidth) {
-        const palm = toPx(hd.palmCenter)
-        const handWidthPx = hd.handWidth * w
+        const palm = toPx(lh.palmCenter)
+        const handWidthPx = lh.handWidth * w
         const bw = Math.max(handWidthPx * 2.0, 75)
         const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(palm.x, palm.y)
-        ctx.rotate(hd.rotation + Math.PI / 2)
+        ctx.rotate(lh.rotation + Math.PI / 2)
         ctx.drawImage(img, -bw / 2, -bh * 0.56, bw, bh)
         ctx.restore()
       }
     }
 
-    if (hd && arepaOn) {
+    if (rh && arepaOn) {
       const img = overlayImages.arepa
       if (img?.complete && img.naturalWidth) {
-        const palm = toPx(hd.palmCenter)
-        const handWidthPx = hd.handWidth * w
+        const palm = toPx(rh.palmCenter)
+        const handWidthPx = rh.handWidth * w
         const aw = Math.max(handWidthPx * 1.8, 70)
         const ah = aw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
         ctx.translate(palm.x, palm.y)
-        ctx.rotate(hd.rotation)
+        ctx.rotate(rh.rotation)
         ctx.drawImage(img, -aw / 2, -ah / 2, aw, ah)
         ctx.restore()
       }
@@ -232,13 +233,13 @@ export default function CameraApp() {
     }
 
     ctx.filter = 'none'
-    drawOverlays(ctx, w, h, face, hand)
+    drawOverlays(ctx, w, h, face, leftHand, rightHand)
 
     const dataUrl = canvas.toDataURL('image/png')
     setPhotos(prev => [{ id: Date.now().toString(), dataUrl }, ...prev])
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
-  }, [hasCamera, activeFilter, face, hand, drawOverlays])
+  }, [hasCamera, activeFilter, face, leftHand, rightHand, drawOverlays])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
@@ -344,16 +345,16 @@ export default function CameraApp() {
 
     }
 
-    if (hand && beerOn) {
+    if (leftHand && beerOn) {
       const beerImg = overlayImages.polarcita
-      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
-      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
-      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const palm = mapToViewfinder(leftHand.palmCenter.x, leftHand.palmCenter.y, container)
+      const indexMcp = mapToViewfinder(leftHand.palmCenter.x - leftHand.handWidth / 2, leftHand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(leftHand.palmCenter.x + leftHand.handWidth / 2, leftHand.palmCenter.y, container)
       const handWidthPx = dist(indexMcp, pinkyMcp)
       const bw = Math.max(handWidthPx * 2.0, 50)
       const bhRatio = beerImg?.naturalWidth ? (beerImg.naturalHeight / beerImg.naturalWidth) : (1 / 0.35)
       const bh = bw * bhRatio
-      const rotDeg = ((hand.rotation + Math.PI / 2) * 180) / Math.PI
+      const rotDeg = ((leftHand.rotation + Math.PI / 2) * 180) / Math.PI
       beer = {
         position: 'absolute',
         left: palm.x - bw / 2,
@@ -368,16 +369,16 @@ export default function CameraApp() {
     }
 
     let arepa: React.CSSProperties | null = null
-    if (hand && arepaOn) {
+    if (rightHand && arepaOn) {
       const arepaImg = overlayImages.arepa
-      const palm = mapToViewfinder(hand.palmCenter.x, hand.palmCenter.y, container)
-      const indexMcp = mapToViewfinder(hand.palmCenter.x - hand.handWidth / 2, hand.palmCenter.y, container)
-      const pinkyMcp = mapToViewfinder(hand.palmCenter.x + hand.handWidth / 2, hand.palmCenter.y, container)
+      const palm = mapToViewfinder(rightHand.palmCenter.x, rightHand.palmCenter.y, container)
+      const indexMcp = mapToViewfinder(rightHand.palmCenter.x - rightHand.handWidth / 2, rightHand.palmCenter.y, container)
+      const pinkyMcp = mapToViewfinder(rightHand.palmCenter.x + rightHand.handWidth / 2, rightHand.palmCenter.y, container)
       const handWidthPx = dist(indexMcp, pinkyMcp)
       const aw = Math.max(handWidthPx * 1.8, 45)
       const ahRatio = arepaImg?.naturalWidth ? (arepaImg.naturalHeight / arepaImg.naturalWidth) : 1
       const ah = aw * ahRatio
-      const rotDeg = ((hand.rotation) * 180) / Math.PI
+      const rotDeg = ((rightHand.rotation) * 180) / Math.PI
       arepa = {
         position: 'absolute',
         left: palm.x - aw / 2,
@@ -392,7 +393,7 @@ export default function CameraApp() {
     }
 
     return { mustache, hat, beer, arepa }
-  }, [face, hand, mustacheOn, hatOn, beerOn, arepaOn])
+  }, [face, leftHand, rightHand, mustacheOn, hatOn, beerOn, arepaOn])
 
   const overlays = getOverlayCSS(viewfinderRef.current)
 

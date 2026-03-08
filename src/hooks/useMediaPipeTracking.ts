@@ -42,6 +42,8 @@ export interface HandPosition {
 interface TrackingResult {
   face: FaceLandmarks | null
   hand: HandPosition | null
+  leftHand: HandPosition | null
+  rightHand: HandPosition | null
 }
 
 const FACE = {
@@ -132,11 +134,31 @@ function smoothHand(prev: HandPosition | null, next: HandPosition): HandPosition
   }
 }
 
+function extractHand(lm: { x: number; y: number }[]): HandPosition {
+  const wrist = mirror2(lm[HAND.WRIST])
+  const palmCenter = mirror2(lm[HAND.PALM_CENTER])
+  const indexMcp = mirror2(lm[HAND.INDEX_MCP])
+  const pinkyMcp = mirror2(lm[HAND.PINKY_MCP])
+  const middleTip = mirror2(lm[HAND.MIDDLE_TIP])
+
+  const handWidth = dist2(indexMcp, pinkyMcp)
+  const handHeight = dist2(middleTip, wrist)
+
+  return {
+    palmCenter,
+    wrist,
+    handWidth,
+    handHeight,
+    handSize: Math.max(handWidth, handHeight),
+    rotation: Math.atan2(indexMcp.y - pinkyMcp.y, indexMcp.x - pinkyMcp.x),
+  }
+}
+
 export function useMediaPipeTracking(
   videoRef: React.RefObject<HTMLVideoElement | null>,
   enabled: boolean
 ) {
-  const [tracking, setTracking] = useState<TrackingResult>({ face: null, hand: null })
+  const [tracking, setTracking] = useState<TrackingResult>({ face: null, hand: null, leftHand: null, rightHand: null })
   const faceLandmarkerRef = useRef<FaceLandmarker | null>(null)
   const handLandmarkerRef = useRef<HandLandmarker | null>(null)
   const loopRef = useRef<number>(0)
@@ -144,6 +166,8 @@ export function useMediaPipeTracking(
   const [ready, setReady] = useState(false)
   const smoothedFaceRef = useRef<FaceLandmarks | null>(null)
   const smoothedHandRef = useRef<HandPosition | null>(null)
+  const smoothedLeftHandRef = useRef<HandPosition | null>(null)
+  const smoothedRightHandRef = useRef<HandPosition | null>(null)
 
   useEffect(() => {
     if (!enabled || initRef.current) return
@@ -176,7 +200,7 @@ export function useMediaPipeTracking(
               delegate: 'GPU',
             },
             runningMode: 'VIDEO',
-            numHands: 1,
+            numHands: 2,
             minHandDetectionConfidence: 0.55,
             minTrackingConfidence: 0.55,
           }),
@@ -218,6 +242,8 @@ export function useMediaPipeTracking(
 
       let face: FaceLandmarks | null = null
       let hand: HandPosition | null = null
+      let leftHand: HandPosition | null = null
+      let rightHand: HandPosition | null = null
 
       if (faceResults.faceLandmarks?.length) {
         const lm = faceResults.faceLandmarks[0]
@@ -257,34 +283,40 @@ export function useMediaPipeTracking(
         smoothedFaceRef.current = null
       }
 
+      // Process hands with handedness
       if (handResults.landmarks?.length) {
-        const lm = handResults.landmarks[0]
-
-        const wrist = mirror2(lm[HAND.WRIST])
-        const palmCenter = mirror2(lm[HAND.PALM_CENTER])
-        const indexMcp = mirror2(lm[HAND.INDEX_MCP])
-        const pinkyMcp = mirror2(lm[HAND.PINKY_MCP])
-        const middleTip = mirror2(lm[HAND.MIDDLE_TIP])
-
-        const handWidth = dist2(indexMcp, pinkyMcp)
-        const handHeight = dist2(middleTip, wrist)
-
-        const nextHand: HandPosition = {
-          palmCenter,
-          wrist,
-          handWidth,
-          handHeight,
-          handSize: Math.max(handWidth, handHeight),
-          rotation: Math.atan2(indexMcp.y - pinkyMcp.y, indexMcp.x - pinkyMcp.x),
-        }
-
-        hand = smoothHand(smoothedHandRef.current, nextHand)
+        // First hand is also kept as generic "hand" for backward compat
+        hand = smoothHand(smoothedHandRef.current, extractHand(handResults.landmarks[0]))
         smoothedHandRef.current = hand
+
+        for (let i = 0; i < handResults.landmarks.length; i++) {
+          const handedness = handResults.handednesses?.[i]?.[0]?.categoryName
+          const extracted = extractHand(handResults.landmarks[i])
+          
+          // MediaPipe reports handedness from camera's perspective
+          // Since we mirror the preview, "Left" from camera = user's right hand visually (but we mirror coordinates too)
+          // After mirroring: MediaPipe "Right" = user's right hand on screen, "Left" = user's left hand on screen
+          if (handedness === 'Left') {
+            // Camera's left = user's right (but mirrored coords make it appear on user's left side)
+            leftHand = smoothHand(smoothedLeftHandRef.current, extracted)
+            smoothedLeftHandRef.current = leftHand
+          } else {
+            // Camera's right = user's left (but mirrored coords make it appear on user's right side)
+            rightHand = smoothHand(smoothedRightHandRef.current, extracted)
+            smoothedRightHandRef.current = rightHand
+          }
+        }
       } else {
         smoothedHandRef.current = null
+        smoothedLeftHandRef.current = null
+        smoothedRightHandRef.current = null
       }
 
-      setTracking({ face, hand })
+      // Clear smoothed refs for hands not detected this frame
+      if (!leftHand) smoothedLeftHandRef.current = null
+      if (!rightHand) smoothedRightHandRef.current = null
+
+      setTracking({ face, hand, leftHand, rightHand })
     } catch {
       // skip frame
     }
