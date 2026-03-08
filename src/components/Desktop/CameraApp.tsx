@@ -325,24 +325,6 @@ export default function CameraApp() {
         }
       }
 
-      if (heartsOn) {
-        const positions = [
-          { dx: 0, dy: -faceHeightPx * 0.25, size: faceWidthPx * 0.14 },
-          { dx: -faceWidthPx * 0.18, dy: -faceHeightPx * 0.35, size: faceWidthPx * 0.12 },
-          { dx: faceWidthPx * 0.18, dy: -faceHeightPx * 0.35, size: faceWidthPx * 0.12 },
-          { dx: -faceWidthPx * 0.08, dy: -faceHeightPx * 0.45, size: faceWidthPx * 0.1 },
-          { dx: faceWidthPx * 0.08, dy: -faceHeightPx * 0.45, size: faceWidthPx * 0.1 },
-        ]
-        hearts = positions.map(p => ({
-          position: 'absolute' as const,
-          left: forehead.x + p.dx - p.size / 2,
-          top: forehead.y + p.dy - p.size / 2,
-          fontSize: p.size,
-          pointerEvents: 'none' as const,
-          zIndex: 10,
-          filter: 'drop-shadow(0 2px 4px rgba(255,0,0,0.4))',
-        }))
-      }
     }
 
     if (hand && beerOn) {
