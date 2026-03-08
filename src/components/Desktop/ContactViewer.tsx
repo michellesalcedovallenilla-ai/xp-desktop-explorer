@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   Mail,
-  Phone,
   Globe,
   Send,
   Linkedin
