@@ -460,12 +460,6 @@ export default function CameraApp() {
           <div key={i} style={style}>❤️</div>
         ))}
 
-        {/* Centered fallbacks when no face detected */}
-        {hasCamera && glassesOn && !face && trackingReady && (
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}>
-            <img src={OVERLAY_PATHS.glasses} alt="" style={{ width: '40%' }} />
-          </div>
-        )}
         {hasCamera && heartsOn && !face && trackingReady && (
           <div style={{
             position: 'absolute', top: '10%', left: 0, right: 0,
