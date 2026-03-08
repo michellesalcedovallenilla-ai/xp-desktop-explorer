@@ -396,7 +396,7 @@ export default function CameraApp() {
         )}
         {showCenteredHat && (
           <div style={{ position: 'absolute', top: '5%', left: 0, right: 0, pointerEvents: 'none', display: 'flex', justifyContent: 'center' }}>
-            <img src="/overlays/hat.png" alt="" style={{ width: '45%', opacity: 0.95 }} />
+            <img src={OVERLAY_SRC.hat} alt="" style={{ width: '45%', opacity: 0.95 }} />
           </div>
         )}
 
