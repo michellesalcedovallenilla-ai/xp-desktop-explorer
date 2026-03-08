@@ -309,21 +309,46 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
-    // Default to iframe for external sites
+    // External sites can't be iframed — show a redirect page
     return (
-      <iframe
-        id={`ie-iframe-${windowId}`}
-        src={currentUrl}
-        style={{
-          width: '100%',
-          height: '100%',
-          border: 'none',
-          backgroundColor: '#fff',
-          display: 'block'
-        }}
-        title="Internet Explorer Browser"
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-      />
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#fff',
+        padding: '40px',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌐</div>
+        <h2 style={{ fontSize: '18px', color: '#333', marginBottom: '8px' }}>
+          Opening External Website
+        </h2>
+        <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px', maxWidth: '400px' }}>
+          This website cannot be displayed inside Internet Explorer due to security restrictions.
+        </p>
+        <a
+          href={currentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            padding: '8px 24px',
+            backgroundColor: '#3168D5',
+            color: '#fff',
+            textDecoration: 'none',
+            borderRadius: '3px',
+            fontSize: '13px',
+            border: '1px solid #2050A0'
+          }}
+        >
+          Open in New Tab →
+        </a>
+        <p style={{ fontSize: '11px', color: '#999', marginTop: '12px' }}>
+          {currentUrl}
+        </p>
+      </div>
     )
   }
 
