@@ -235,8 +235,8 @@ export default function CameraApp() {
     }
   }, [mustacheOn, hatOn, beerOn, arepaOn, plumbobOn, handsOn])
 
-  // Take photo
-  const takePhoto = useCallback(() => {
+  // Actual capture logic
+  const captureNow = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -249,7 +249,6 @@ export default function CameraApp() {
       h = video.videoHeight || 480
       canvas.width = w
       canvas.height = h
-      // Mirror
       ctx.save()
       ctx.translate(w, 0)
       ctx.scale(-1, 1)
@@ -275,6 +274,23 @@ export default function CameraApp() {
     setFlash(true)
     setTimeout(() => setFlash(false), 200)
   }, [hasCamera, activeFilter, face, leftHand, rightHand, drawOverlays])
+
+  // Take photo with 3-second countdown
+  const takePhoto = useCallback(() => {
+    if (countdown !== null) return // already counting
+    setCountdown(3)
+  }, [countdown])
+
+  useEffect(() => {
+    if (countdown === null) return
+    if (countdown === 0) {
+      captureNow()
+      setCountdown(null)
+      return
+    }
+    const timer = setTimeout(() => setCountdown(prev => prev !== null ? prev - 1 : null), 1000)
+    return () => clearTimeout(timer)
+  }, [countdown, captureNow])
 
   const downloadPhoto = (dataUrl: string) => {
     const a = document.createElement('a')
