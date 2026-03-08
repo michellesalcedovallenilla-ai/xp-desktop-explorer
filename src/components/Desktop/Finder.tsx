@@ -40,7 +40,7 @@ const pictures = [
   { label: 'party-cow.png', src: '/pictures/party-cow.png' },
 ]
 
-export default function Finder({ initialPath }: { initialPath?: string }) {
+export default function Finder({ initialPath, windowId, projectId }: { initialPath?: string; windowId?: string; projectId?: string }) {
   const { openWindow } = useWindowStore()
   const [currentPath, setCurrentPath] = useState<string>(initialPath || 'documents')
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null)
