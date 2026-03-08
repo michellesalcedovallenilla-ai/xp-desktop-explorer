@@ -252,7 +252,7 @@ export default function Window({ window: win }: Props) {
           <ContentComponent windowId={win.id} projectId={win.projectId} />
         </div>
 
-        {!['paint', 'ie'].includes(win.type) && (
+        {!['paint', 'ie', 'music'].includes(win.type) && (
           <div className="xp-window-statusbar">
             <span>{win.title}</span>
           </div>
