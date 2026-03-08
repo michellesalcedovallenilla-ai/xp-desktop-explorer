@@ -64,6 +64,7 @@ const App = () => {
         isOpen={isShutdownVisible}
         onClose={() => setShutdownVisible(false)}
         onShutdown={() => {
+          playShutdown()
           setShutdownVisible(false)
           windows.forEach((w) => closeWindow(w.id))
           setLocked(true)
