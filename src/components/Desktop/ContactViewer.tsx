@@ -32,9 +32,6 @@ export default function ContactViewer() {
             <Mail size={14} /> michellesalcedovallenilla@gmail.com
           </div>
           <div className="xp-contact-detail">
-            <Phone size={14} /> (555) 123-4567
-          </div>
-          <div className="xp-contact-detail">
             <Globe size={14} /> www.readymag.website/u2801101920/5411866
           </div>
         </div>
