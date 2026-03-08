@@ -171,6 +171,12 @@ export default function MenuBar() {
                   >
                     <span className="xp-start-item-icon">🃏</span> Solitaire
                   </button>
+                  <button
+                    className="xp-start-item"
+                    onClick={() => openWindow('messenger', 'MSN Messenger')}
+                  >
+                    <span className="xp-start-item-icon">💬</span> MSN Messenger
+                  </button>
                   <div className="xp-start-sep" />
                   <button
                     className="xp-start-item"
