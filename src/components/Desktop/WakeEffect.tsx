@@ -13,13 +13,12 @@ export default function WakeEffect() {
         setShowFlash(true)
         setTimeout(() => {
           setShowFlash(false)
-          setLocked(true)
         }, 300)
       }
     }
     document.addEventListener('visibilitychange', handler)
     return () => document.removeEventListener('visibilitychange', handler)
-  }, [isBooting, isLocked, setLocked])
+  }, [isBooting, isLocked])
 
   return (
     <AnimatePresence>
