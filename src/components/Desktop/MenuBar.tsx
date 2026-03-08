@@ -77,7 +77,15 @@ export default function MenuBar() {
       <div className="xp-start-area" ref={startRef}>
         <button
           className={`xp-start-btn ${startOpen ? 'active' : ''}`}
-          onClick={() => setStartOpen(!startOpen)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setStartOpen(!startOpen)
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setStartOpen(!startOpen)
+          }}
         >
           <img
             src="/38216057e97f444799f1d66485241a79.png"
