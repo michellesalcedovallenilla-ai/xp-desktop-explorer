@@ -17,7 +17,7 @@ const ICON_IMAGES: Record<string, { src: string; alt: string }> = {
   msn: { src: '/animals/michelle.png', alt: 'Michelle - MSN Messenger' },
   portfolio: { src: '/animals/harina-pan.png', alt: 'Harina PAN - Portfolio' },
   myspace: { src: '/animals/cj.png', alt: 'CJ - MySpace' },
-  video: { src: '/animals/cat-video.png', alt: 'Cat - Video Player' }
+  video: { src: '/animals/cat-video.png?v=2', alt: 'Cat - Video Player' }
 }
 
 interface Props {
