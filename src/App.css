@@ -4696,15 +4696,22 @@ textarea {
     touch-action: manipulation;
   }
 
-  /* Keep landscape icon positions but scale down slightly */
+  /* Desktop: keep absolute positioning but boost icon sizes */
+  .desktop {
+    bottom: 38px;
+  }
   .xp-landscape-icon {
     touch-action: none;
+    padding: 6px;
   }
+  /* Scale up all animal icons for easier tapping */
   .xp-landscape-animal {
-    /* Let vw-based sizing handle it, just cap large ones */
+    transform: scale(1.15);
+    transform-origin: center bottom;
   }
   .xp-landscape-label {
-    font-size: 10px;
+    font-size: 11px;
+    padding: 2px 5px;
   }
 
   /* Sun */
@@ -4720,23 +4727,31 @@ textarea {
     height: 32px;
   }
   .xp-win-btn {
-    width: 26px;
-    height: 26px;
-    min-width: 26px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
   }
 
   /* Taskbar */
   .xp-taskbar {
-    height: 36px;
+    height: 38px;
   }
   .xp-start-btn {
-    height: 34px;
-    font-size: 12px;
+    height: 36px;
+    font-size: 13px;
+    padding: 2px 12px 2px 6px;
+    min-width: 80px;
+    z-index: 1001;
+    position: relative;
+  }
+  .xp-start-btn img {
+    width: 24px !important;
+    height: 24px !important;
   }
   .xp-task-btn {
     max-width: 120px;
-    font-size: 10px;
-    height: 26px;
+    font-size: 11px;
+    height: 28px;
   }
   .xp-running-apps .xp-task-btn.widget-btn {
     display: none;
@@ -4745,8 +4760,8 @@ textarea {
     gap: 4px;
   }
   .xp-ql-btn {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
   }
 
   /* Login */
@@ -4775,19 +4790,26 @@ textarea {
     transform: scale(1.3);
   }
 
-  /* Start menu */
+  /* Start menu — touch-friendly */
   .xp-start-menu {
-    width: 340px;
-    max-height: calc(100vh - 44px);
+    width: 360px;
+    max-height: calc(100vh - 46px);
     overflow-y: auto;
+    border-radius: 8px 8px 0 0;
   }
   .xp-start-item {
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 12px;
+    min-height: 36px;
+  }
+  .xp-start-item-icon {
+    font-size: 18px;
+    width: 24px;
   }
   .xp-start-footer-btn {
-    padding: 5px 10px;
-    font-size: 11px;
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
   }
 
   /* Widgets - constrain to viewport */
