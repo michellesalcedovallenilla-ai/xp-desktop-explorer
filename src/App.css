@@ -2282,6 +2282,11 @@
   transform: scaleX(-1);
 }
 
+@keyframes flashFade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 .camera-no-feed {
   display: flex;
   flex-direction: column;

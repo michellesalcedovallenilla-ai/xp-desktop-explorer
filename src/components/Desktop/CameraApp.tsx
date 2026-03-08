@@ -305,7 +305,7 @@ export default function CameraApp() {
             playsInline
             muted
             className="camera-video"
-            style={{ filter: filterStyle, transform: 'scaleX(-1)' }}
+            style={{ filter: filterStyle }}
           />
         ) : (
           <div style={{
