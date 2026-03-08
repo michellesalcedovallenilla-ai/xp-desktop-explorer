@@ -146,12 +146,22 @@ interface Props {
   windowId: string
 }
 
+interface LiveSearchResult {
+  title: string
+  url: string
+  snippet: string
+  displayUrl: string
+}
+
 export default function InternetExplorer({ windowId }: Props) {
   const [addressBar, setAddressBar] = useState(GOOGLE_URL)
   const [currentUrl, setCurrentUrl] = useState(GOOGLE_URL)
   const [history, setHistory] = useState<string[]>([GOOGLE_URL])
   const [historyIndex, setHistoryIndex] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [liveSearchResults, setLiveSearchResults] = useState<LiveSearchResult[]>([])
+  const [liveSearchLoading, setLiveSearchLoading] = useState(false)
+  const [liveSearchError, setLiveSearchError] = useState<string | null>(null)
   const [proxyHtml, setProxyHtml] = useState<string | null>(null)
   const [proxyLoading, setProxyLoading] = useState(false)
   const [proxyError, setProxyError] = useState<string | null>(null)
