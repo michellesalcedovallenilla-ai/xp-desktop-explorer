@@ -15,7 +15,8 @@ const ICON_IMAGES: Record<string, { src: string; alt: string }> = {
   ie: { src: '/animals/cat-flying.png', alt: 'Cat - Internet Explorer' },
   resume: { src: '/animals/cat.png', alt: 'Cat - Resume' },
   msn: { src: '/animals/michelle.png', alt: 'Michelle - MSN Messenger' },
-  portfolio: { src: '/animals/harina-pan.png', alt: 'Harina PAN - Portfolio' }
+  portfolio: { src: '/animals/harina-pan.png', alt: 'Harina PAN - Portfolio' },
+  myspace: { src: '/animals/cj.png', alt: 'CJ - MySpace' }
 }
 
 interface Props {
