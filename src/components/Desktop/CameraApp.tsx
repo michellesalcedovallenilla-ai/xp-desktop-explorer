@@ -105,30 +105,47 @@ export default function CameraApp() {
     return () => { streamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current = null }
   }, [])
 
-  // Draw overlays on a canvas context given face/hand landmarks (in pixel coords)
+  // Draw overlays on a canvas context using normalized landmarks mapped to this canvas space
   const drawOverlays = useCallback((
     ctx: CanvasRenderingContext2D,
     w: number, h: number,
     f: FaceLandmarks | null,
     hd: HandPosition | null
   ) => {
+    const toPx = (p: { x: number; y: number }) => ({ x: p.x * w, y: p.y * h })
+    const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
+    const lerp = (a: { x: number; y: number }, b: { x: number; y: number }, t: number) => ({
+      x: a.x + (b.x - a.x) * t,
+      y: a.y + (b.y - a.y) * t,
+    })
+
     if (f) {
-      const eyeCenterX = ((f.leftEye.x + f.rightEye.x) / 2) * w
-      const eyeCenterY = ((f.leftEye.y + f.rightEye.y) / 2) * h
-      const eyeDistancePx = f.eyeDistance * w
-      const faceW = f.faceWidth * w
-      const faceH = f.faceHeight * h
-      const mouthWidthPx = f.mouthWidth * w
-      const rot = f.rotation
+      const leftEye = toPx(f.leftEye)
+      const rightEye = toPx(f.rightEye)
+      const noseTip = toPx(f.noseTip)
+      const upperLip = toPx(f.upperLip)
+      const mouthLeft = toPx(f.mouthLeft)
+      const mouthRight = toPx(f.mouthRight)
+      const forehead = toPx(f.forehead)
+      const chin = toPx(f.chin)
+      const leftTemple = toPx(f.leftTemple)
+      const rightTemple = toPx(f.rightTemple)
+
+      const eyeCenter = { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 }
+      const eyeDistancePx = dist(leftEye, rightEye)
+      const mouthWidthPx = dist(mouthLeft, mouthRight)
+      const faceHeightPx = dist(forehead, chin)
+      const faceWidthPx = dist(leftTemple, rightTemple)
+      const rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x)
 
       if (glassesOn) {
         const img = overlayImages.glasses
         if (img?.complete && img.naturalWidth) {
-          const gw = Math.max(eyeDistancePx * 2.4, faceW * 0.8)
+          const gw = Math.max(eyeDistancePx * 2.15, faceWidthPx * 0.75)
           const gh = gw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
-          ctx.translate(eyeCenterX, eyeCenterY + faceH * 0.06)
-          ctx.rotate(rot)
+          ctx.translate(eyeCenter.x, eyeCenter.y + faceHeightPx * 0.02)
+          ctx.rotate(rotation)
           ctx.drawImage(img, -gw / 2, -gh / 2, gw, gh)
           ctx.restore()
         }
@@ -137,13 +154,12 @@ export default function CameraApp() {
       if (mustacheOn) {
         const img = overlayImages.mustache
         if (img?.complete && img.naturalWidth) {
-          const mx = ((f.noseTip.x + f.upperLip.x) / 2) * w
-          const my = (f.upperLip.y * h) + faceH * 0.09
-          const mw = Math.max(mouthWidthPx * 1.65, faceW * 0.44)
+          const anchor = lerp(noseTip, upperLip, 0.68)
+          const mw = Math.max(mouthWidthPx * 1.45, faceWidthPx * 0.4)
           const mh = mw * (img.naturalHeight / img.naturalWidth)
           ctx.save()
-          ctx.translate(mx, my)
-          ctx.rotate(rot)
+          ctx.translate(anchor.x, anchor.y + faceHeightPx * 0.02)
+          ctx.rotate(rotation)
           ctx.drawImage(img, -mw / 2, -mh / 2, mw, mh)
           ctx.restore()
         }
@@ -152,35 +168,31 @@ export default function CameraApp() {
       if (hatOn) {
         const img = overlayImages.hat
         if (img?.complete && img.naturalWidth) {
-          const hx = f.forehead.x * w
-          const hy = (f.forehead.y * h) + faceH * 0.2
-          const hw = Math.max(faceW * 1.32, eyeDistancePx * 3.1)
+          const hw = Math.max(faceWidthPx * 1.35, eyeDistancePx * 3)
           const hh = hw * (img.naturalHeight / img.naturalWidth)
+          const hatAnchor = { x: forehead.x, y: forehead.y - faceHeightPx * 0.18 }
           ctx.save()
-          ctx.translate(hx, hy)
-          ctx.rotate(rot)
-          ctx.scale(-1, 1)
-          ctx.drawImage(img, -hw / 2, -hh * 0.72, hw, hh)
+          ctx.translate(hatAnchor.x, hatAnchor.y)
+          ctx.rotate(rotation)
+          ctx.drawImage(img, -hw / 2, -hh * 0.62, hw, hh)
           ctx.restore()
         }
       }
 
       if (heartsOn) {
-        const foreheadX = f.forehead.x * w
-        const foreheadY = f.forehead.y * h
-        const heartSize = Math.max(16, faceW * 0.14)
+        const heartSize = Math.max(16, faceWidthPx * 0.14)
         ctx.save()
         ctx.textAlign = 'center'
         ctx.font = `${heartSize}px serif`
         const positions = [
-          { dx: 0, dy: -faceH * 0.15 },
-          { dx: -faceW * 0.18, dy: -faceH * 0.25 },
-          { dx: faceW * 0.18, dy: -faceH * 0.25 },
-          { dx: -faceW * 0.08, dy: -faceH * 0.35 },
-          { dx: faceW * 0.08, dy: -faceH * 0.35 },
+          { dx: 0, dy: -faceHeightPx * 0.25 },
+          { dx: -faceWidthPx * 0.18, dy: -faceHeightPx * 0.35 },
+          { dx: faceWidthPx * 0.18, dy: -faceHeightPx * 0.35 },
+          { dx: -faceWidthPx * 0.08, dy: -faceHeightPx * 0.45 },
+          { dx: faceWidthPx * 0.08, dy: -faceHeightPx * 0.45 },
         ]
         for (const p of positions) {
-          ctx.fillText('❤️', foreheadX + p.dx, foreheadY + p.dy)
+          ctx.fillText('❤️', forehead.x + p.dx, forehead.y + p.dy)
         }
         ctx.restore()
       }
@@ -189,15 +201,14 @@ export default function CameraApp() {
     if (hd && beerOn) {
       const img = overlayImages.polarcita
       if (img?.complete && img.naturalWidth) {
-        const px = hd.palmCenter.x * w
-        const py = hd.palmCenter.y * h
+        const palm = toPx(hd.palmCenter)
         const handWidthPx = hd.handWidth * w
-        const bw = Math.max(handWidthPx * 1.25, 54)
+        const bw = Math.max(handWidthPx * 1.45, 54)
         const bh = bw * (img.naturalHeight / img.naturalWidth)
         ctx.save()
-        ctx.translate(px, py)
-        ctx.rotate(hd.rotation - Math.PI / 2)
-        ctx.drawImage(img, -bw / 2, -bh * 0.52, bw, bh)
+        ctx.translate(palm.x, palm.y)
+        ctx.rotate(hd.rotation + Math.PI / 2)
+        ctx.drawImage(img, -bw / 2, -bh * 0.56, bw, bh)
         ctx.restore()
       }
     }
