@@ -26,17 +26,21 @@ export default function MenuBar() {
 
   const openWindow = (type: string, title: string) => {
     const { openWindow: ow } = useWindowStore.getState()
+    const vw = window.innerWidth
+    const isMobile = vw <= 480
+    const isTablet = vw > 480 && vw <= 768
     const sizes: Record<string, { w: number; h: number }> = {
-      minesweeper: { w: 320, h: 420 },
-      solitaire: { w: 700, h: 550 },
-      paint: { w: 700, h: 500 },
-      camera: { w: 640, h: 520 },
-      music: { w: 700, h: 500 },
-      ie: { w: 850, h: 600 },
-      contact: { w: 600, h: 500 },
-      resume: { w: 650, h: 550 },
-      about: { w: 700, h: 500 },
-      finder: { w: 750, h: 450 },
+      minesweeper: { w: isMobile ? vw : 320, h: isMobile ? vw : 420 },
+      solitaire: { w: isMobile ? vw : isTablet ? 500 : 700, h: isMobile ? window.innerHeight - 50 : 550 },
+      paint: { w: isMobile ? vw : isTablet ? 500 : 700, h: isMobile ? window.innerHeight - 50 : 500 },
+      camera: { w: isMobile ? vw : isTablet ? 480 : 640, h: isMobile ? window.innerHeight - 50 : 520 },
+      music: { w: isMobile ? vw : isTablet ? 480 : 700, h: isMobile ? window.innerHeight - 50 : 500 },
+      ie: { w: isMobile ? vw : isTablet ? 600 : 850, h: isMobile ? window.innerHeight - 50 : 600 },
+      contact: { w: isMobile ? vw : isTablet ? 480 : 600, h: isMobile ? window.innerHeight - 50 : 500 },
+      resume: { w: isMobile ? vw : isTablet ? 500 : 650, h: isMobile ? window.innerHeight - 50 : 550 },
+      about: { w: isMobile ? vw : isTablet ? 500 : 700, h: isMobile ? window.innerHeight - 50 : 500 },
+      finder: { w: isMobile ? vw : isTablet ? 500 : 750, h: isMobile ? window.innerHeight - 50 : 450 },
+      messenger: { w: isMobile ? vw : isTablet ? 420 : 500, h: isMobile ? window.innerHeight - 50 : 550 },
     }
     const s = sizes[type] || { w: 700, h: 500 }
     ow({
