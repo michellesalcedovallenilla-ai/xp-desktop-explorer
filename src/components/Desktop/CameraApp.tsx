@@ -169,8 +169,13 @@ export default function CameraApp() {
                 borderRadius: 4, cursor: 'pointer', zIndex: 2
               }}
             >
-              📷 Start Camera
+              📷 {cameraError ? 'Retry Camera' : 'Start Camera'}
             </button>
+            {cameraError && (
+              <div style={{ color: '#ff8a8a', fontSize: 10, fontFamily: 'Tahoma, sans-serif', textAlign: 'center', maxWidth: 280 }}>
+                {cameraError}
+              </div>
+            )}
             <div style={{ color: '#666', fontSize: 11, fontFamily: 'Tahoma, sans-serif' }}>
               Or browse sample photos:
             </div>
