@@ -233,17 +233,29 @@ export default function MenuBar() {
                   <div className="xp-start-sep" />
                   <button
                     className="xp-start-item"
-                    onClick={() => openWindow('finder', 'Control Panel')}
+                    onClick={() => {
+                      showError('Control Panel', 'Access denied. You do not have permission to access the Control Panel.')
+                      setStartOpen(false)
+                    }}
                   >
                     <span className="xp-start-item-icon">⚙️</span> Control Panel
                   </button>
                   <button
                     className="xp-start-item"
-                    onClick={() => openWindow('finder', 'Printers and Faxes')}
+                    onClick={() => {
+                      showError('Printers and Faxes', 'Windows cannot find any printers. Make sure a printer is connected and try again.')
+                      setStartOpen(false)
+                    }}
                   >
                     <span className="xp-start-item-icon">🖨️</span> Printers
                   </button>
-                  <button className="xp-start-item">
+                  <button
+                    className="xp-start-item"
+                    onClick={() => {
+                      showError('Help and Support', 'Help is not available. This program has performed an illegal operation.')
+                      setStartOpen(false)
+                    }}
+                  >
                     <span className="xp-start-item-icon">❓</span> Help and
                     Support
                   </button>
