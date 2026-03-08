@@ -320,6 +320,12 @@ export default function InternetExplorer({ windowId }: Props) {
       )
     }
 
+    // Check if it's a portfolio page
+    const portfolioPage = PORTFOLIO_PAGES[currentUrl]
+    if (portfolioPage) {
+      return <PortfolioSite page={portfolioPage} onNavigate={navigateTo} />
+    }
+
     // External sites can't be iframed — show a redirect page
     return (
       <div style={{
