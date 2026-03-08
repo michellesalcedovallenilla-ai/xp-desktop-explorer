@@ -75,7 +75,7 @@ export default function CameraApp() {
   const anyOverlay = mustacheOn || hatOn || beerOn || arepaOn
 
   // MediaPipe tracking
-  const { face, hand, ready: trackingReady } = useMediaPipeTracking(
+  const { face, leftHand, rightHand, ready: trackingReady } = useMediaPipeTracking(
     videoRef,
     hasCamera && anyOverlay
   )
