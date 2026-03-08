@@ -109,7 +109,8 @@ export default function CameraApp() {
     ctx: CanvasRenderingContext2D,
     w: number, h: number,
     f: FaceLandmarks | null,
-    hd: HandPosition | null
+    lh: HandPosition | null,
+    rh: HandPosition | null
   ) => {
     const toPx = (p: { x: number; y: number }) => ({ x: p.x * w, y: p.y * h })
     const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
