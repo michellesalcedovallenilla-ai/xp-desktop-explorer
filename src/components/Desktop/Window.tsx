@@ -43,7 +43,8 @@ const typeIcons: Record<string, string> = {
   solitaire: '🃏',
   ie: '🌐',
   project: '📁',
-  messenger: '💬'
+  messenger: '💬',
+  video: '🎬'
 }
 
 interface Props {
