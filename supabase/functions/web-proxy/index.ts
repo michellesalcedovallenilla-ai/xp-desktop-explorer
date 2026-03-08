@@ -129,8 +129,15 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (err) {
-    console.error('Proxy error:', err)
-    return new Response(JSON.stringify({ error: (err as Error).message || 'Proxy failed' }), {
+    const msg = (err as Error).message || 'Proxy failed'
+    console.error('Proxy error:', msg)
+    // Return 200 with error field so the client handles it gracefully
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+})
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
