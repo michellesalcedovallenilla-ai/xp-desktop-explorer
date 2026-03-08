@@ -294,7 +294,7 @@ export default function InternetExplorer({ windowId }: Props) {
               textTransform: 'uppercase',
             }}>INSTAGRAM</span>
             {/* Share icon */}
-            <div style={{
+            <div onClick={openIg} style={{
               background: 'linear-gradient(to bottom, #7ab0cc 0%, #5a95b5 100%)',
               border: '1px solid #4a85a5',
               borderRadius: '4px',
