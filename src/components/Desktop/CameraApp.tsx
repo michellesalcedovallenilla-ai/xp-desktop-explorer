@@ -291,12 +291,18 @@ export default function CameraApp() {
     let beer: React.CSSProperties | null = null
 
     if (face) {
-      const eyeCenterX = ((face.leftEye.x + face.rightEye.x) / 2) * cw
-      const eyeCenterY = ((face.leftEye.y + face.rightEye.y) / 2) * ch
-      const eyeDistancePx = face.eyeDistance * cw
-      const faceW = face.faceWidth * cw
-      const faceH = face.faceHeight * ch
-      const mouthWidthPx = face.mouthWidth * cw
+      const leftEye = mapToViewfinder(face.leftEye.x, face.leftEye.y, container)
+      const rightEye = mapToViewfinder(face.rightEye.x, face.rightEye.y, container)
+      const forehead = mapToViewfinder(face.forehead.x, face.forehead.y, container)
+      const upperLip = mapToViewfinder(face.upperLip.x, face.upperLip.y, container)
+      const noseTip = mapToViewfinder(face.noseTip.x, face.noseTip.y, container)
+
+      const eyeCenterX = (leftEye.x + rightEye.x) / 2
+      const eyeCenterY = (leftEye.y + rightEye.y) / 2
+      const eyeDistancePx = face.eyeDistance * pxScale
+      const faceW = face.faceWidth * pxScale
+      const faceH = face.faceHeight * (vh * scale)
+      const mouthWidthPx = face.mouthWidth * pxScale
       const rotDeg = (face.rotation * 180) / Math.PI
 
       if (glassesOn) {
@@ -316,8 +322,8 @@ export default function CameraApp() {
       }
 
       if (mustacheOn) {
-        const mx = ((face.noseTip.x + face.upperLip.x) / 2) * cw
-        const my = (face.upperLip.y * ch) + faceH * 0.03
+        const mx = (noseTip.x + upperLip.x) / 2
+        const my = upperLip.y + faceH * 0.03
         const mw = Math.max(mouthWidthPx * 1.2, faceW * 0.34)
         const mh = mw * 0.35
         mustache = {
@@ -334,8 +340,8 @@ export default function CameraApp() {
       }
 
       if (hatOn) {
-        const hx = face.forehead.x * cw
-        const hy = (face.forehead.y * ch) + faceH * 0.08
+        const hx = forehead.x
+        const hy = forehead.y + faceH * 0.08
         const hw = Math.max(faceW * 1.28, eyeDistancePx * 3.0)
         const hh = hw * 0.75
         hat = {
@@ -344,7 +350,7 @@ export default function CameraApp() {
           top: hy - hh * 0.72,
           width: hw,
           height: hh,
-          transform: `rotate(${rotDeg}deg) scaleX(-1)`,
+          transform: `rotate(${rotDeg}deg)`,
           pointerEvents: 'none',
           zIndex: 10,
           objectFit: 'contain',
@@ -352,8 +358,6 @@ export default function CameraApp() {
       }
 
       if (heartsOn) {
-        const foreheadX = face.forehead.x * cw
-        const foreheadY = face.forehead.y * ch
         const positions = [
           { dx: 0, dy: -faceH * 0.15, size: faceW * 0.14 },
           { dx: -faceW * 0.18, dy: -faceH * 0.25, size: faceW * 0.12 },
@@ -363,8 +367,8 @@ export default function CameraApp() {
         ]
         hearts = positions.map(p => ({
           position: 'absolute' as const,
-          left: foreheadX + p.dx - p.size / 2,
-          top: foreheadY + p.dy - p.size / 2,
+          left: forehead.x + p.dx - p.size / 2,
+          top: forehead.y + p.dy - p.size / 2,
           fontSize: p.size,
           pointerEvents: 'none' as const,
           zIndex: 10,
