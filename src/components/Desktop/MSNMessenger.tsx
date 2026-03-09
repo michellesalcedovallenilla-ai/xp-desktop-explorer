@@ -76,6 +76,15 @@ function timeAgo(dateStr: string): string {
 let lastPostTime = 0
 let lastNudgeTime = 0
 
+// Generate or retrieve device ID for one-comment-per-device enforcement
+function getDeviceId(): string {
+  const stored = localStorage.getItem('msn_device_id')
+  if (stored) return stored
+  const newId = `device_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+  localStorage.setItem('msn_device_id', newId)
+  return newId
+}
+
 export default function MSNMessenger() {
   const [messages, setMessages] = useState<GuestbookMessage[]>([])
   const [nickname, setNickname] = useState('')
@@ -88,9 +97,11 @@ export default function MSNMessenger() {
   const [isShaking, setIsShaking] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [activeGuino, setActiveGuino] = useState<typeof MSN_GUINOS[0] | null>(null)
+  const [hasPosted, setHasPosted] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
   const msgInputRef = useRef<HTMLTextAreaElement>(null)
   const { playError } = useAudioStore()
+  const deviceId = getDeviceId()
 
   const triggerGuino = useCallback((guinoId: string) => {
     const guino = MSN_GUINOS.find(g => g.id === guinoId)
