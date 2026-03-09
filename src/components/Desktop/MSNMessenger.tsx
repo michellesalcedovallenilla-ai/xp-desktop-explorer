@@ -165,6 +165,7 @@ export default function MSNMessenger() {
     e?.stopPropagation()
     const trimNick = nickname.trim()
     if (!trimNick) { setError('¡Escribe tu nickname primero!'); return }
+    if (hasPosted) { setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.'); return }
     if (Date.now() - lastNudgeTime < 8000) {
       setError('¡Espera para enviar otro zumbido!')
       return
@@ -172,10 +173,16 @@ export default function MSNMessenger() {
     triggerNudgeEffect()
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({ nickname: trimNick, status, message: NUDGE_MSG })
-    if (insertError) setError('Error al enviar zumbido')
-    else { lastNudgeTime = Date.now(); setError('') }
-  }, [nickname, status, triggerNudgeEffect])
+      .insert({ nickname: trimNick, status, message: NUDGE_MSG, device_id: deviceId })
+    if (insertError) {
+      if (insertError.code === '23505') setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.')
+      else setError('Error al enviar zumbido')
+    } else { 
+      lastNudgeTime = Date.now()
+      setError('')
+      setHasPosted(true)
+    }
+  }, [nickname, status, triggerNudgeEffect, hasPosted, deviceId])
 
   const sendGuino = useCallback(async (guino: typeof MSN_GUINOS[0]) => {
     const trimNick = nickname.trim()
