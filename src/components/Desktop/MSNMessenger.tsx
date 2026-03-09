@@ -76,6 +76,15 @@ function timeAgo(dateStr: string): string {
 let lastPostTime = 0
 let lastNudgeTime = 0
 
+// Generate or retrieve device ID for one-comment-per-device enforcement
+function getDeviceId(): string {
+  const stored = localStorage.getItem('msn_device_id')
+  if (stored) return stored
+  const newId = `device_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+  localStorage.setItem('msn_device_id', newId)
+  return newId
+}
+
 export default function MSNMessenger() {
   const [messages, setMessages] = useState<GuestbookMessage[]>([])
   const [nickname, setNickname] = useState('')
@@ -88,9 +97,11 @@ export default function MSNMessenger() {
   const [isShaking, setIsShaking] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [activeGuino, setActiveGuino] = useState<typeof MSN_GUINOS[0] | null>(null)
+  const [hasPosted, setHasPosted] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
   const msgInputRef = useRef<HTMLTextAreaElement>(null)
   const { playError } = useAudioStore()
+  const deviceId = getDeviceId()
 
   const triggerGuino = useCallback((guinoId: string) => {
     const guino = MSN_GUINOS.find(g => g.id === guinoId)
@@ -107,7 +118,12 @@ export default function MSNMessenger() {
         .select('*')
         .order('created_at', { ascending: true })
         .limit(200)
-      if (data) setMessages(data as GuestbookMessage[])
+      if (data) {
+        setMessages(data as GuestbookMessage[])
+        // Check if this device has already posted
+        const alreadyPosted = data.some((msg: any) => msg.device_id === deviceId)
+        setHasPosted(alreadyPosted)
+      }
     }
     fetchMessages()
 
@@ -149,6 +165,7 @@ export default function MSNMessenger() {
     e?.stopPropagation()
     const trimNick = nickname.trim()
     if (!trimNick) { setError('¡Escribe tu nickname primero!'); return }
+    if (hasPosted) { setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.'); return }
     if (Date.now() - lastNudgeTime < 8000) {
       setError('¡Espera para enviar otro zumbido!')
       return
@@ -156,14 +173,21 @@ export default function MSNMessenger() {
     triggerNudgeEffect()
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({ nickname: trimNick, status, message: NUDGE_MSG })
-    if (insertError) setError('Error al enviar zumbido')
-    else { lastNudgeTime = Date.now(); setError('') }
-  }, [nickname, status, triggerNudgeEffect])
+      .insert({ nickname: trimNick, status, message: NUDGE_MSG, device_id: deviceId })
+    if (insertError) {
+      if (insertError.code === '23505') setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.')
+      else setError('Error al enviar zumbido')
+    } else { 
+      lastNudgeTime = Date.now()
+      setError('')
+      setHasPosted(true)
+    }
+  }, [nickname, status, triggerNudgeEffect, hasPosted, deviceId])
 
   const sendGuino = useCallback(async (guino: typeof MSN_GUINOS[0]) => {
     const trimNick = nickname.trim()
     if (!trimNick) { setError('¡Escribe tu nickname primero!'); return }
+    if (hasPosted) { setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.'); return }
     if (Date.now() - lastPostTime < 5000) { setError('¡Más lento! Espera unos segundos.'); return }
 
     setShowWinks(false)
@@ -171,16 +195,23 @@ export default function MSNMessenger() {
 
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({ nickname: trimNick, status, message: WINK_PREFIX + guino.id })
-    if (insertError) setError('Error al enviar guiño')
-    else { lastPostTime = Date.now(); setError('') }
-  }, [nickname, status, triggerGuino])
+      .insert({ nickname: trimNick, status, message: WINK_PREFIX + guino.id, device_id: deviceId })
+    if (insertError) {
+      if (insertError.code === '23505') setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.')
+      else setError('Error al enviar guiño')
+    } else { 
+      lastPostTime = Date.now()
+      setError('')
+      setHasPosted(true)
+    }
+  }, [nickname, status, triggerGuino, hasPosted, deviceId])
 
   const handlePost = useCallback(async () => {
     const trimNick = nickname.trim()
     const trimMsg = messageText.trim()
     if (!trimNick) { setError('¡Escribe tu nickname!'); return }
     if (!trimMsg) { setError('¡Escribe un mensaje!'); return }
+    if (hasPosted) { setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.'); return }
     if (trimNick.length > 30) { setError('Nickname muy largo (máx 30)'); return }
     if (trimMsg.length > 500) { setError('Mensaje muy largo (máx 500)'); return }
     if (Date.now() - lastPostTime < 5000) { setError('¡Más lento! Espera unos segundos.'); return }
@@ -189,11 +220,17 @@ export default function MSNMessenger() {
     setError('')
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({ nickname: trimNick, status, message: trimMsg })
-    if (insertError) setError('Error al enviar. ¡Intenta de nuevo!')
-    else { lastPostTime = Date.now(); setMessageText('') }
+      .insert({ nickname: trimNick, status, message: trimMsg, device_id: deviceId })
+    if (insertError) {
+      if (insertError.code === '23505') setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.')
+      else setError('Error al enviar. ¡Intenta de nuevo!')
+    } else { 
+      lastPostTime = Date.now()
+      setMessageText('')
+      setHasPosted(true)
+    }
     setIsPosting(false)
-  }, [nickname, messageText, status])
+  }, [nickname, messageText, status, hasPosted, deviceId])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handlePost() }
