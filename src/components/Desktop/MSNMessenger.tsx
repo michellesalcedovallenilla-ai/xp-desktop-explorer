@@ -118,7 +118,12 @@ export default function MSNMessenger() {
         .select('*')
         .order('created_at', { ascending: true })
         .limit(200)
-      if (data) setMessages(data as GuestbookMessage[])
+      if (data) {
+        setMessages(data as GuestbookMessage[])
+        // Check if this device has already posted
+        const alreadyPosted = data.some((msg: any) => msg.device_id === deviceId)
+        setHasPosted(alreadyPosted)
+      }
     }
     fetchMessages()
 
