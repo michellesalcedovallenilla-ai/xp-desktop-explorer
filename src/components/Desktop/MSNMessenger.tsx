@@ -187,6 +187,7 @@ export default function MSNMessenger() {
   const sendGuino = useCallback(async (guino: typeof MSN_GUINOS[0]) => {
     const trimNick = nickname.trim()
     if (!trimNick) { setError('¡Escribe tu nickname primero!'); return }
+    if (hasPosted) { setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.'); return }
     if (Date.now() - lastPostTime < 5000) { setError('¡Más lento! Espera unos segundos.'); return }
 
     setShowWinks(false)
@@ -194,10 +195,16 @@ export default function MSNMessenger() {
 
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({ nickname: trimNick, status, message: WINK_PREFIX + guino.id })
-    if (insertError) setError('Error al enviar guiño')
-    else { lastPostTime = Date.now(); setError('') }
-  }, [nickname, status, triggerGuino])
+      .insert({ nickname: trimNick, status, message: WINK_PREFIX + guino.id, device_id: deviceId })
+    if (insertError) {
+      if (insertError.code === '23505') setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.')
+      else setError('Error al enviar guiño')
+    } else { 
+      lastPostTime = Date.now()
+      setError('')
+      setHasPosted(true)
+    }
+  }, [nickname, status, triggerGuino, hasPosted, deviceId])
 
   const handlePost = useCallback(async () => {
     const trimNick = nickname.trim()
