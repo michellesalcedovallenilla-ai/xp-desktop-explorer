@@ -211,6 +211,7 @@ export default function MSNMessenger() {
     const trimMsg = messageText.trim()
     if (!trimNick) { setError('¡Escribe tu nickname!'); return }
     if (!trimMsg) { setError('¡Escribe un mensaje!'); return }
+    if (hasPosted) { setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.'); return }
     if (trimNick.length > 30) { setError('Nickname muy largo (máx 30)'); return }
     if (trimMsg.length > 500) { setError('Mensaje muy largo (máx 500)'); return }
     if (Date.now() - lastPostTime < 5000) { setError('¡Más lento! Espera unos segundos.'); return }
@@ -219,11 +220,17 @@ export default function MSNMessenger() {
     setError('')
     const { error: insertError } = await supabase
       .from('guestbook_messages')
-      .insert({ nickname: trimNick, status, message: trimMsg })
-    if (insertError) setError('Error al enviar. ¡Intenta de nuevo!')
-    else { lastPostTime = Date.now(); setMessageText('') }
+      .insert({ nickname: trimNick, status, message: trimMsg, device_id: deviceId })
+    if (insertError) {
+      if (insertError.code === '23505') setError('¡Ya dejaste tu mensaje! Solo puedes comentar una vez.')
+      else setError('Error al enviar. ¡Intenta de nuevo!')
+    } else { 
+      lastPostTime = Date.now()
+      setMessageText('')
+      setHasPosted(true)
+    }
     setIsPosting(false)
-  }, [nickname, messageText, status])
+  }, [nickname, messageText, status, hasPosted, deviceId])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handlePost() }
